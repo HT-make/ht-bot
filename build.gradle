@@ -40,10 +40,13 @@ dependencies {
 	runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
 
 	//discord
-	implementation 'net.dv8tion:JDA:5.0.0-alpha.12'
+	implementation 'net.dv8tion:JDA:5.0.0-beta.21'
 
 	//detonv
 	implementation 'io.github.cdimascio:java-dotenv:5.2.2'
+
+	//unirest
+	implementation 'com.mashape.unirest:unirest-java:1.4.8'
 }
 
 tasks.named('test') {

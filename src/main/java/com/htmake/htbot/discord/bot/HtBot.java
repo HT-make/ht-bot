@@ -1,6 +1,6 @@
 package com.htmake.htbot.discord.bot;
 
-import com.htmake.htbot.discord.commands.CommandManager;
+import com.htmake.htbot.discord.commands.PlayerCommand;
 import com.htmake.htbot.discord.listeners.EventListener;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
@@ -29,12 +29,15 @@ public class HtBot {
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(token);
         builder.setStatus(OnlineStatus.ONLINE);
         builder.setActivity(Activity.listening("이야기"));
-        builder.enableIntents(GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS);
+        builder.enableIntents(GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT);
         builder.setMemberCachePolicy(MemberCachePolicy.ALL);
         builder.setChunkingFilter(ChunkingFilter.ALL);
         shardManager = builder.build();
 
         // Register listeners
-        shardManager.addEventListener(new EventListener(), new CommandManager());
+        shardManager.addEventListener(
+                new EventListener(),
+                new PlayerCommand()
+        );
     }
 }
