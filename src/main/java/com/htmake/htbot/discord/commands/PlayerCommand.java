@@ -1,10 +1,11 @@
 package com.htmake.htbot.discord.commands;
 
-import com.htmake.htbot.discord.util.RestServiceType;
+import com.htmake.htbot.interfaces.Pair;
+import com.htmake.htbot.unirest.HttpClient;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
@@ -17,6 +18,7 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
@@ -24,7 +26,11 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 @Component
+@Slf4j
+@RequiredArgsConstructor
 public class PlayerCommand extends ListenerAdapter {
+
+    private final HttpClient httpClient;
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
@@ -39,24 +45,18 @@ public class PlayerCommand extends ListenerAdapter {
 
     private void handleGameJoin(SlashCommandInteractionEvent event) {
         User user = event.getUser();
+
+        String endPoint = "/player/join";
         String jsonBody = "{\"userId\":\"" + user.getId() + "\", " +
                 "\"name\":\"" + user.getName() + "\"}";
 
-        try {
-            HttpResponse<JsonNode> response = Unirest
-                    .post(RestServiceType.DEFAULT_URL + "/player/join")
-                    .header("Content-Type", "application/json")
-                    .body(jsonBody)
-                    .asJson();
+        HttpResponse<JsonNode> response = httpClient.sendPostRequest(endPoint, jsonBody);
 
-            if (response.getStatus() == 200) {
-                String message = response.getBody().getObject().getString("message");
-                event.reply(message).queue();
-            } else {
-                System.out.println(response.getBody());
-            }
-        } catch (UnirestException e) {
-            e.printStackTrace();
+        if (response.getStatus() == 200) {
+            String message = response.getBody().getObject().getString("message");
+            event.reply(message).queue();
+        } else {
+            log.error(String.valueOf(response.getBody()));
         }
     }
 
@@ -70,39 +70,35 @@ public class PlayerCommand extends ListenerAdapter {
             user = option.getAsUser();
         }
 
-        try {
-            HttpResponse<JsonNode> response = Unirest
-                    .get(RestServiceType.DEFAULT_URL + "/player/info/{player_id}")
-                    .routeParam("player_id", user.getId())
-                    .asJson();
+        String endPoint = "/player/info/{player_id}";
+        Pair<String, String> routeParam = new Pair<>("player_id", user.getId());
 
-            if (response.getStatus() == 200) {
-                DecimalFormat decimalFormat = new DecimalFormat("#,###");
+        HttpResponse<JsonNode> response = httpClient.sendGetRequest(endPoint, routeParam);
 
-                int level = response.getBody().getObject().getInt("level");
-                int currentExp = response.getBody().getObject().getInt("currentExp");
-                int maxExp = response.getBody().getObject().getInt("maxExp");
+        if (response.getStatus() == 200) {
+            DecimalFormat decimalFormat = new DecimalFormat("#,###");
 
-                String StringLevel = String.valueOf(level);
-                String StringCurrentExp = decimalFormat.format(currentExp);
-                String StringMaxExp = decimalFormat.format(maxExp);
-                String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
+            JSONObject responseBody = response.getBody().getObject();
+            int level = responseBody.getInt("level");
+            int currentExp = responseBody.getInt("currentExp");
+            int maxExp = responseBody.getInt("maxExp");
 
-                MessageEmbed embed = new EmbedBuilder()
-                        .setColor(Color.GREEN)
-                        .setAuthor(user.getName(), null, profileUrl)
-                        .addField(":beginner:LV. " + StringLevel,
-                                StringCurrentExp + "/" + StringMaxExp,
-                                false)
-                        .build();
+            String levelString = String.valueOf(level);
+            String currentExpFormatted = decimalFormat.format(currentExp);
+            String maxExpFormatted = decimalFormat.format(maxExp);
+            String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
 
-                event.replyEmbeds(embed).queue();
-            } else {
-                System.out.println(response.getBody());
-                event.reply("유저 정보를 찾지 못했습니다.").queue();
-            }
-        } catch (UnirestException e) {
-            e.printStackTrace();
+            MessageEmbed embed = new EmbedBuilder()
+                    .setColor(Color.GREEN)
+                    .setAuthor(user.getName(), null, profileUrl)
+                    .addField(":beginner:LV. " + levelString,
+                            currentExpFormatted + "/" + maxExpFormatted,
+                            false)
+                    .build();
+
+            event.replyEmbeds(embed).queue();
+        } else {
+            log.error(String.valueOf(response.getBody()));
         }
     }
 
