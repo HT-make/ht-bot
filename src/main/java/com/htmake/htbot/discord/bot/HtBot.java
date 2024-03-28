@@ -2,6 +2,7 @@ package com.htmake.htbot.discord.bot;
 
 import com.htmake.htbot.discord.commands.PlayerCommand;
 import com.htmake.htbot.discord.listeners.EventListener;
+import com.htmake.htbot.unirest.HttpClient;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -17,10 +18,13 @@ import javax.security.auth.login.LoginException;
 @Getter
 public class HtBot {
 
+    private final HttpClient httpClient;
     private final Dotenv config;
     private final ShardManager shardManager;
 
-    public HtBot() throws LoginException {
+    public HtBot(HttpClient httpClient) throws LoginException {
+        this.httpClient = httpClient;
+
         // Load environment variables
         config = Dotenv.configure().load();
         String token = config.get("TOKEN");
@@ -37,7 +41,7 @@ public class HtBot {
         // Register listeners
         shardManager.addEventListener(
                 new EventListener(),
-                new PlayerCommand()
+                new PlayerCommand(this.httpClient)
         );
     }
 }
