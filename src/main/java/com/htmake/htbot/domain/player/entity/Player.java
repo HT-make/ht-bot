@@ -21,4 +21,10 @@ public class Player {
 
     @Column(name = "player_level", nullable = false)
     private int level;
+
+    @Column(name = "player_current_exp", nullable = false)
+    private int currentExp;
+
+    @Column(name = "player_max_exp", nullable = false)
+    private int maxExp;
 }
