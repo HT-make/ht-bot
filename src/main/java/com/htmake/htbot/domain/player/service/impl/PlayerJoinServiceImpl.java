@@ -29,6 +29,8 @@ public class PlayerJoinServiceImpl implements PlayerJoinService {
                             .id(request.getUserId())
                             .name(request.getName())
                             .level(1)
+                            .currentExp(0)
+                            .maxExp(100)
                             .build()
             );
 
