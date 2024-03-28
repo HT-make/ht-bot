@@ -98,6 +98,13 @@ public class PlayerCommand extends ListenerAdapter {
 
             event.replyEmbeds(embed).queue();
         } else {
+            MessageEmbed embed = new EmbedBuilder()
+                    .setColor(Color.YELLOW)
+                    .setTitle(":warning:유저 정보")
+                    .setDescription("해당 유저의 정보를 찾을 수 없습니다!")
+                    .build();
+
+            event.replyEmbeds(embed).queue();
             log.error(String.valueOf(response.getBody()));
         }
     }
