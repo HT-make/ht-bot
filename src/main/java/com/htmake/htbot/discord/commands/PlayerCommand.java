@@ -10,20 +10,14 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.text.DecimalFormat;
-import java.util.List;
 
 @Component
 @Slf4j
@@ -107,19 +101,5 @@ public class PlayerCommand extends ListenerAdapter {
             event.replyEmbeds(embed).queue();
             log.error(String.valueOf(response.getBody()));
         }
-    }
-
-    @Override
-    public void onReady(@NotNull ReadyEvent event) {
-        List<CommandData> commandData = List.of(
-                Commands.slash("게임-가입", "게임 기능을 사용하기 위해 가입합니다."),
-                Commands.slash("유저-정보", "유저 정보를 검색합니다.").addOptions(selectUser())
-        );
-
-        event.getJDA().updateCommands().addCommands(commandData).queue();
-    }
-
-    private OptionData selectUser() {
-        return new OptionData(OptionType.USER, "유저", "정보 검색을 원하는 유저를 선택해 주세요!");
     }
 }
