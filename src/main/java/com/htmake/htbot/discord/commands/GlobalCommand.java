@@ -1,5 +1,6 @@
 package com.htmake.htbot.discord.commands;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
@@ -14,6 +15,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -35,9 +38,12 @@ public class GlobalCommand extends ListenerAdapter {
                 InteractionHook hook = event.getHook().setEphemeral(true);
                 hook.sendMessage("이 버튼은 이용할 수 없습니다!").queue();
             } else {
-                event.getMessage().delete().queue(deleteMessage ->
-                        event.getChannel().sendMessage("작업이 취소되었습니다.").queue()
-                );
+                message.editMessageComponents(Collections.emptyList()).queue();
+                message.editMessageEmbeds(new EmbedBuilder()
+                        .setColor(Color.ORANGE)
+                        .setDescription("작업이 취소되었습니다.")
+                        .build()
+                ).queue();
             }
         }
     }
