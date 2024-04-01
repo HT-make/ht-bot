@@ -1,8 +1,10 @@
 package com.htmake.htbot.domain.player.presentation;
 
 import com.htmake.htbot.domain.player.presentation.data.request.PlayerJoinRequest;
+import com.htmake.htbot.domain.player.presentation.data.response.PlayerBattleResponse;
 import com.htmake.htbot.domain.player.presentation.data.response.PlayerInfoResponse;
 import com.htmake.htbot.domain.player.presentation.data.response.PlayerJoinResponse;
+import com.htmake.htbot.domain.player.service.PlayerBattleService;
 import com.htmake.htbot.domain.player.service.PlayerInfoService;
 import com.htmake.htbot.domain.player.service.PlayerJoinService;
 import jakarta.validation.Valid;
@@ -18,6 +20,7 @@ public class PlayerController {
 
     private final PlayerJoinService playerJoinService;
     private final PlayerInfoService playerInfoService;
+    private final PlayerBattleService playerBattleService;
 
     @PostMapping("/join")
     public ResponseEntity<PlayerJoinResponse> join(@RequestBody @Valid PlayerJoinRequest request) {
@@ -28,6 +31,12 @@ public class PlayerController {
     @GetMapping("/info/{player_id}")
     public ResponseEntity<PlayerInfoResponse> info(@PathVariable("player_id") String playerId) {
         PlayerInfoResponse response = playerInfoService.execute(playerId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/battle/{player_id}")
+    public ResponseEntity<PlayerBattleResponse> battle(@PathVariable("player_id") String playerId) {
+        PlayerBattleResponse response = playerBattleService.execute(playerId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
