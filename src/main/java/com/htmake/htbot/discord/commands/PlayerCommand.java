@@ -1,9 +1,9 @@
 package com.htmake.htbot.discord.commands;
 
-import com.htmake.htbot.interfaces.Pair;
 import com.htmake.htbot.unirest.HttpClient;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
+import kotlin.Pair;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -85,7 +85,8 @@ public class PlayerCommand extends ListenerAdapter {
             MessageEmbed embed = new EmbedBuilder()
                     .setColor(Color.GREEN)
                     .setAuthor(user.getName(), null, profileUrl)
-                    .addField(":beginner:LV. " + levelString,
+                    .setTitle("유저 정보")
+                    .addField(":beginner: Lv. " + levelString,
                             currentExpFormatted + "/" + maxExpFormatted,
                             false)
                     .build();
@@ -94,7 +95,7 @@ public class PlayerCommand extends ListenerAdapter {
         } else {
             MessageEmbed embed = new EmbedBuilder()
                     .setColor(Color.YELLOW)
-                    .setTitle(":warning:유저 정보")
+                    .setTitle(":warning: 유저 정보")
                     .setDescription("해당 유저의 정보를 찾을 수 없습니다!")
                     .build();
 

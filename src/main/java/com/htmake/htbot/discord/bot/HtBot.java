@@ -45,7 +45,7 @@ public class HtBot {
                 new EventListener(),
                 new GlobalCommand(),
                 new PlayerCommand(this.httpClient),
-                new DungeonCommand()
+                new DungeonCommand(this.httpClient)
         );
     }
 }

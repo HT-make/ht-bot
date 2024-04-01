@@ -1,8 +1,8 @@
 package com.htmake.htbot.unirest;
 
-import com.htmake.htbot.interfaces.Pair;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
+import kotlin.Pair;
 import org.springframework.stereotype.Component;
 
 @Component
