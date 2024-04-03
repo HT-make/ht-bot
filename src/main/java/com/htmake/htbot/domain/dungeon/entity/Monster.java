@@ -14,7 +14,7 @@ public class Monster {
     @Column(name = "monster_id")
     private String id;
 
-    @Column(name = "monster_name", nullable = false)
+    @Column(name = "monster_name", nullable = false, unique = true)
     private String name;
 
     @Column(name = "monster_level", nullable = false)

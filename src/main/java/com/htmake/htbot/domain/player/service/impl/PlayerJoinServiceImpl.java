@@ -34,6 +34,8 @@ public class PlayerJoinServiceImpl implements PlayerJoinService {
                             .level(1)
                             .currentExp(0)
                             .maxExp(100)
+                            .gold(0)
+                            .gem(0)
                             .build()
             );
 
