@@ -34,4 +34,18 @@ public class HttpClientImpl implements HttpClient {
             throw new RuntimeException("Failed to send HTTP GET request", e);
         }
     }
+
+    @Override
+    public HttpResponse<JsonNode> sendPatchRequest(String endPoint, Pair<String, String> routeParam, String requestBody) {
+        try {
+            return Unirest.patch(RestServiceType.DEFAULT_URL + endPoint)
+                    .header("Content-Type", "application/json")
+                    .routeParam(routeParam.getFirst(), routeParam.getSecond())
+                    .body(requestBody)
+                    .asJson();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to send HTTP PATCH request", e);
+        }
+    }
 }
