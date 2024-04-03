@@ -27,4 +27,20 @@ public class Player {
 
     @Column(name = "player_max_exp", nullable = false)
     private int maxExp;
+
+    @Column(name = "player_gold", nullable = false)
+    private int gold;
+
+    @Column(name = "player_gem", nullable = false)
+    private int gem;
+
+    public void killMonster(int currentExp, int gold) {
+        this.currentExp = currentExp;
+        this.gold = gold;
+    }
+
+    public void levelUp(int maxExp) {
+        this.maxExp = maxExp;
+        this.level++;
+    }
 }
