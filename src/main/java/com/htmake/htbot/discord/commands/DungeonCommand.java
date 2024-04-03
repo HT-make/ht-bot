@@ -8,8 +8,10 @@ import kotlin.Pair;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -77,24 +79,39 @@ public class DungeonCommand extends ListenerAdapter {
         String[] componentList = component.split("-");
 
         if (componentList[0].equals("enter")) {
-            battleInterface(event, componentList);
+            battleInterface(event, null, componentList);
         }
     }
 
-    private void battleInterface(StringSelectInteractionEvent event, String[] dungeonInfo) {
+    @Override
+    public void onButtonInteraction(ButtonInteractionEvent event) {
+        String component = event.getComponentId();
+        String[] componentList = component.split("-");
+
+        if (componentList[0].equals("enter")) {
+            battleInterface(null, event, componentList);
+        }
+    }
+
+    private void battleInterface(StringSelectInteractionEvent selectEvent, ButtonInteractionEvent buttonEvent, String[] dungeonInfo) {
         String endPoint = "/dungeon/{dungeon_id}";
         Pair<String, String> routeParam = new Pair<>("dungeon_id", dungeonInfo[1]);
 
         HttpResponse<JsonNode> response = httpClient.sendGetRequest(endPoint, routeParam);
 
         if (response.getStatus() == 200) {
-            handleSuccessfulResponse(event, response, dungeonInfo[2]);
+            handleSuccessfulResponse(selectEvent, buttonEvent, response, dungeonInfo[2]);
         } else {
-            handleErrorResponse(event, response);
+            handleErrorResponse(selectEvent, buttonEvent, response);
         }
     }
 
-    private void handleSuccessfulResponse(StringSelectInteractionEvent event, HttpResponse<JsonNode> response, String stage) {
+    private void handleSuccessfulResponse(
+            StringSelectInteractionEvent selectEvent,
+            ButtonInteractionEvent buttonEvent,
+            HttpResponse<JsonNode> response,
+            String stage
+    ) {
         JsonNode responseBody = response.getBody();
         JSONArray jsonArray = responseBody.getArray();
 
@@ -105,30 +122,45 @@ public class DungeonCommand extends ListenerAdapter {
         monsterList.sort(Comparator.comparingInt(Monster::getLevel));
         String dungeonName = dungeonObject.getString("name") + "-" + stage;
 
-        JSONObject playerObject = playerDataResponse(event);
+        JSONObject playerObject = playerDataResponse(selectEvent, buttonEvent);
         Monster monster = randomMonster(monsterList, stage);
 
         MessageEmbed embed = buildEmbed(dungeonName, monster, playerObject);
 
-        event.editMessageEmbeds(embed)
-                .setActionRow(
-                        Button.success("attack", "공격"),
-                        Button.primary("defence", "방어"),
-                        Button.danger("run", "후퇴")
-                )
-                .queue();
+        if (selectEvent != null) {
+            selectEvent.editMessageEmbeds(embed)
+                    .setActionRow(
+                            Button.success("attack", "공격"),
+                            Button.primary("potion-open", "포션"),
+                            Button.danger("run", "후퇴")
+                    )
+                    .queue();
+        } else {
+            buttonEvent.getMessage().editMessageEmbeds(embed)
+                    .setActionRow(
+                            Button.success("attack", "공격"),
+                            Button.primary("potion-open", "포션"),
+                            Button.danger("run", "후퇴")
+                    )
+                    .queue();
+        }
     }
 
-    private void handleErrorResponse(StringSelectInteractionEvent event, HttpResponse<JsonNode> response) {
+    private void handleErrorResponse(
+            StringSelectInteractionEvent selectEvent,
+            ButtonInteractionEvent buttonEvent,
+            HttpResponse<JsonNode> response
+    ) {
+        Message message = selectEvent != null ? selectEvent.getMessage() : buttonEvent.getMessage();
+
         MessageEmbed embed = new EmbedBuilder()
                 .setColor(Color.ORANGE)
                 .setTitle(":warning: 던전 입장")
                 .setDescription("던전 입장에 실패하였습니다!")
                 .build();
 
-        event.getMessage().editMessageComponents(Collections.emptyList()).queue();
-        event.editMessageEmbeds(embed).queue();
-
+        message.editMessageComponents(Collections.emptyList()).queue();
+        message.editMessageEmbeds(embed).queue();
         log.error(String.valueOf(response.getBody()));
     }
 
@@ -193,8 +225,8 @@ public class DungeonCommand extends ListenerAdapter {
         return monsterList.get(ran);
     }
 
-    private JSONObject playerDataResponse(StringSelectInteractionEvent event) {
-        String playerId = event.getUser().getId();
+    private JSONObject playerDataResponse(StringSelectInteractionEvent selectEvent, ButtonInteractionEvent buttonEvent) {
+        String playerId = selectEvent != null ? selectEvent.getUser().getId() : buttonEvent.getUser().getId();
         String endPoint = "/player/battle/{player_id}";
         Pair<String, String> routeParam = new Pair<>("player_id", playerId);
 
@@ -203,7 +235,7 @@ public class DungeonCommand extends ListenerAdapter {
         if (response.getStatus() == 200) {
             return response.getBody().getObject();
         } else {
-            handleErrorResponse(event, response);
+            handleErrorResponse(selectEvent, buttonEvent, response);
         }
 
         return null;
