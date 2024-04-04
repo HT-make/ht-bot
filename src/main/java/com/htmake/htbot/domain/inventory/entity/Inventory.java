@@ -20,7 +20,6 @@ public class Inventory {
     @Column(name = "item_id")
     private String itemId;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "player_id")
     private Player player;
