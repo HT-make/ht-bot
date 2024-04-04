@@ -20,13 +20,17 @@ import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
-public class InventoryCommaned extends ListenerAdapter {
+public class InventoryCommand extends ListenerAdapter {
+
     private final HttpClient httpClient;
+    private final Map<String, JSONArray> inventoryCache = new HashMap<>();
 
     @Override
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
@@ -41,12 +45,16 @@ public class InventoryCommaned extends ListenerAdapter {
     public void onButtonInteraction(ButtonInteractionEvent event) {
         List<String> components = List.of(event.getComponentId().split("-"));
         String component = components.get(0);
-        int page = Integer.parseInt(components.get(1));
 
-        if (component.equals("left") && page >= 1) {
-            handlePageButton(event, page - 1);
-        } else if (component.equals("right") && page < 6) {
-            handlePageButton(event, page);
+        if (component.equals("inventory")) {
+            String pageButton = components.get(1);
+            int page = Integer.parseInt(components.get(2));
+
+            if (pageButton.equals("left") && page >= 1) {
+                handlePageButton(event, page - 1);
+            } else if (pageButton.equals("right") && page < 6) {
+                handlePageButton(event, page);
+            }
         }
     }
 
@@ -56,53 +64,67 @@ public class InventoryCommaned extends ListenerAdapter {
         String endPoint = "/inventory/info/{player_id}";
         Pair<String, String> routeParam = new Pair<>("player_id", user.getId());
 
-        HttpResponse<JsonNode> response = httpClient.sendGetRequest(endPoint, routeParam);
 
-        JSONObject inventoryObject = response.getBody().getObject();
-        JSONArray inventoryArray = inventoryObject.getJSONArray("inventoryList");
+        JSONArray inventoryArray = getInventoryArrayFromCache(user.getId());
+        if (inventoryArray == null) {
+            HttpResponse<JsonNode> response = httpClient.sendGetRequest(endPoint, routeParam);
+
+            if (response.getStatus() != 200)  {
+                MessageEmbed embed = new EmbedBuilder()
+                        .setColor(Color.YELLOW)
+                        .setTitle(":warning: 인벤토리를 찾을 수 없습니다!")
+                        .build();
+
+                event.replyEmbeds(embed).queue();
+                log.error(String.valueOf(response.getBody()));
+
+                return;
+            }
+
+            JSONObject inventoryObject = response.getBody().getObject();
+            inventoryArray = inventoryObject.getJSONArray("inventoryList");
+
+            cacheInventoryArray(user.getId(), inventoryArray);
+        }
 
         String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
 
-        if (response.getStatus() == 200) {
+        EmbedBuilder embedBuilder = new EmbedBuilder()
+                .setColor(Color.GREEN)
+                .setAuthor(user.getName(), null, profileUrl)
+                .setTitle(":backpack: 인벤토리");
 
-            EmbedBuilder embedBuilder = new EmbedBuilder()
-                    .setColor(Color.GREEN)
-                    .setAuthor(user.getName(), null, profileUrl)
-                    .setTitle(":backpack: 인벤토리");
+        for (int i = 0; i < 9; i++) {
+            if (i >= inventoryArray.length()) break;
 
-            for (int i = 0; i < 9; i++) {
-                JSONObject item = inventoryArray.getJSONObject(i);
-                String itemName = item.getString("name");
-                int itemQuantity = item.getInt("quantity");
+            JSONObject item = inventoryArray.getJSONObject(i);
+            String itemName = item.getString("name");
+            int itemQuantity = item.getInt("quantity");
 
-                embedBuilder.addField(itemName, "수량: " + itemQuantity, true);
-            }
-
-
-
-            MessageEmbed embed = embedBuilder.build();
-
-            event.replyEmbeds(embed)
-                    .addActionRow(
-                            Button.primary("left-0", "◄"),
-                            Button.secondary("blank", "1/5"),
-                            Button.primary("right-2", "►")
-                    )
-                    .queue();
-        } else {
-            MessageEmbed embed = new EmbedBuilder()
-                    .setColor(Color.YELLOW)
-                    .setTitle(":warning: 인벤토리를 찾을 수 없습니다!")
-                    .build();
-
-            event.replyEmbeds(embed).queue();
-            log.error(String.valueOf(response.getBody()));
+            embedBuilder.addField(itemName, "수량: " + itemQuantity, true);
         }
+
+        MessageEmbed embed = embedBuilder.build();
+
+        event.replyEmbeds(embed)
+                .addActionRow(
+                        Button.primary("inventory-left-0", "◄"),
+                        Button.secondary("blank", "1/5"),
+                        Button.primary("inventory-right-2", "►")
+                )
+                .queue();
     }
 
     private void handlePageButton(ButtonInteractionEvent event, int page) {
 
-        JSONArray inventoryArray = getInventoryArray(event);
+        JSONArray inventoryArray = getInventoryArrayFromCache(event.getUser().getId());
+        if (inventoryArray == null) {
+            inventoryArray = getInventoryArray(event);
+
+            if (inventoryArray == null) return;
+
+            cacheInventoryArray(event.getUser().getId(), inventoryArray);
+        }
 
         MessageEmbed embed = event.getMessage().getEmbeds().get(0);
 
@@ -125,9 +147,9 @@ public class InventoryCommaned extends ListenerAdapter {
 
         MessageEmbed newEmbed = embedBuilder.build();
 
-        String leftId = "left-" + page;
+        String leftId = "inventory-left-" + page;
         String pageLabel = page + "/5";
-        String rightId = "right-" + (page + 1);
+        String rightId = "inventory-right-" + (page + 1);
 
         event.getMessage().editMessageEmbeds(newEmbed)
                 .setActionRow(
@@ -138,11 +160,17 @@ public class InventoryCommaned extends ListenerAdapter {
                 .queue();
     }
 
-    private JSONArray getInventoryArray(ButtonInteractionEvent event) {
-        User user = event.getUser();
+    private JSONArray getInventoryArrayFromCache(String userId) {
+        return inventoryCache.get(userId);
+    }
 
+    private void cacheInventoryArray(String userId, JSONArray inventoryArray) {
+        inventoryCache.put(userId, inventoryArray);
+    }
+
+    private JSONArray getInventoryArray(ButtonInteractionEvent event) {
         String endPoint = "/inventory/info/{player_id}";
-        Pair<String, String> routeParam = new Pair<>("player_id", user.getId());
+        Pair<String, String> routeParam = new Pair<>("player_id", event.getUser().getId());
 
         HttpResponse<JsonNode> response = httpClient.sendGetRequest(endPoint, routeParam);
 
