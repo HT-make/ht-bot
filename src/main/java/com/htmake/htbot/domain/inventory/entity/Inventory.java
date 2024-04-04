@@ -13,22 +13,24 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Inventory {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "inventory_id")
-    private String id;
+    private Long id;
 
     @Column(name = "item_id")
     private String itemId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "player_id")
-    private Player player;
 
     @Column(name = "item_name", nullable = false)
     private String name;
 
     @Column(name = "item_quantity", nullable = false)
     private int quantity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "player_id")
+    private Player player;
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
