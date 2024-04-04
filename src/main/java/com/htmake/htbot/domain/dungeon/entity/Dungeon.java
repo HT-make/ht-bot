@@ -1,6 +1,5 @@
 package com.htmake.htbot.domain.dungeon.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,7 +19,6 @@ public class Dungeon {
     @Column(name = "dungeon_name", nullable = false)
     private String name;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "dungeon", cascade = CascadeType.ALL)
     private List<Monster> monsters;
 }
