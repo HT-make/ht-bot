@@ -47,7 +47,7 @@ public class PlayerController {
     @PatchMapping("/battle/win/{player_id}")
     public ResponseEntity<LevelUpResponse> battleWin(
             @PathVariable("player_id") String playerId,
-            @RequestBody @Valid KillMonsterRequest request
+            @RequestBody KillMonsterRequest request
     ) {
         LevelUpResponse response = killMonsterService.execute(playerId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
