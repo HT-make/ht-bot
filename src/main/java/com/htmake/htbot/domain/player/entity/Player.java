@@ -1,9 +1,10 @@
 package com.htmake.htbot.domain.player.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.htmake.htbot.domain.inventory.entity.Inventory;
+import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -33,6 +34,9 @@ public class Player {
 
     @Column(name = "player_gem", nullable = false)
     private int gem;
+
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
+    private List<Inventory> inventoryList;
 
     public void killMonster(int currentExp, int gold) {
         this.currentExp = currentExp;
