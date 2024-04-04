@@ -22,7 +22,8 @@ public class InventoryInsertItemServiceImpl implements InventoryInsertItemServic
         Player player = playerRepository.findById(playerId)
                 .orElseThrow();
 
-        Inventory existingItem = inventoryRepository.findById(request.getItemId()).orElse(null);
+        Inventory existingItem = inventoryRepository
+                .findByPlayerIdAndItemId(playerId, request.getItemId()).orElse(null);
 
         if (existingItem != null) {
             existingItem.setQuantity(existingItem.getQuantity() + request.getQuantity());

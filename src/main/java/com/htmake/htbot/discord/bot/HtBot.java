@@ -1,6 +1,6 @@
 package com.htmake.htbot.discord.bot;
 
-import com.htmake.htbot.discord.commands.InventoryCommaned;
+import com.htmake.htbot.discord.commands.InventoryCommand;
 import com.htmake.htbot.discord.commands.battle.BattleCommand;
 import com.htmake.htbot.discord.commands.DungeonCommand;
 import com.htmake.htbot.discord.commands.PlayerCommand;
@@ -49,7 +49,7 @@ public class HtBot {
                 new PlayerCommand(this.httpClient),
                 new DungeonCommand(this.httpClient),
                 new BattleCommand(this.httpClient),
-                new InventoryCommaned(this.httpClient)
+                new InventoryCommand(this.httpClient)
         );
     }
 }
