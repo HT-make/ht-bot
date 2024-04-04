@@ -112,10 +112,7 @@ public class DungeonCommand extends ListenerAdapter {
             HttpResponse<JsonNode> response,
             String stage
     ) {
-        JsonNode responseBody = response.getBody();
-        JSONArray jsonArray = responseBody.getArray();
-
-        JSONObject dungeonObject = jsonArray.getJSONObject(0);
+        JSONObject dungeonObject = response.getBody().getObject();
         JSONArray monsterArray = dungeonObject.getJSONArray("monsterList");
 
         ArrayList<Monster> monsterList = toMonsterList(monsterArray);
