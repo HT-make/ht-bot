@@ -1,6 +1,7 @@
 package com.htmake.htbot.domain.player.service.impl;
 
 import com.htmake.htbot.domain.player.entity.Player;
+import com.htmake.htbot.domain.player.presentation.data.request.GetDropItemRequest;
 import com.htmake.htbot.domain.player.presentation.data.request.KillMonsterRequest;
 import com.htmake.htbot.domain.player.presentation.data.response.LevelUpResponse;
 import com.htmake.htbot.domain.player.repository.PlayerRepository;
@@ -8,6 +9,8 @@ import com.htmake.htbot.domain.player.service.KillMonsterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional
@@ -22,8 +25,8 @@ public class KillMonsterServiceImpl implements KillMonsterService {
         Player player = playerRepository.findById(playerId)
                 .orElseThrow();
 
-        int currentExp = player.getCurrentExp() + Integer.parseInt(request.getExp());
-        int gold = player.getGold() + Integer.parseInt(request.getGold());
+        int currentExp = player.getCurrentExp() + request.getExp();
+        int gold = player.getGold() + request.getGold();
 
         int maxExp = player.getMaxExp();
         int level = player.getLevel();
@@ -40,6 +43,8 @@ public class KillMonsterServiceImpl implements KillMonsterService {
         player.killMonster(currentExp, gold);
 
         playerRepository.save(player);
+
+        List<GetDropItemRequest> getItemList = request.getGetItemList();
 
         return LevelUpResponse.builder().levelUp(levelUp).build();
     }

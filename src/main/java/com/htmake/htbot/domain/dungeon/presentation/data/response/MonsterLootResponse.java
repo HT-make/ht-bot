@@ -5,13 +5,17 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class MonsterLootResponse {
 
-    private String exp;
+    private int exp;
 
-    private String gold;
+    private int gold;
+
+    private List<DropItemResponse> dropItemList;
 }

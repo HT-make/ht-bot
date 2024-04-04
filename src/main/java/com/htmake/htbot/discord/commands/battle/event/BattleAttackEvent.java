@@ -1,5 +1,7 @@
 package com.htmake.htbot.discord.commands.battle.event;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.htmake.htbot.domain.dungeon.enums.DungeonEnum;
 import com.htmake.htbot.unirest.HttpClient;
 import com.mashape.unirest.http.HttpResponse;
@@ -11,6 +13,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -37,7 +40,7 @@ public class BattleAttackEvent {
         monster.set(1, Math.max(0, monster.get(1) - playerDamage.getFirst()));
         ArrayList<String> situation = playerTurn(event, monster, player, playerDamage);
 
-        if (!Objects.equals(situation.get(0), "game over")) {
+        if (!situation.get(0).equals("game over")) {
             int monsterDamage = Math.max(monster.get(0) - player.get(2), 0);
             player.set(1, Math.max(0, player.get(1) - monsterDamage));
             monsterTurn(event, monster, player, monsterDamage, situation);
@@ -208,13 +211,25 @@ public class BattleAttackEvent {
     }
 
     private void monsterKill(ButtonInteractionEvent event) {
+        ObjectMapper objectMapper = new ObjectMapper();
+
         JSONObject monsterLoot = getMonsterLoot(event);
+
+        Map<String, Object> requestData = new HashMap<>();
+
+        requestData.put("exp", monsterLoot.getInt("exp"));
+        requestData.put("gold", monsterLoot.getInt("gold"));
+        requestData.put("getItemList", getItemList(monsterLoot));
 
         String endPoint = "/player/battle/win/{player_id}";
         Pair<String, String> routeParam = new Pair<>("player_id", event.getUser().getId());
-        String jsonBody =
-                "{\"exp\":\"" + monsterLoot.getString("exp") + "\", " +
-                "\"gold\":\"" + monsterLoot.getString("gold") + "\"}";
+        String jsonBody;
+
+        try {
+            jsonBody = objectMapper.writeValueAsString(requestData);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         HttpResponse<JsonNode> response = httpClient.sendPatchRequest(endPoint, routeParam, jsonBody);
 
@@ -227,14 +242,12 @@ public class BattleAttackEvent {
     }
 
     private void playerKill(ButtonInteractionEvent event) {
+        event.getMessage().editMessageComponents(Collections.emptyList()).queue();
         event.getMessage().editMessageEmbeds(new EmbedBuilder()
                         .setColor(Color.RED)
                         .setTitle(":skull: 전투 패배")
                         .setDescription("전투에서 패배했습니다.")
                         .build()
-                )
-                .setActionRow(
-                        Button.danger("close-dungeon", "돌아가기")
                 )
                 .queue();
     }
@@ -256,6 +269,30 @@ public class BattleAttackEvent {
         return null;
     }
 
+    private List<Map<String, String>> getItemList(JSONObject monsterLoot) {
+        JSONArray dropItems = monsterLoot.getJSONArray("dropItemList");
+
+        List<Map<String, String>> getItemList = new ArrayList<>();
+
+        for (int i = 0; i < dropItems.length(); i++) {
+            JSONObject dropItemObject = dropItems.getJSONObject(i);
+
+            Random random = new Random();
+            int randomNum = random.nextInt(100);
+
+            int dropChance = dropItemObject.getInt("chance");
+
+            if (randomNum < dropChance) {
+                Map<String, String> item = new HashMap<>();
+                item.put("id", dropItemObject.getString("id"));
+                item.put("name", dropItemObject.getString("name"));
+                getItemList.add(item);
+            }
+        }
+
+        return getItemList;
+    }
+
     private void battleResult(ButtonInteractionEvent event, JSONObject levelUp, JSONObject monsterLoot) {
         Message message = event.getMessage();
         MessageEmbed embed = message.getEmbeds().get(0);
@@ -273,14 +310,30 @@ public class BattleAttackEvent {
         int stage = Integer.parseInt(title.get(1)) + 1;
         nextDungeon += "-" + stage;
 
-        String levelUpMessage = levelUp.getBoolean("levelUp") ? "레벨업!!" : "";
+        String levelUpMessage = levelUp.getBoolean("levelUp") ? ":up: 레벨업!!" : "";
+
+        String getItem = "";
+
+        List<Map<String, String>> getItemList = getItemList(monsterLoot);
+
+        if (getItemList.size() > 0) {
+            for (Map<String, String> item : getItemList) {
+                Set<String> keySet = item.keySet();
+                for (String key : keySet) {
+                    if (key.equals("name")) getItem += item.get(key) + "\n";
+                }
+            }
+        } else {
+            getItem = "획득한 아이템이 없습니다.";
+        }
 
         MessageEmbed newEmbed = new EmbedBuilder()
                 .setColor(Color.GREEN)
                 .setTitle(":crossed_swords: 전투 승리!")
                 .setDescription(levelUpMessage)
-                .addField("획득 경험치", "" + monsterLoot.getInt("exp"), true)
-                .addField("획득 골드", "" + monsterLoot.get("gold"), true)
+                .addField(":sparkles: 획득 경험치", "" + monsterLoot.getInt("exp"), true)
+                .addField(":coin: 획득 골드", "" + monsterLoot.get("gold"), true)
+                .addField(":purse: 획득 아이템", getItem, false)
                 .build();
 
         message.editMessageEmbeds(newEmbed)

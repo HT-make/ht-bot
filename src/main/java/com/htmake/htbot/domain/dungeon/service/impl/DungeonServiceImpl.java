@@ -26,7 +26,8 @@ public class DungeonServiceImpl implements DungeonService {
         return DungeonResponse.builder()
                 .name(dungeon.getName())
                 .monsterList(
-                        dungeon.getMonsters().stream().map(MonsterResponse::toResponse)
+                        dungeon.getMonsters().stream()
+                                .map(MonsterResponse::toResponse)
                                 .collect(Collectors.toList())
                 )
                 .build();
