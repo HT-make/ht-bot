@@ -21,11 +21,11 @@ public class Armor {
     @Column(name = "item_level", nullable = false)
     private int level;
 
-    @Column(name = "item_hp", nullable = false)
-    private int hp;
+    @Column(name = "item_health", nullable = false)
+    private int health;
 
-    @Column(name = "item_def", nullable = false)
-    private int def;
+    @Column(name = "item_defence", nullable = false)
+    private int defence;
 
     @Column(name = "item_gold", nullable = false)
     private int gold;

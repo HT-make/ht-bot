@@ -21,14 +21,14 @@ public class Weapon {
     @Column(name = "item_level", nullable = false)
     private int level;
 
-    @Column(name = "item_dmg", nullable = false)
-    private int dmg;
+    @Column(name = "item_damage", nullable = false)
+    private int damage;
 
-    @Column(name = "item_hp", nullable = false)
-    private int hp;
+    @Column(name = "item_health", nullable = false)
+    private int health;
 
-    @Column(name = "item_def", nullable = false)
-    private int def;
+    @Column(name = "item_defence", nullable = false)
+    private int defence;
 
     @Column(name = "item_critical_chance", nullable = false)
     private int criticalChance;
