@@ -3,6 +3,8 @@ package com.htmake.htbot.domain.dungeon.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Builder
@@ -34,6 +36,9 @@ public class Monster {
 
     @Column(name = "monster_gold", nullable = false)
     private int gold;
+
+    @OneToMany(mappedBy = "monster", cascade = CascadeType.ALL)
+    private List<DropItem> dropItems;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dungeon_id")
