@@ -1,6 +1,7 @@
 package com.htmake.htbot.domain.player.entity;
 
 import com.htmake.htbot.domain.inventory.entity.Inventory;
+import com.htmake.htbot.domain.player.enums.Job;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,6 +35,10 @@ public class Player {
 
     @Column(name = "player_gem", nullable = false)
     private int gem;
+
+    @Column(name = "job")
+    @Enumerated(EnumType.STRING)
+    private Job job;
 
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
     private List<Inventory> inventoryList;

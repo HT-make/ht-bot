@@ -16,4 +16,7 @@ public class PlayerJoinRequest {
 
     @NotBlank(message = "이름은 필수 입니다.")
     private String name;
+
+    @NotBlank(message = "직업은 필수 입니다.")
+    private String job;
 }

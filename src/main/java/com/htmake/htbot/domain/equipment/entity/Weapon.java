@@ -1,8 +1,7 @@
 package com.htmake.htbot.domain.equipment.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import com.htmake.htbot.domain.equipment.enums.WeaponType;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
@@ -41,4 +40,8 @@ public class Weapon {
 
     @Column(name = "item_gold", nullable = false)
     private int gold;
+
+    @Column(name = "weapon_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private WeaponType weaponType;
 }

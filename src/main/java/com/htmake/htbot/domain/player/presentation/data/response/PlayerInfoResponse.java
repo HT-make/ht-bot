@@ -16,4 +16,22 @@ public class PlayerInfoResponse {
     private int currentExp;
 
     private int maxExp;
+
+    private int damage;
+
+    private int health;
+
+    private int defence;
+
+    private int mana;
+
+    private int criticalChance;
+
+    private int criticalDamage;
+
+    private String job;
+
+    private String weaponName;
+
+    private String armorName;
 }
