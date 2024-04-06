@@ -50,7 +50,7 @@ public class InventoryCommand extends ListenerAdapter {
             String pageButton = components.get(1);
             int page = Integer.parseInt(components.get(2));
 
-            if (pageButton.equals("left") && page >= 1) {
+            if (pageButton.equals("left") && page > 1) {
                 handlePageButton(event, page - 1);
             } else if (pageButton.equals("right") && page < 6) {
                 handlePageButton(event, page);
@@ -64,28 +64,24 @@ public class InventoryCommand extends ListenerAdapter {
         String endPoint = "/inventory/info/{player_id}";
         Pair<String, String> routeParam = new Pair<>("player_id", user.getId());
 
+        HttpResponse<JsonNode> response = httpClient.sendGetRequest(endPoint, routeParam);
 
-        JSONArray inventoryArray = getInventoryArrayFromCache(user.getId());
-        if (inventoryArray == null) {
-            HttpResponse<JsonNode> response = httpClient.sendGetRequest(endPoint, routeParam);
+        if (response.getStatus() != 200)  {
+            MessageEmbed embed = new EmbedBuilder()
+                    .setColor(Color.YELLOW)
+                    .setTitle(":warning: 인벤토리를 찾을 수 없습니다!")
+                    .build();
 
-            if (response.getStatus() != 200)  {
-                MessageEmbed embed = new EmbedBuilder()
-                        .setColor(Color.YELLOW)
-                        .setTitle(":warning: 인벤토리를 찾을 수 없습니다!")
-                        .build();
+            event.replyEmbeds(embed).queue();
+            log.error(String.valueOf(response.getBody()));
 
-                event.replyEmbeds(embed).queue();
-                log.error(String.valueOf(response.getBody()));
-
-                return;
-            }
-
-            JSONObject inventoryObject = response.getBody().getObject();
-            inventoryArray = inventoryObject.getJSONArray("inventoryList");
-
-            cacheInventoryArray(user.getId(), inventoryArray);
+            return;
         }
+
+        JSONObject inventoryObject = response.getBody().getObject();
+        JSONArray inventoryArray = inventoryObject.getJSONArray("inventoryList");
+
+        cacheInventoryArray(user.getId(), inventoryArray);
 
         String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
 
