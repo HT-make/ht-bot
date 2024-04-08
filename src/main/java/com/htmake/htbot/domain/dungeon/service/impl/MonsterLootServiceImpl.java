@@ -9,8 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,11 +19,9 @@ public class MonsterLootServiceImpl implements MonsterLootService {
     private final MonsterRepository monsterRepository;
 
     @Override
-    public MonsterLootResponse execute(String monsterName) {
+    public MonsterLootResponse execute(String monsterId) {
 
-        String decodedName = URLDecoder.decode(monsterName, StandardCharsets.UTF_8).replaceFirst(" ", "");
-
-        Monster monster = monsterRepository.findByName(decodedName)
+        Monster monster = monsterRepository.findById(monsterId)
                 .orElseThrow();
 
         return MonsterLootResponse.builder()

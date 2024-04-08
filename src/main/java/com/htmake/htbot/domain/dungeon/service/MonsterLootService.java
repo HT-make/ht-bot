@@ -4,5 +4,5 @@ import com.htmake.htbot.domain.dungeon.presentation.data.response.MonsterLootRes
 
 public interface MonsterLootService {
 
-    MonsterLootResponse execute(String monsterName);
+    MonsterLootResponse execute(String monsterId);
 }
