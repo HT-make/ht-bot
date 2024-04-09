@@ -26,9 +26,9 @@ public class DungeonController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/monster/{monster_name}")
-    public ResponseEntity<MonsterLootResponse> getLoot(@PathVariable("monster_name") String monsterName) {
-        MonsterLootResponse response = monsterLootService.execute(monsterName);
+    @GetMapping("/monster/{monster_id}")
+    public ResponseEntity<MonsterLootResponse> getLoot(@PathVariable("monster_id") String monsterId) {
+        MonsterLootResponse response = monsterLootService.execute(monsterId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

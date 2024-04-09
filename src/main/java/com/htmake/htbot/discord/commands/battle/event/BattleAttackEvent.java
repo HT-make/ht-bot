@@ -2,8 +2,16 @@ package com.htmake.htbot.discord.commands.battle.event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.htmake.htbot.cache.Caches;
+import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
+import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
+import com.htmake.htbot.discord.commands.battle.cache.SituationCache;
+import com.htmake.htbot.discord.commands.battle.data.MonsterStatus;
+import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
+import com.htmake.htbot.discord.commands.battle.data.Situation;
 import com.htmake.htbot.domain.dungeon.enums.DungeonEnum;
 import com.htmake.htbot.unirest.HttpClient;
+import com.htmake.htbot.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
@@ -11,14 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.awt.*;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
 
@@ -27,161 +34,126 @@ public class BattleAttackEvent {
 
     private final HttpClient httpClient;
 
-    public BattleAttackEvent(ButtonInteractionEvent event, HttpClient httpClient) {
-        this.httpClient = httpClient;
+    private final PlayerStatusCache playerStatusCache;
 
-        MessageEmbed embed = event.getMessage().getEmbeds().get(0);
-        List<MessageEmbed.Field> fieldList = embed.getFields();
+    private final MonsterStatusCache monsterStatusCache;
 
-        ArrayList<Integer> monster = parseStats(fieldList.subList(0, 3));
-        ArrayList<Integer> player = parseStats(fieldList.subList(5, fieldList.size()));
+    private final SituationCache situationCache;
 
-        Pair<Integer, Boolean> playerDamage = playerAttackDamage(player, monster);
-        monster.set(1, Math.max(0, monster.get(1) - playerDamage.getFirst()));
-        ArrayList<String> situation = playerTurn(event, monster, player, playerDamage);
+    public BattleAttackEvent() {
+        this.httpClient = new HttpClientImpl();
+        this.playerStatusCache = Caches.playerStatusCache;
+        this.monsterStatusCache = Caches.monsterStatusCache;
+        this.situationCache = Caches.situationCache;
+    }
 
-        if (!situation.get(0).equals("game over")) {
-            int monsterDamage = Math.max(monster.get(0) - player.get(2), 0);
-            player.set(1, Math.max(0, player.get(1) - monsterDamage));
-            monsterTurn(event, monster, player, monsterDamage, situation);
+    public void execute(ButtonInteractionEvent event) {
+        String playerId = event.getUser().getId();
+        PlayerStatus playerStatus = playerStatusCache.get(playerId);
+        MonsterStatus monsterStatus = monsterStatusCache.get(playerId);
+
+        playerTurn(event, playerStatus, monsterStatus);
+
+        if (monsterStatus.getHealth() == 0) {
+            killMonster(event, playerStatus, monsterStatus);
+            return;
+        }
+
+        monsterTurn(event, playerStatus, monsterStatus);
+
+        if (playerStatus.getHealth() == 0) {
+            killPlayer(event, playerStatus, monsterStatus);
         }
     }
 
-    private ArrayList<Integer> parseStats(List<MessageEmbed.Field> fieldList) {
-        ArrayList<Integer> stats = new ArrayList<>();
+    private void updateSituation(String playerId, String message) {
+        Situation situation = situationCache.get(playerId);
+        List<String> messageList = situation.getMessageList();
 
-        for (MessageEmbed.Field field : fieldList) {
-            String value = Objects.requireNonNull(field.getValue()).replace("%", "");
-            stats.add(Integer.valueOf(value));
+        if (messageList.size() >= 5) {
+            messageList.remove(0);
         }
+        messageList.add(message);
 
-        return stats;
+        situation.setMessageList(messageList);
+        situationCache.put(playerId, situation);
     }
 
-    private Pair<Integer, Boolean> playerAttackDamage(ArrayList<Integer> player, ArrayList<Integer> monster) {
+    private Pair<Integer, Boolean> playerAttackDamage(PlayerStatus playerStatus, MonsterStatus monsterStatus) {
         Random random = new Random();
         int randomNum = random.nextInt(100);
 
-        int damage = player.get(0);
-        int criticalChance = player.get(4);
+        int damage = playerStatus.getDamage();
+        int criticalChance = playerStatus.getCriticalChance();
+        int criticalDamage = playerStatus.getCriticalDamage();
+
+        int monsterDefence = monsterStatus.getDefence();
 
         if (randomNum < criticalChance) {
-            double criticalDamage = Double.valueOf(player.get(5)) / 100;
-            damage = (int) (damage * criticalDamage);
-            damage -= monster.get(2);
+            double criticalDamageMultiple = (double) criticalDamage / 100;
+            damage = (int) (damage * criticalDamageMultiple) - monsterDefence;
 
             return new Pair<>(Math.max(damage, 0), true);
         }
 
-        damage -= monster.get(2);
+        damage -= monsterDefence;
         return new Pair<>(Math.max(damage, 0), false);
     }
 
-    private ArrayList<String> playerTurn(
-            ButtonInteractionEvent event,
-            ArrayList<Integer> monster,
-            ArrayList<Integer> player,
-            Pair<Integer, Boolean> damage
-    ) {
-        MessageEmbed embed = event.getMessage().getEmbeds().get(0);
-        String[] playerInfo = embed.getFooter().getText().split(" ");
-        String newMessage = playerInfo[1] + "의 ";
+    private void playerTurn(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
+        Pair<Integer, Boolean> damage = playerAttackDamage(playerStatus, monsterStatus);
+
+        User user = event.getUser();
+        String playerId = user.getId();
+        String name = user.getName();
+
+        String message = name + "의 ";
 
         if (damage.getSecond()) {
-            newMessage += "치명타 공격!";
+            message += "치명타 공격!";
         } else {
-            newMessage += "공격.";
+            message += "공격.";
         }
 
-        String[] situation = embed.getFields().get(3).getValue().split("\n");
-        ArrayList<String> newSituation = new ArrayList<>(Arrays.asList(situation));
+        updateSituation(playerId, message);
 
-        if (newSituation.size() > 5) newSituation.remove(0);
-        newSituation.add(newMessage);
+        editEmbed(event, playerStatus, monsterStatus);
 
-        editEmbed(event, monster, player, newSituation);
+        monsterStatus.setHealth(Math.max(0, (monsterStatus.getHealth() - damage.getFirst())));
+        message = damage.getFirst() + "의 데미지를 입혔다!";
 
-        newMessage = damage.getFirst() + "의 데미지를 입혔다!";
+        updateSituation(playerId, message);
 
-        if (newSituation.size() > 5) newSituation.remove(0);
-        newSituation.add(newMessage);
-
-        editEmbed(event, monster, player, newSituation);
-
-        if (monster.get(1) == 0) {
-            newMessage = getMonsterName(event) + "을/를 처치했다!";
-
-            if (newSituation.size() > 5) newSituation.remove(0);
-            newSituation.add(newMessage);
-
-            editEmbed(event, monster, player, newSituation);
-
-            monsterKill(event);
-            return new ArrayList<>(List.of("game over"));
-        }
-
-        return newSituation;
+        editEmbed(event, playerStatus, monsterStatus);
     }
 
-    private void monsterTurn(
-            ButtonInteractionEvent event,
-            ArrayList<Integer> monster,
-            ArrayList<Integer> player,
-            int monsterDamage,
-            ArrayList<String> situation
-    ) {
-        String newMessage = getMonsterName(event) + "의 공격.";
+    private void monsterTurn(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
+        String playerId = event.getUser().getId();
 
-        if (situation.size() > 5) situation.remove(0);
-        situation.add(newMessage);
+        String message = monsterStatus.getName() + "의 공격.";
 
-        editEmbed(event, monster, player, situation);
+        updateSituation(playerId, message);
 
-        newMessage = monsterDamage + "의 데미지를 입혔다!";
+        editEmbed(event, playerStatus, monsterStatus);
 
-        if (situation.size() > 5) situation.remove(0);
-        situation.add(newMessage);
+        int damage = Math.max(0, monsterStatus.getDamage() - playerStatus.getDefence());
+        playerStatus.setHealth(Math.max(0, playerStatus.getHealth() - damage));
+        message = damage + "의 데미지를 입혔다!";
 
-        editEmbed(event, monster, player, situation);
+        updateSituation(playerId, message);
 
-        if (player.get(1) <= 0) {
-            MessageEmbed embed = event.getMessage().getEmbeds().get(0);
-            String[] playerInfo = embed.getFooter().getText().split(" ");
-            newMessage = playerInfo[1] + "가 사망했다.";
-
-            if (situation.size() > 5) situation.remove(0);
-            situation.add(newMessage);
-
-            editEmbed(event, monster, player, situation);
-
-            playerKill(event);
-        }
+        editEmbed(event, playerStatus, monsterStatus);
     }
 
-    private String getMonsterName(ButtonInteractionEvent event) {
+    private void editEmbed(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
         MessageEmbed embed = event.getMessage().getEmbeds().get(0);
-        String[] monsterInfo = embed.getDescription().split(" ");
-        String monsterName = "";
 
-        for (int i = 1; i < monsterInfo.length; i++) {
-            monsterName += " " + monsterInfo[i];
-        }
-
-        return monsterName;
-    }
-
-    private void editEmbed(
-            ButtonInteractionEvent event,
-            ArrayList<Integer> monster,
-            ArrayList<Integer> player,
-            ArrayList<String> situation
-    ) {
-        MessageEmbed embed = event.getMessage().getEmbeds().get(0);
+        Situation situation = situationCache.get(event.getUser().getId());
+        List<String> messageList = situation.getMessageList();
 
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < situation.size(); i++) {
-            if (i != 0) sb.append("\n");
-            sb.append(situation.get(i));
+        for (String message : messageList) {
+            sb.append("\n").append(message);
         }
 
         MessageEmbed newEmbed = new EmbedBuilder()
@@ -189,20 +161,20 @@ public class BattleAttackEvent {
                 .setTitle(embed.getTitle())
                 .setDescription(embed.getDescription())
 
-                .addField(":crossed_swords: 공격력", "" + monster.get(0), true)
-                .addField(":heart: 체력", "" + monster.get(1), true)
-                .addField(":shield: 방어력", "" + monster.get(2), true)
+                .addField(":crossed_swords: 공격력", "" + monsterStatus.getDamage(), true)
+                .addField(":heart: 체력", "" + monsterStatus.getHealth(), true)
+                .addField(":shield: 방어력", "" + monsterStatus.getDefence(), true)
 
                 .addField(":video_game: 전투 현황", "" + sb, false)
                 .addBlankField(false)
 
-                .addField(":crossed_swords: 공격력", "" + player.get(0), true)
-                .addField(":heart: 체력", "" + player.get(1), true)
-                .addField(":shield: 방어력", "" + player.get(2), true)
+                .addField(":crossed_swords: 공격력", "" + playerStatus.getDamage(), true)
+                .addField(":heart: 체력", "" + playerStatus.getHealth(), true)
+                .addField(":shield: 방어력", "" + playerStatus.getDamage(), true)
 
-                .addField(":large_blue_diamond: 마나", "" + player.get(3), true)
-                .addField(":boom: 치명타 확률", player.get(4) + "%", true)
-                .addField(":boom: 치명타 데미지", player.get(5) + "%", true)
+                .addField(":large_blue_diamond: 마나", "" + playerStatus.getMana(), true)
+                .addField(":boom: 치명타 확률", playerStatus.getCriticalChance() + "%", true)
+                .addField(":boom: 치명타 데미지", playerStatus.getCriticalDamage() + "%", true)
 
                 .setFooter("" + embed.getFooter().getText())
                 .build();
@@ -210,10 +182,23 @@ public class BattleAttackEvent {
         event.getMessage().editMessageEmbeds(newEmbed).queue();
     }
 
-    private void monsterKill(ButtonInteractionEvent event) {
+    private void killMonster(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
+        String playerId = event.getUser().getId();
+
+        String message = monsterStatus.getName() + "을/를 처치했다!";
+        updateSituation(playerId, message);
+
+        editEmbed(event, playerStatus, monsterStatus);
+
+        getAward(event, monsterStatus.getId());
+
+        removeCache(playerId);
+    }
+
+    private void getAward(ButtonInteractionEvent event, String monsterId) {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        JSONObject monsterLoot = getMonsterLoot(event);
+        JSONObject monsterLoot = getMonsterLoot(event, monsterId);
 
         Map<String, Object> requestData = new HashMap<>();
 
@@ -241,7 +226,17 @@ public class BattleAttackEvent {
         }
     }
 
-    private void playerKill(ButtonInteractionEvent event) {
+    private void killPlayer(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
+
+        User user = event.getUser();
+        String playerId = user.getId();
+        String name = user.getName();
+
+        String message = name + "이/가 사망했다.";
+        updateSituation(playerId, message);
+
+        editEmbed(event, playerStatus, monsterStatus);
+
         event.getMessage().editMessageComponents(Collections.emptyList()).queue();
         event.getMessage().editMessageEmbeds(new EmbedBuilder()
                         .setColor(Color.RED)
@@ -250,12 +245,13 @@ public class BattleAttackEvent {
                         .build()
                 )
                 .queue();
+
+        removeCache(playerId);
     }
 
-    private JSONObject getMonsterLoot(ButtonInteractionEvent event) {
-        String endPoint = "/dungeon/monster/{monster_name}";
-        String encodedMonsterName = URLEncoder.encode(getMonsterName(event), StandardCharsets.UTF_8);
-        Pair<String, String> routeParam = new Pair<>("monster_name", encodedMonsterName);
+    private JSONObject getMonsterLoot(ButtonInteractionEvent event, String monsterId) {
+        String endPoint = "/dungeon/monster/{monster_id}";
+        Pair<String, String> routeParam = new Pair<>("monster_id", monsterId);
 
         HttpResponse<JsonNode> response = httpClient.sendGetRequest(endPoint, routeParam);
 
@@ -342,6 +338,12 @@ public class BattleAttackEvent {
                         Button.danger("close-dungeon", "돌아가기")
                 )
                 .queue();
+    }
+
+    private void removeCache(String playerId) {
+        playerStatusCache.remove(playerId);
+        monsterStatusCache.remove(playerId);
+        situationCache.remove(playerId);
     }
 
     private void battleError(ButtonInteractionEvent event) {
