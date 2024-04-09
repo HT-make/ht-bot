@@ -24,6 +24,17 @@ public class HttpClientImpl implements HttpClient {
     }
 
     @Override
+    public HttpResponse<JsonNode> sendGetRequest(String endPoint) {
+        try {
+            return Unirest.get(RestServiceType.DEFAULT_URL + endPoint)
+                    .asJson();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to send HTTP GET request", e);
+        }
+    }
+
+    @Override
     public HttpResponse<JsonNode> sendGetRequest(String endPoint, Pair<String, String> routeParam) {
         try {
             return Unirest.get(RestServiceType.DEFAULT_URL + endPoint)

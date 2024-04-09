@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 public interface HttpClient {
 
     HttpResponse<JsonNode> sendPostRequest(String endPoint, String requestBody);
+    HttpResponse<JsonNode> sendGetRequest(String endPoint);
     HttpResponse<JsonNode> sendGetRequest(String endPoint, Pair<String, String> routeParam);
     HttpResponse<JsonNode> sendPatchRequest(String endPoint, Pair<String, String> routeParam, String requestBody);
 }
