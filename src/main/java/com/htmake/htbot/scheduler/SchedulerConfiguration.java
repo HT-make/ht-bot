@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class SchedulerConfiguration {
     private final RandomShopItemShuffleService randomShopItemShuffleService;
 
-    @Scheduled(fixedDelay = 1000 * 30)
+    @Scheduled(fixedDelay = 1000 * 60)
     public void run() {
         randomShopItemShuffleService.execute();
     }

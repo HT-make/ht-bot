@@ -12,13 +12,13 @@ import com.htmake.htbot.domain.shop.repository.RandomShopRepository;
 import com.htmake.htbot.domain.shop.repository.RandomShopWeaponRepository;
 import com.htmake.htbot.domain.shop.service.RandomShopItemShuffleService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Random;
 
 @Service
 @Transactional
@@ -43,10 +43,8 @@ public class RandomShopItemShuffleServiceImpl implements RandomShopItemShuffleSe
         List<Weapon> weapons = weaponRepository.findAll();
         List<Armor> armors = armorRepository.findAll();
 
+        RandomGenerator random = new MersenneTwister();
 
-        Random random = new Random();
-
-        int min = 0;
         int weaponMax = weapons.size();
         int armorMax = armors.size();
 
@@ -54,10 +52,10 @@ public class RandomShopItemShuffleServiceImpl implements RandomShopItemShuffleSe
         List<RandomShopArmor> randomShopArmors = new ArrayList<>();
 
         for (int i=0; i<3; i++){
-            int weaponRandom = random.nextInt(min, weaponMax);
-            int armorRandom = random.nextInt(min, armorMax);
-            int weaponQuantityRandom = random.nextInt(1, 10);
-            int armorQuantityRandom = random.nextInt(1, 10);
+            int weaponRandom = random.nextInt(weaponMax);
+            int armorRandom = random.nextInt(armorMax);
+            int weaponQuantityRandom = random.nextInt(10) + 1;
+            int armorQuantityRandom = random.nextInt(10) + 1;
 
             Weapon randomWeapon = weapons.get(weaponRandom);
             Armor randomArmor = armors.get(armorRandom);
@@ -79,12 +77,6 @@ public class RandomShopItemShuffleServiceImpl implements RandomShopItemShuffleSe
                     .build());
 
         }
-/*        System.out.println(randomShopWeapons.get(0).getName());
-        System.out.println(randomShopWeapons.get(1).getName());
-        System.out.println(randomShopWeapons.get(2).getName());
-        System.out.println(randomShopArmors.get(0).getName());
-        System.out.println(randomShopArmors.get(1).getName());
-        System.out.println(randomShopArmors.get(2).getName());*/
 
         randomShopWeaponRepository.saveAll(randomShopWeapons);
         randomShopArmorRepository.saveAll(randomShopArmors);
