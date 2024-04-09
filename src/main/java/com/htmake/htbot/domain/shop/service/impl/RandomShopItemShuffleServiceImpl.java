@@ -45,7 +45,6 @@ public class RandomShopItemShuffleServiceImpl implements RandomShopItemShuffleSe
 
         RandomGenerator random = new MersenneTwister();
 
-        int min = 0;
         int weaponMax = weapons.size();
         int armorMax = armors.size();
 
@@ -53,8 +52,8 @@ public class RandomShopItemShuffleServiceImpl implements RandomShopItemShuffleSe
         List<RandomShopArmor> randomShopArmors = new ArrayList<>();
 
         for (int i=0; i<3; i++){
-            int weaponRandom = random.nextInt(weaponMax - min) + min;
-            int armorRandom = random.nextInt(armorMax - min) + min;
+            int weaponRandom = random.nextInt(weaponMax);
+            int armorRandom = random.nextInt(armorMax);
             int weaponQuantityRandom = random.nextInt(10) + 1;
             int armorQuantityRandom = random.nextInt(10) + 1;
 
