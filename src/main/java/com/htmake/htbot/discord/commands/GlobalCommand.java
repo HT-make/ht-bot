@@ -54,7 +54,9 @@ public class GlobalCommand extends ListenerAdapter {
                 Commands.slash("게임-가입", "게임 기능을 사용하기 위해 가입합니다."),
                 Commands.slash("유저-정보", "유저 정보를 검색합니다.").addOptions(selectUser()),
                 Commands.slash("던전-입장", "던전에 입장합니다."),
-                Commands.slash("인벤토리", "인벤토리를 확인합니다.")
+                Commands.slash("인벤토리", "인벤토리를 확인합니다."),
+                Commands.slash("상점", "상점에 입장합니다."),
+                Commands.slash("랜덤-상점", "랜덤 상점에 입장합니다.")
         );
 
         event.getJDA().updateCommands().addCommands(commandData).queue();
