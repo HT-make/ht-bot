@@ -47,6 +47,10 @@ dependencies {
 
 	//unirest
 	implementation 'com.mashape.unirest:unirest-java:1.4.8'
+
+	//math
+	implementation group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'
+
 }
 
 tasks.named('test') {
