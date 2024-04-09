@@ -12,6 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RandomShopItemListResponse {
-    List<RandomShopWeaponResponse> randomShopWeaponList;
-    List<RandomShopArmorResponse> randomShopArmorList;
+    private List<RandomShopWeaponResponse> randomShopWeaponList;
+    private List<RandomShopArmorResponse> randomShopArmorList;
 }
