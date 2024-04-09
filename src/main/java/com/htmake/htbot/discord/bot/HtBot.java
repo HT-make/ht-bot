@@ -5,6 +5,7 @@ import com.htmake.htbot.discord.commands.battle.BattleCommand;
 import com.htmake.htbot.discord.commands.dungeon.DungeonCommand;
 import com.htmake.htbot.discord.commands.player.PlayerCommand;
 import com.htmake.htbot.discord.commands.GlobalCommand;
+import com.htmake.htbot.discord.commands.shop.ShopCommand;
 import com.htmake.htbot.discord.listeners.EventListener;
 import com.htmake.htbot.unirest.HttpClient;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -49,7 +50,8 @@ public class HtBot {
                 new PlayerCommand(this.httpClient),
                 new DungeonCommand(),
                 new BattleCommand(),
-                new InventoryCommand(this.httpClient)
+                new InventoryCommand(this.httpClient),
+                new ShopCommand()
         );
     }
 }
