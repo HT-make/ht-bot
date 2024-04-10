@@ -1,6 +1,6 @@
 package com.htmake.htbot.discord.commands.battle;
 
-import com.htmake.htbot.discord.commands.battle.event.BattleAttackEvent;
+import com.htmake.htbot.discord.commands.battle.event.PlayerAttackEvent;
 import com.htmake.htbot.discord.commands.battle.event.BattlePotionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -12,10 +12,10 @@ import java.util.List;
 @Component
 public class BattleCommand extends ListenerAdapter {
 
-    private final BattleAttackEvent battleAttackEvent;
+    private final PlayerAttackEvent playerAttackEvent;
 
     public BattleCommand() {
-        battleAttackEvent = new BattleAttackEvent();
+        playerAttackEvent = new PlayerAttackEvent();
     }
 
     @Override
@@ -25,7 +25,7 @@ public class BattleCommand extends ListenerAdapter {
         String component = components.get(0);
 
         if (component.equals("attack")) {
-            battleAttackEvent.execute(event);
+            playerAttackEvent.execute(event);
         } else if (component.equals("potion")) {
             new BattlePotionEvent(event, components.get(1));
         }
