@@ -1,5 +1,8 @@
 package com.htmake.htbot.discord.commands.dungeon.event;
 
+import com.htmake.htbot.cache.Caches;
+import com.htmake.htbot.discord.commands.dungeon.cache.DungeonStatusCache;
+import com.htmake.htbot.discord.commands.dungeon.data.DungeonStatus;
 import com.htmake.htbot.discord.commands.dungeon.util.DungeonUtil;
 import com.htmake.htbot.domain.dungeon.entity.Monster;
 import com.mashape.unirest.http.HttpResponse;
@@ -16,20 +19,27 @@ import org.json.JSONObject;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 @Slf4j
 public class NextDungeonEntryEvent {
 
     private final DungeonUtil dungeonUtil;
 
+    private final DungeonStatusCache dungeonStatusCache;
+
     public NextDungeonEntryEvent() {
         this.dungeonUtil = new DungeonUtil();
+
+        this.dungeonStatusCache = Caches.dungeonStatusCache;
     }
 
-    public void execute(ButtonInteractionEvent event, List<String> componentList) {
-        String dungeonId = componentList.get(1);
-        String stage = componentList.get(2);
+    public void execute(ButtonInteractionEvent event) {
+        String playerId = event.getUser().getId();
+
+        DungeonStatus dungeonStatus = dungeonStatusCache.get(playerId);
+
+        String dungeonId = dungeonStatus.getId();
+        int stage = dungeonStatus.getStage() + 1;
 
         HttpResponse<JsonNode> response = dungeonUtil.dungeonResponse(dungeonId);
 
@@ -43,7 +53,7 @@ public class NextDungeonEntryEvent {
     private void handleSuccessfulResponse(
             ButtonInteractionEvent event,
             HttpResponse<JsonNode> response,
-            String stage
+            int stage
     ) {
         JSONObject dungeonObject = response.getBody().getObject();
 
@@ -76,6 +86,13 @@ public class NextDungeonEntryEvent {
                 )
                 .queue();
 
+        updateStage(playerId, stage);
+    }
+
+    private void updateStage(String playerId, int stage) {
+        DungeonStatus dungeonStatus = dungeonStatusCache.get(playerId);
+        dungeonStatus.setStage(stage);
+        dungeonStatusCache.put(playerId, dungeonStatus);
     }
 
     private void handleErrorResponse(ButtonInteractionEvent event, HttpResponse<JsonNode> response) {
