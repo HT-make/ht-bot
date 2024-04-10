@@ -1,4 +1,4 @@
-package com.htmake.htbot.domain.player.presentation.data.request;
+package com.htmake.htbot.domain.inventory.presentation.data.request;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class GetDropItemRequest {
+public class DropItemRequest {
 
     private String id;
 
