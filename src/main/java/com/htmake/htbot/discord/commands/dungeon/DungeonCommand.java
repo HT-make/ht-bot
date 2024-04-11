@@ -1,5 +1,6 @@
 package com.htmake.htbot.discord.commands.dungeon;
 
+import com.htmake.htbot.discord.commands.dungeon.event.DungeonCloseEvent;
 import com.htmake.htbot.discord.commands.dungeon.event.DungeonEntryEvent;
 import com.htmake.htbot.discord.commands.dungeon.event.NextDungeonEntryEvent;
 import lombok.extern.slf4j.Slf4j;
@@ -25,10 +26,12 @@ public class DungeonCommand extends ListenerAdapter {
 
     private final DungeonEntryEvent dungeonEntryEvent;
     private final NextDungeonEntryEvent nextDungeonEntryEvent;
+    private final DungeonCloseEvent dungeonCloseEvent;
 
     public DungeonCommand() {
         this.dungeonEntryEvent = new DungeonEntryEvent();
         this.nextDungeonEntryEvent = new NextDungeonEntryEvent();
+        this.dungeonCloseEvent = new DungeonCloseEvent();
     }
 
     @Override
@@ -60,12 +63,12 @@ public class DungeonCommand extends ListenerAdapter {
         StringSelectMenu menu = StringSelectMenu.create("dungeonMenu")
                 .setPlaceholder("던전 선택")
                 .addOptions(Arrays.asList(
-                        SelectOption.of("드넓은 초원 | 권장 레벨 1~10", "enter-dungeon1-1"),
-                        SelectOption.of("깊은 동굴 | 권장 레벨 10~20", "enter-dungeon2-1"),
-                        SelectOption.of("끈적이는 늪 | 권장 레벨 20~30", "enter-dungeon3-1"),
-                        SelectOption.of("어두운 숲 | 권장 레벨 30~40", "enter-dungeon4-1"),
-                        SelectOption.of("몰락한 성 | 권장 레벨 40~50", "enter-dungeon5-1"),
-                        SelectOption.of("용암 지대 | 권장 레벨 50~60", "enter-dungeon6-1")
+                        SelectOption.of("드넓은 초원 | 권장 레벨 1~10", "enter-dungeon1"),
+                        SelectOption.of("깊은 동굴 | 권장 레벨 10~20", "enter-dungeon2"),
+                        SelectOption.of("끈적이는 늪 | 권장 레벨 20~30", "enter-dungeon3"),
+                        SelectOption.of("어두운 숲 | 권장 레벨 30~40", "enter-dungeon4"),
+                        SelectOption.of("몰락한 성 | 권장 레벨 40~50", "enter-dungeon5"),
+                        SelectOption.of("용암 지대 | 권장 레벨 50~60", "enter-dungeon6")
                 ))
                 .build();
 
@@ -77,21 +80,21 @@ public class DungeonCommand extends ListenerAdapter {
 
     @Override
     public void onStringSelectInteraction(StringSelectInteractionEvent event) {
-        String component = event.getValues().get(0);
-        List<String> componentList = List.of(component.split("-"));
+        List<String> components = List.of(event.getValues().get(0).split("-"));
 
-        if (componentList.get(0).equals("enter")) {
-            dungeonEntryEvent.execute(event, componentList);
+        if (components.get(0).equals("enter")) {
+            dungeonEntryEvent.execute(event, components.get(1));
         }
     }
 
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
         String component = event.getComponentId();
-        List<String> componentList = List.of(component.split("-"));
 
-        if (componentList.get(0).equals("enter")) {
-            nextDungeonEntryEvent.execute(event, componentList);
+        if (component.equals("next")) {
+            nextDungeonEntryEvent.execute(event);
+        } else if (component.equals("close")) {
+            dungeonCloseEvent.execute(event);
         }
     }
 }

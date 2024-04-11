@@ -29,13 +29,12 @@ public class DungeonUtil {
     private final HttpClient httpClient;
 
     private final PlayerStatusCache playerStatusCache;
-
     private final MonsterStatusCache monsterStatusCache;
-
     private final SituationCache situationCache;
 
     public DungeonUtil() {
         this.httpClient = new HttpClientImpl();
+
         this.playerStatusCache = Caches.playerStatusCache;
         this.monsterStatusCache = Caches.monsterStatusCache;
         this.situationCache = Caches.situationCache;
@@ -112,12 +111,11 @@ public class DungeonUtil {
         return null;
     }
 
-    public Monster randomMonster(ArrayList<Monster> monsterList, String stage) {
+    public Monster randomMonster(ArrayList<Monster> monsterList, int stage) {
         Random random = new Random();
-        int stageInt = Integer.parseInt(stage);
 
-        int min = (stageInt % 2 == 0 ? stageInt / 2 : stageInt / 2 + 1) - 1;
-        int max = (stageInt % 2 == 0 ? min + 3 : min + 2) + 1;
+        int min = (stage % 2 == 0 ? stage / 2 : stage / 2 + 1) - 1;
+        int max = (stage % 2 == 0 ? min + 3 : min + 2) + 1;
 
         int ran = random.nextInt(min, max);
 

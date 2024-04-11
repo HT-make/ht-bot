@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,6 +16,4 @@ public class KillMonsterRequest {
 
     @NotEmpty(message = "골드는 필수 입니다.")
     private int gold;
-
-    private List<GetDropItemRequest> getItemList;
 }

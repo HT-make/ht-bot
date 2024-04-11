@@ -1,5 +1,8 @@
 package com.htmake.htbot.discord.commands.dungeon.event;
 
+import com.htmake.htbot.cache.Caches;
+import com.htmake.htbot.discord.commands.dungeon.cache.DungeonStatusCache;
+import com.htmake.htbot.discord.commands.dungeon.data.DungeonStatus;
 import com.htmake.htbot.discord.commands.dungeon.util.DungeonUtil;
 import com.htmake.htbot.domain.dungeon.entity.Monster;
 import com.mashape.unirest.http.HttpResponse;
@@ -14,25 +17,26 @@ import org.json.JSONObject;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 @Slf4j
 public class DungeonEntryEvent {
 
     private final DungeonUtil dungeonUtil;
 
+    private final DungeonStatusCache dungeonStatusCache;
+
     public DungeonEntryEvent() {
         this.dungeonUtil = new DungeonUtil();
+
+        this.dungeonStatusCache = Caches.dungeonStatusCache;
     }
 
-    public void execute(StringSelectInteractionEvent event, List<String> componentList) {
-        String dungeonId = componentList.get(1);
-        String stage = componentList.get(2);
+    public void execute(StringSelectInteractionEvent event, String dungeonId) {
 
         HttpResponse<JsonNode> response = dungeonUtil.dungeonResponse(dungeonId);
 
         if (response.getStatus() == 200) {
-            handleSuccessfulResponse(event, response, stage);
+            handleSuccessfulResponse(event, response, dungeonId);
         } else {
             handleErrorResponse(event, response);
         }
@@ -41,11 +45,11 @@ public class DungeonEntryEvent {
     private void handleSuccessfulResponse(
             StringSelectInteractionEvent event,
             HttpResponse<JsonNode> response,
-            String stage
+            String dungeonId
     ) {
         JSONObject dungeonObject = response.getBody().getObject();
 
-        String dungeonName = dungeonObject.getString("name") + "-" + stage;
+        String dungeonName = dungeonObject.getString("name") + "-1";
         JSONArray monsterArray = dungeonObject.getJSONArray("monsterList");
 
         ArrayList<Monster> monsterList = dungeonUtil.toMonsterList(monsterArray);
@@ -58,7 +62,7 @@ public class DungeonEntryEvent {
             handleErrorResponse(event, response);
         }
 
-        Monster monster = dungeonUtil.randomMonster(monsterList, stage);
+        Monster monster = dungeonUtil.randomMonster(monsterList, 1);
         dungeonUtil.saveMonsterStatus(playerId, monster);
 
         MessageEmbed embed = dungeonUtil.buildEmbed(dungeonName, monster, playerObject);
@@ -74,6 +78,17 @@ public class DungeonEntryEvent {
                 )
                 .queue();
 
+        saveDungeonStatus(playerId, dungeonId);
+    }
+
+    private void saveDungeonStatus(String playerId, String dungeonId) {
+        DungeonStatus dungeonStatus = DungeonStatus.builder()
+                .id(dungeonId)
+                .stage(1)
+                .getItemList(new ArrayList<>())
+                .build();
+
+        dungeonStatusCache.put(playerId, dungeonStatus);
     }
 
     private void handleErrorResponse(StringSelectInteractionEvent event, HttpResponse<JsonNode> response) {
