@@ -18,4 +18,8 @@ public class MonsterStatus {
     private int health;
 
     private int defence;
+
+    private String skillName;
+
+    private int skillDamage;
 }
