@@ -4,9 +4,11 @@ import com.htmake.htbot.cache.Caches;
 import com.htmake.htbot.discord.commands.dungeon.cache.DungeonStatusCache;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonStatus;
 import com.htmake.htbot.discord.commands.dungeon.util.DungeonUtil;
-import com.htmake.htbot.domain.dungeon.entity.Monster;
+import com.htmake.htbot.domain.monster.entity.Monster;
+import com.htmake.htbot.domain.monster.entity.MonsterSkill;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
+import kotlin.Pair;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -60,7 +62,7 @@ public class NextDungeonEntryEvent {
         String dungeonName = dungeonObject.getString("name") + "-" + stage;
         JSONArray monsterArray = dungeonObject.getJSONArray("monsterList");
 
-        ArrayList<Monster> monsterList = dungeonUtil.toMonsterList(monsterArray);
+        ArrayList<Pair<Monster, MonsterSkill>> monsterList = dungeonUtil.toMonsterList(monsterArray);
 
         String playerId = event.getUser().getId();
         JSONObject playerObject = dungeonUtil.playerDataResponse(playerId);
@@ -70,10 +72,10 @@ public class NextDungeonEntryEvent {
             handleErrorResponse(event, response);
         }
 
-        Monster monster = dungeonUtil.randomMonster(monsterList, stage);
+        Pair<Monster, MonsterSkill> monster = dungeonUtil.randomMonster(monsterList, stage);
         dungeonUtil.saveMonsterStatus(playerId, monster);
 
-        MessageEmbed embed = dungeonUtil.buildEmbed(dungeonName, monster, playerObject);
+        MessageEmbed embed = dungeonUtil.buildEmbed(dungeonName, monster.getFirst(), playerObject);
 
         MessageEmbed.Field field = embed.getFields().get(3);
         dungeonUtil.saveSituation(playerId, field);
