@@ -1,5 +1,6 @@
-package com.htmake.htbot.domain.dungeon.entity;
+package com.htmake.htbot.domain.monster.entity;
 
+import com.htmake.htbot.domain.dungeon.entity.Dungeon;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,8 +38,11 @@ public class Monster {
     @Column(name = "monster_gold", nullable = false)
     private int gold;
 
-    @OneToMany(mappedBy = "monster", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "monster", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DropItem> dropItems;
+
+    @OneToOne(mappedBy = "monster", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private MonsterSkill monsterSkill;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dungeon_id")
