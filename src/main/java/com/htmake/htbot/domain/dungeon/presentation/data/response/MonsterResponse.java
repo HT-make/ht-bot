@@ -1,6 +1,6 @@
 package com.htmake.htbot.domain.dungeon.presentation.data.response;
 
-import com.htmake.htbot.domain.dungeon.entity.Monster;
+import com.htmake.htbot.domain.monster.entity.Monster;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,20 +24,29 @@ public class MonsterResponse {
 
     private int defence;
 
-    private int exp;
+    private String skillName;
 
-    private int gold;
+    private int skillDamage;
 
     public static MonsterResponse toResponse(Monster monster) {
-        return MonsterResponse.builder()
+        MonsterResponse.MonsterResponseBuilder responseBuilder = MonsterResponse.builder()
                 .id(monster.getId())
                 .name(monster.getName())
                 .level(monster.getLevel())
                 .damage(monster.getDamage())
                 .health(monster.getHealth())
-                .defence(monster.getDefence())
-                .exp(monster.getExp())
-                .gold(monster.getGold())
-                .build();
+                .defence(monster.getDefence());
+
+        if (monster.getMonsterSkill() != null) {
+            responseBuilder
+                    .skillName(monster.getMonsterSkill().getName())
+                    .skillDamage(monster.getMonsterSkill().getDamage());
+        } else {
+            responseBuilder
+                    .skillName("null")
+                    .skillDamage(0);
+        }
+
+        return responseBuilder.build();
     }
 }

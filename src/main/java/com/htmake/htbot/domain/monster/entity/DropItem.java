@@ -1,4 +1,4 @@
-package com.htmake.htbot.domain.dungeon.entity;
+package com.htmake.htbot.domain.monster.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

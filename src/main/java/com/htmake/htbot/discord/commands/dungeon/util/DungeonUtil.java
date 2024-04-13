@@ -7,7 +7,8 @@ import com.htmake.htbot.discord.commands.battle.cache.SituationCache;
 import com.htmake.htbot.discord.commands.battle.data.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.data.Situation;
-import com.htmake.htbot.domain.dungeon.entity.Monster;
+import com.htmake.htbot.domain.monster.entity.Monster;
+import com.htmake.htbot.domain.monster.entity.MonsterSkill;
 import com.htmake.htbot.unirest.HttpClient;
 import com.htmake.htbot.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
@@ -15,6 +16,8 @@ import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -22,7 +25,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
+import java.util.Objects;
 
 public class DungeonUtil {
 
@@ -73,8 +76,8 @@ public class DungeonUtil {
         return httpClient.sendGetRequest(endPoint, routeParam);
     }
 
-    public ArrayList<Monster> toMonsterList(JSONArray monsterArray) {
-        ArrayList<Monster> monsterList = new ArrayList<>();
+    public ArrayList<Pair<Monster, MonsterSkill>> toMonsterList(JSONArray monsterArray) {
+        ArrayList<Pair<Monster, MonsterSkill>> monsterList = new ArrayList<>();
 
         for (int i = 0; i < monsterArray.length(); i++) {
             JSONObject monsterObject = monsterArray.getJSONObject(i);
@@ -86,14 +89,21 @@ public class DungeonUtil {
                     .damage(monsterObject.getInt("damage"))
                     .health(monsterObject.getInt("health"))
                     .defence(monsterObject.getInt("defence"))
-                    .exp(monsterObject.getInt("exp"))
-                    .gold(monsterObject.getInt("gold"))
                     .build();
 
-            monsterList.add(monster);
+            MonsterSkill monsterSkill = null;
+            if (!Objects.equals(monsterObject.getString("skillName"), "null")) {
+                monsterSkill = MonsterSkill.builder()
+                        .name(monsterObject.getString("skillName"))
+                        .damage(monsterObject.getInt("skillDamage"))
+                        .build();
+            }
+
+            Pair<Monster, MonsterSkill> pair = new Pair<>(monster, monsterSkill);
+            monsterList.add(pair);
         }
 
-        monsterList.sort(Comparator.comparingInt(Monster::getLevel));
+        monsterList.sort(Comparator.comparingInt(pair -> pair.getFirst().getLevel()));
 
         return monsterList;
     }
@@ -111,25 +121,35 @@ public class DungeonUtil {
         return null;
     }
 
-    public Monster randomMonster(ArrayList<Monster> monsterList, int stage) {
-        Random random = new Random();
+    public Pair<Monster, MonsterSkill> randomMonster(ArrayList<Pair<Monster, MonsterSkill>> monsterList, int stage) {
+        RandomGenerator random = new MersenneTwister();
 
         int min = (stage % 2 == 0 ? stage / 2 : stage / 2 + 1) - 1;
         int max = (stage % 2 == 0 ? min + 3 : min + 2) + 1;
 
-        int ran = random.nextInt(min, max);
+        int ran = random.nextInt(max) + min;
 
         return monsterList.get(ran);
     }
 
-    public void saveMonsterStatus(String playerId, Monster monster) {
-        MonsterStatus monsterStatus = MonsterStatus.builder()
+    public void saveMonsterStatus(String playerId, Pair<Monster, MonsterSkill> monsterInfo) {
+        Monster monster = monsterInfo.getFirst();
+        MonsterSkill monsterSkill = monsterInfo.getSecond();
+
+        MonsterStatus.MonsterStatusBuilder monsterStatusBuilder = MonsterStatus.builder()
                 .id(monster.getId())
                 .name(monster.getName())
                 .damage(monster.getDamage())
                 .health(monster.getHealth())
-                .defence(monster.getDefence())
-                .build();
+                .defence(monster.getDefence());
+
+        if (monsterSkill != null) {
+            monsterStatusBuilder
+                    .skillName(monsterSkill.getName())
+                    .skillDamage(monsterSkill.getDamage());
+        }
+
+        MonsterStatus monsterStatus = monsterStatusBuilder.build();
 
         monsterStatusCache.put(playerId, monsterStatus);
     }

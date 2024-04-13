@@ -5,10 +5,12 @@ import com.htmake.htbot.domain.dungeon.presentation.data.response.DungeonRespons
 import com.htmake.htbot.domain.dungeon.presentation.data.response.MonsterResponse;
 import com.htmake.htbot.domain.dungeon.repository.DungeonRepository;
 import com.htmake.htbot.domain.dungeon.service.DungeonService;
+import com.htmake.htbot.domain.monster.entity.Monster;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,10 +25,12 @@ public class DungeonServiceImpl implements DungeonService {
         Dungeon dungeon = dungeonRepository.findById(dungeonId)
                 .orElseThrow();
 
+        List<Monster> monsterList = dungeon.getMonsters();
+
         return DungeonResponse.builder()
                 .name(dungeon.getName())
                 .monsterList(
-                        dungeon.getMonsters().stream()
+                        monsterList.stream()
                                 .map(MonsterResponse::toResponse)
                                 .collect(Collectors.toList())
                 )

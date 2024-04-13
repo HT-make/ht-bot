@@ -1,4 +1,4 @@
-package com.htmake.htbot.domain.dungeon.presentation.data.response;
+package com.htmake.htbot.domain.monster.presentation.data.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

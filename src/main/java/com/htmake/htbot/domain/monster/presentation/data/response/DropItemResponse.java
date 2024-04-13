@@ -1,6 +1,6 @@
-package com.htmake.htbot.domain.dungeon.presentation.data.response;
+package com.htmake.htbot.domain.monster.presentation.data.response;
 
-import com.htmake.htbot.domain.dungeon.entity.DropItem;
+import com.htmake.htbot.domain.monster.entity.DropItem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

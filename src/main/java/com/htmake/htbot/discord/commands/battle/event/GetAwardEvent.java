@@ -49,7 +49,7 @@ public class GetAwardEvent {
     }
 
     private JSONObject getMonsterLoot(ButtonInteractionEvent event, String monsterId) {
-        String endPoint = "/dungeon/monster/{monster_id}";
+        String endPoint = "/monster/loot/{monster_id}";
         Pair<String, String> routeParam = new Pair<>("monster_id", monsterId);
 
         HttpResponse<JsonNode> response = httpClient.sendGetRequest(endPoint, routeParam);
