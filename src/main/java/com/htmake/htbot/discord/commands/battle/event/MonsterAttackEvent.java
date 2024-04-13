@@ -6,6 +6,8 @@ import com.htmake.htbot.discord.commands.battle.util.BattleUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
 
 import java.awt.*;
 import java.util.Collections;
@@ -21,15 +23,16 @@ public class MonsterAttackEvent {
     public void execute(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
         String playerId = event.getUser().getId();
 
-        String message = monsterStatus.getName() + "의 공격.";
-        battleUtil.updateSituation(playerId, message);
+        int damage;
+        if (monsterStatus.getSkillName() != null && skillChance()) {
+            damage = skillAttack(event, playerStatus, monsterStatus);
+        } else {
+            damage = normalAttack(event, playerStatus, monsterStatus);
+        }
 
-        battleUtil.editEmbed(event, playerStatus, monsterStatus);
-
-        int damage = Math.max(0, monsterStatus.getDamage() - playerStatus.getDefence());
         playerStatus.setHealth(Math.max(0, playerStatus.getHealth() - damage));
 
-        message = damage + "의 데미지를 입혔다!";
+        String message = damage + "의 데미지를 입혔다!";
         battleUtil.updateSituation(playerId, message);
 
         battleUtil.editEmbed(event, playerStatus, monsterStatus);
@@ -37,6 +40,30 @@ public class MonsterAttackEvent {
         if (playerStatus.getHealth() == 0) {
             killPlayer(event, playerStatus, monsterStatus);
         }
+    }
+
+    private boolean skillChance() {
+        RandomGenerator random = new MersenneTwister();
+        int skillChance = random.nextInt(100) + 1;
+        return skillChance <= 20;
+    }
+
+    private int skillAttack(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
+        String message = monsterStatus.getName() + "의 " + monsterStatus.getSkillName();
+        battleUtil.updateSituation(event.getUser().getId(), message);
+
+        battleUtil.editEmbed(event, playerStatus, monsterStatus);
+
+        return Math.max(0, monsterStatus.getSkillDamage() - playerStatus.getDefence());
+    }
+
+    private int normalAttack(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
+        String message = monsterStatus.getName() + "의 공격.";
+        battleUtil.updateSituation(event.getUser().getId(), message);
+
+        battleUtil.editEmbed(event, playerStatus, monsterStatus);
+
+        return Math.max(0, monsterStatus.getDamage() - playerStatus.getDefence());
     }
 
     private void killPlayer(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
