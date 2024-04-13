@@ -1,10 +1,10 @@
-package com.htmake.htbot.domain.dungeon.service.impl;
+package com.htmake.htbot.domain.monster.service.impl;
 
-import com.htmake.htbot.domain.dungeon.entity.Monster;
-import com.htmake.htbot.domain.dungeon.presentation.data.response.DropItemResponse;
-import com.htmake.htbot.domain.dungeon.presentation.data.response.MonsterLootResponse;
-import com.htmake.htbot.domain.dungeon.repository.MonsterRepository;
-import com.htmake.htbot.domain.dungeon.service.MonsterLootService;
+import com.htmake.htbot.domain.monster.entity.Monster;
+import com.htmake.htbot.domain.monster.presentation.data.response.DropItemResponse;
+import com.htmake.htbot.domain.monster.presentation.data.response.MonsterLootResponse;
+import com.htmake.htbot.domain.monster.repository.MonsterRepository;
+import com.htmake.htbot.domain.monster.service.MonsterLootService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
