@@ -1,6 +1,6 @@
 package com.htmake.htbot.discord.commands.battle.cache;
 
-import com.htmake.htbot.cache.CacheManager;
+import com.htmake.htbot.global.cache.CacheManager;
 import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
 
 public class PlayerStatusCache {

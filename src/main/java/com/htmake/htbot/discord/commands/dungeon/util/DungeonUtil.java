@@ -1,6 +1,6 @@
 package com.htmake.htbot.discord.commands.dungeon.util;
 
-import com.htmake.htbot.cache.Caches;
+import com.htmake.htbot.global.cache.Caches;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.SituationCache;
@@ -9,8 +9,8 @@ import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.data.Situation;
 import com.htmake.htbot.domain.monster.entity.Monster;
 import com.htmake.htbot.domain.monster.entity.MonsterSkill;
-import com.htmake.htbot.unirest.HttpClient;
-import com.htmake.htbot.unirest.impl.HttpClientImpl;
+import com.htmake.htbot.global.unirest.HttpClient;
+import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;

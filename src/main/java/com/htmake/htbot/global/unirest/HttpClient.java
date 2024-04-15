@@ -1,4 +1,4 @@
-package com.htmake.htbot.unirest;
+package com.htmake.htbot.global.unirest;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;

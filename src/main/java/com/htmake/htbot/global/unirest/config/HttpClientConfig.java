@@ -1,7 +1,7 @@
-package com.htmake.htbot.unirest.config;
+package com.htmake.htbot.global.unirest.config;
 
-import com.htmake.htbot.unirest.HttpClient;
-import com.htmake.htbot.unirest.impl.HttpClientImpl;
+import com.htmake.htbot.global.unirest.HttpClient;
+import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

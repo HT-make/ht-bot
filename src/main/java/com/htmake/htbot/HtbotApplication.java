@@ -1,7 +1,7 @@
 package com.htmake.htbot;
 
 import com.htmake.htbot.discord.bot.HtBot;
-import com.htmake.htbot.unirest.HttpClient;
+import com.htmake.htbot.global.unirest.HttpClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

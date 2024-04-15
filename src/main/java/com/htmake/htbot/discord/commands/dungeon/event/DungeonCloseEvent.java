@@ -2,12 +2,12 @@ package com.htmake.htbot.discord.commands.dungeon.event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.htmake.htbot.cache.Caches;
+import com.htmake.htbot.global.cache.Caches;
 import com.htmake.htbot.discord.commands.dungeon.cache.DungeonStatusCache;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonStatus;
 import com.htmake.htbot.discord.commands.dungeon.data.GetItem;
-import com.htmake.htbot.unirest.HttpClient;
-import com.htmake.htbot.unirest.impl.HttpClientImpl;
+import com.htmake.htbot.global.unirest.HttpClient;
+import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;

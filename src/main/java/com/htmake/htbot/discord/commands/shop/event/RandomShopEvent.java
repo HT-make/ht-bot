@@ -2,8 +2,8 @@ package com.htmake.htbot.discord.commands.shop.event;
 
 import com.htmake.htbot.domain.shop.entity.RandomShopArmor;
 import com.htmake.htbot.domain.shop.entity.RandomShopWeapon;
-import com.htmake.htbot.unirest.HttpClient;
-import com.htmake.htbot.unirest.impl.HttpClientImpl;
+import com.htmake.htbot.global.unirest.HttpClient;
+import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import lombok.extern.slf4j.Slf4j;

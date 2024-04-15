@@ -1,4 +1,4 @@
-package com.htmake.htbot.cache;
+package com.htmake.htbot.global.cache;
 
 import com.htmake.htbot.discord.commands.dungeon.cache.DungeonStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;

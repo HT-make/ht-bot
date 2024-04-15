@@ -7,7 +7,7 @@ import com.htmake.htbot.discord.commands.player.PlayerCommand;
 import com.htmake.htbot.discord.commands.GlobalCommand;
 import com.htmake.htbot.discord.commands.shop.ShopCommand;
 import com.htmake.htbot.discord.listeners.EventListener;
-import com.htmake.htbot.unirest.HttpClient;
+import com.htmake.htbot.global.unirest.HttpClient;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
 import net.dv8tion.jda.api.OnlineStatus;
