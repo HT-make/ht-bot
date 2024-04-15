@@ -1,6 +1,6 @@
 package com.htmake.htbot.discord.commands.battle.util;
 
-import com.htmake.htbot.cache.Caches;
+import com.htmake.htbot.global.cache.Caches;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.SituationCache;

@@ -1,6 +1,6 @@
 package com.htmake.htbot.discord.commands.dungeon.cache;
 
-import com.htmake.htbot.cache.CacheManager;
+import com.htmake.htbot.global.cache.CacheManager;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonStatus;
 
 public class DungeonStatusCache {

@@ -1,7 +1,7 @@
-package com.htmake.htbot.unirest.impl;
+package com.htmake.htbot.global.unirest.impl;
 
 import com.htmake.htbot.discord.util.RestServiceType;
-import com.htmake.htbot.unirest.HttpClient;
+import com.htmake.htbot.global.unirest.HttpClient;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;

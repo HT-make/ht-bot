@@ -1,7 +1,7 @@
 package com.htmake.htbot.discord.commands.player.event;
 
 import com.htmake.htbot.domain.player.enums.Job;
-import com.htmake.htbot.unirest.HttpClient;
+import com.htmake.htbot.global.unirest.HttpClient;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import lombok.extern.slf4j.Slf4j;

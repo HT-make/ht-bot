@@ -1,6 +1,6 @@
 package com.htmake.htbot.discord.commands;
 
-import com.htmake.htbot.unirest.HttpClient;
+import com.htmake.htbot.global.unirest.HttpClient;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;

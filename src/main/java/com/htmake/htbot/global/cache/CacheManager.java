@@ -1,4 +1,4 @@
-package com.htmake.htbot.cache;
+package com.htmake.htbot.global.cache;
 
 import java.util.HashMap;
 import java.util.Map;

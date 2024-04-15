@@ -1,4 +1,4 @@
-package com.htmake.htbot.scheduler;
+package com.htmake.htbot.global.scheduler;
 
 import com.htmake.htbot.domain.shop.service.RandomShopItemShuffleService;
 import lombok.RequiredArgsConstructor;
