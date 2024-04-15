@@ -56,7 +56,8 @@ public class GlobalCommand extends ListenerAdapter {
                 Commands.slash("던전-입장", "던전에 입장합니다."),
                 Commands.slash("인벤토리", "인벤토리를 확인합니다."),
                 Commands.slash("상점", "상점에 입장합니다."),
-                Commands.slash("랜덤-상점", "랜덤 상점에 입장합니다.")
+                Commands.slash("랜덤-상점", "랜덤 상점에 입장합니다."),
+                Commands.slash("랜덤-상점-구매", "랜덤 상점에서 장비를 구입합니다.").addOptions(insertEquipmentName().setRequired(true))
         );
 
         event.getJDA().updateCommands().addCommands(commandData).queue();
@@ -64,5 +65,9 @@ public class GlobalCommand extends ListenerAdapter {
 
     private OptionData selectUser() {
         return new OptionData(OptionType.USER, "유저", "정보 검색을 원하는 유저를 선택해 주세요!");
+    }
+
+    private OptionData insertEquipmentName(){
+        return new OptionData(OptionType.STRING, "장비이름", "장비 이름을 입력해 주세요!");
     }
 }
