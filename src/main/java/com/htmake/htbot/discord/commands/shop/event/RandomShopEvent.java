@@ -1,32 +1,38 @@
 package com.htmake.htbot.discord.commands.shop.event;
 
-import com.htmake.htbot.domain.shop.entity.RandomShopArmor;
-import com.htmake.htbot.domain.shop.entity.RandomShopWeapon;
+import com.htmake.htbot.discord.commands.shop.util.ShopUtil;
+import com.htmake.htbot.domain.shop.entity.RandomShop;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
+import kotlin.Pair;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
-import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
+import java.util.List;
 
 @Slf4j
 public class RandomShopEvent {
 
     private final HttpClient httpClient;
+    private final ShopUtil shopUtil;
+
+    private final List<String> itemType = new ArrayList<>() {{
+            add(":shield: 방어구");
+            add(":crossed_swords: 무기");
+    }};
 
     public RandomShopEvent() {
         this.httpClient = new HttpClientImpl();
+        this.shopUtil = new ShopUtil();
     }
 
     public void execute(SlashCommandInteractionEvent event) {
@@ -34,108 +40,90 @@ public class RandomShopEvent {
 
         HttpResponse<JsonNode> response = httpClient.sendGetRequest(endPoint);
 
-        JSONObject randomShopObject = response.getBody().getObject();
+        if (response.getStatus() == 200) {
+            JSONObject randomShopObject = response.getBody().getObject();
 
-        JSONArray randomShopWeaponArray = randomShopObject.getJSONArray("randomShopWeaponList");
-        JSONArray randomShopArmorArray = randomShopObject.getJSONArray("randomShopArmorList");
+            JSONArray randomShopArray = randomShopObject.getJSONArray("itemList");
 
-        ArrayList<RandomShopWeapon> randomShopWeaponList = toRandomShopWeaponList(randomShopWeaponArray);
-        ArrayList<RandomShopArmor> randomShopArmorList = toRandomShopArmorList(randomShopArmorArray);
+            List<RandomShop> randomShopList = toRandomShopList(randomShopArray);
+            randomShopList.sort(Comparator.comparing(RandomShop::getId));
 
-        MessageEmbed embed = buildEmbed(randomShopWeaponList, randomShopArmorList);
+            List<Pair<String, List<RandomShop>>> subItemList = subRandomShopList(randomShopList);
 
-        StringSelectMenu menu = StringSelectMenu.create("randomShopMenu")
-                .setPlaceholder("아이템 선택")
-                .addOptions(Arrays.asList(
-                        SelectOption.of("1️⃣", "shop-randomShop-1"),
-                        SelectOption.of("2️⃣", "shop-randomShop-2"),
-                        SelectOption.of("3️⃣", "shop-randomShop-3"),
-                        SelectOption.of("4️⃣", "shop-randomShop-4"),
-                        SelectOption.of("5️⃣", "shop-randomShop-5"),
-                        SelectOption.of("6️⃣", "shop-randomShop-6")
-                ))
-                .build();
+            MessageEmbed embed = buildEmbed(subItemList);
 
-        event.replyEmbeds(embed)
-                .addActionRow(menu)
-                .addActionRow(Button.danger("cancel", "닫기"))
-                .queue();
+            event.replyEmbeds(embed)
+                    .addActionRow(Button.danger("cancel", "닫기"))
+                    .queue();
+        } else {
+            String title = "랜덤 상점";
+            String message = response.getBody().getObject().getString("message");
+            shopUtil.errorMessage(event, title, message);
+        }
     }
 
-    private MessageEmbed buildEmbed(ArrayList<RandomShopWeapon> randomShopWeaponList, ArrayList<RandomShopArmor> randomShopArmorList) {
+    private MessageEmbed buildEmbed(List<Pair<String, List<RandomShop>>> subItemList) {
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setColor(Color.GREEN)
                 .setTitle(":game_die: 랜덤 상점")
-                .setDescription("1분마다 아이템이 랜덤으로 변경됩니다.");
+                .setDescription("매시간마다 아이템이 랜덤으로 변경됩니다.");
 
-
-        embedBuilder.addField("무기", formatWeaponList(randomShopWeaponList), false);
-        embedBuilder.addField("방어구", formatArmorList(randomShopArmorList), false);
+        for (Pair<String, List<RandomShop>> itemList : subItemList) {
+            embedBuilder.addField(itemList.getFirst(), format(itemList.getSecond()), true);
+        }
 
         return embedBuilder.build();
     }
 
-    private String formatWeaponList(ArrayList<RandomShopWeapon> itemList) {
+    private String format(List<RandomShop> itemList) {
         StringBuilder sb = new StringBuilder();
 
-        for (RandomShopWeapon item : itemList) {
-            sb.append("- "+item.getName())
+        for (RandomShop item : itemList) {
+            String quantity = item.getQuantity() != 0 ? String.valueOf(item.getQuantity()) : "매진";
+
+            sb.append("- ")
+                    .append(item.getName())
                     .append(" - ")
                     .append(item.getGold())
                     .append("G (")
-                    .append(item.getQuantity())
+                    .append(quantity)
                     .append(")\n");
         }
+
         return sb.toString();
     }
 
-    private String formatArmorList(ArrayList<RandomShopArmor> itemList) {
-        StringBuilder sb = new StringBuilder();
+    private List<RandomShop> toRandomShopList(JSONArray randomShopArray) {
+        List<RandomShop> randomShopList = new ArrayList<>();
 
-        for (RandomShopArmor item : itemList) {
-            sb.append("- "+item.getName())
-                    .append(" - ")
-                    .append(item.getGold())
-                    .append("G (")
-                    .append(item.getQuantity())
-                    .append(")\n");
-        }
-        return sb.toString();
-    }
+        for (int i = 0; i < randomShopArray.length(); i++) {
+            JSONObject randomShopObject = randomShopArray.getJSONObject(i);
 
-    private ArrayList<RandomShopWeapon> toRandomShopWeaponList(JSONArray randomShopWeaponsArray) {
-        ArrayList<RandomShopWeapon> randomShopWeapons = new ArrayList<>();
-
-        for (int i = 0; i < randomShopWeaponsArray.length(); i++) {
-            JSONObject randomShopWeaponObject = randomShopWeaponsArray.getJSONObject(i);
-
-            RandomShopWeapon randomShopWeapon = RandomShopWeapon.builder()
-                    .name(randomShopWeaponObject.getString("name"))
-                    .quantity(randomShopWeaponObject.getInt("quantity"))
-                    .gold(randomShopWeaponObject.getInt("gold"))
+            RandomShop randomShop = RandomShop.builder()
+                    .id(randomShopObject.getString("id"))
+                    .name(randomShopObject.getString("name"))
+                    .quantity(randomShopObject.getInt("quantity"))
+                    .gold(randomShopObject.getInt("gold"))
                     .build();
 
-            randomShopWeapons.add(randomShopWeapon);
+            randomShopList.add(randomShop);
         }
 
-        return randomShopWeapons;
+        return randomShopList;
     }
 
-    private ArrayList<RandomShopArmor> toRandomShopArmorList(JSONArray randomShopArmorsArray) {
-        ArrayList<RandomShopArmor> randomShopArmors = new ArrayList<>();
+    private List<Pair<String, List<RandomShop>>> subRandomShopList(List<RandomShop> randomShopList) {
+        List<Pair<String, List<RandomShop>>> subItemList = new ArrayList<>();
 
-        for (int i = 0; i < randomShopArmorsArray.length(); i++) {
-            JSONObject randomShopArmorObject = randomShopArmorsArray.getJSONObject(i);
+        int partitionSize = 3;
+        for (int i = 0; i < randomShopList.size(); i += partitionSize) {
+            String type = itemType.get(i / 3);
+            List<RandomShop> subItem = randomShopList.subList(i, i + partitionSize);
 
-            RandomShopArmor randomShopArmor = RandomShopArmor.builder()
-                    .name(randomShopArmorObject.getString("name"))
-                    .quantity(randomShopArmorObject.getInt("quantity"))
-                    .gold(randomShopArmorObject.getInt("gold"))
-                    .build();
-
-            randomShopArmors.add(randomShopArmor);
+            subItemList.add(new Pair<>(type, subItem));
         }
 
-        return randomShopArmors;
+        return subItemList;
     }
+
 }
