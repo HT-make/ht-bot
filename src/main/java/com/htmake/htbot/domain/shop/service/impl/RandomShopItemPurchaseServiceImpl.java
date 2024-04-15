@@ -3,24 +3,19 @@ package com.htmake.htbot.domain.shop.service.impl;
 import com.htmake.htbot.domain.inventory.entity.Inventory;
 import com.htmake.htbot.domain.inventory.repository.InventoryRepository;
 import com.htmake.htbot.domain.player.entity.Player;
+import com.htmake.htbot.domain.player.exception.NotFoundPlayerException;
 import com.htmake.htbot.domain.player.repository.PlayerRepository;
 import com.htmake.htbot.domain.shop.entity.RandomShop;
-import com.htmake.htbot.domain.shop.entity.RandomShopArmor;
-import com.htmake.htbot.domain.shop.entity.RandomShopWeapon;
 import com.htmake.htbot.domain.shop.exception.NotEnoughGoldException;
 import com.htmake.htbot.domain.shop.exception.NotEnoughQuantityException;
 import com.htmake.htbot.domain.shop.exception.NotFoundItemException;
 import com.htmake.htbot.domain.shop.presentation.data.request.RandomShopPurchaseRequest;
-import com.htmake.htbot.domain.shop.presentation.data.temp.RandomShopItemTemp;
-import com.htmake.htbot.domain.shop.repository.RandomShopArmorRepository;
+import com.htmake.htbot.domain.shop.presentation.data.response.SuccessPurchaseResponse;
 import com.htmake.htbot.domain.shop.repository.RandomShopRepository;
-import com.htmake.htbot.domain.shop.repository.RandomShopWeaponRepository;
 import com.htmake.htbot.domain.shop.service.RandomShopItemPurchaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Transactional
@@ -30,16 +25,18 @@ public class RandomShopItemPurchaseServiceImpl implements RandomShopItemPurchase
     private final RandomShopRepository randomShopRepository;
     private final InventoryRepository inventoryRepository;
     private final PlayerRepository playerRepository;
-    private final RandomShopWeaponRepository randomShopWeaponRepository;
-    private final RandomShopArmorRepository randomShopArmorRepository;
 
     @Override
-    public void execute(String playerId, RandomShopPurchaseRequest request) {
-        RandomShop randomShop = randomShopRepository.findAll().get(0);
-        RandomShopItemTemp item = toTemp(randomShop, request.getName());
+    public SuccessPurchaseResponse execute(String playerId, RandomShopPurchaseRequest request) {
+        RandomShop item = randomShopRepository.findByName(request.getName())
+                .orElseThrow(NotFoundItemException::new);
+
+        if (item.getQuantity() <= 0) {
+            throw new NotEnoughQuantityException();
+        }
 
         Player player = playerRepository.findById(playerId)
-                .orElseThrow();
+                .orElseThrow(NotFoundPlayerException::new);
 
         int playerGold = player.getGold();
 
@@ -49,6 +46,8 @@ public class RandomShopItemPurchaseServiceImpl implements RandomShopItemPurchase
 
         player.setGold(playerGold - item.getGold());
         playerRepository.save(player);
+        item.setQuantity(item.getQuantity() - 1);
+        randomShopRepository.save(item);
 
         Inventory existingItem = inventoryRepository
                 .findByPlayerIdAndItemId(player.getId(), item.getId()).orElse(null);
@@ -67,51 +66,9 @@ public class RandomShopItemPurchaseServiceImpl implements RandomShopItemPurchase
 
             inventoryRepository.save(inventory);
         }
-    }
 
-    private RandomShopItemTemp toTemp(RandomShop randomShop, String name) {
-        List<RandomShopWeapon> weaponList = randomShop.getRandomShopWeapons();
-        RandomShopWeapon weapon = weaponList.stream()
-                .filter(w -> w.getName().equals(name))
-                .findFirst()
-                .orElse(null);
-
-        if (weapon != null) {
-            if (weapon.getQuantity() <= 0) {
-                throw new NotEnoughQuantityException();
-            }
-            weapon.setQuantity(weapon.getQuantity() - 1);
-            randomShopWeaponRepository.save(weapon);
-
-            return RandomShopItemTemp.builder()
-                    .id(weapon.getId())
-                    .name(weapon.getName())
-                    .gold(weapon.getGold())
-                    .quantity(weapon.getQuantity())
-                    .build();
-        }
-
-        List<RandomShopArmor> armorList = randomShop.getRandomShopArmors();
-        RandomShopArmor armor = armorList.stream()
-                .filter(a -> a.getName().equals(name))
-                .findFirst()
-                .orElse(null);
-
-        if (armor != null) {
-            if (armor.getQuantity() <= 0) {
-                throw new NotEnoughQuantityException();
-            }
-            armor.setQuantity(armor.getQuantity() - 1);
-            randomShopArmorRepository.save(armor);
-
-            return RandomShopItemTemp.builder()
-                    .id(armor.getId())
-                    .name(armor.getName())
-                    .gold(armor.getGold())
-                    .quantity(armor.getQuantity())
-                    .build();
-        }
-
-        throw new NotFoundItemException();
+        return SuccessPurchaseResponse.builder()
+                .gold(player.getGold())
+                .build();
     }
 }

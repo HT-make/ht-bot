@@ -1,4 +1,4 @@
-package com.htmake.htbot.domain.shop.presentation.data.temp;
+package com.htmake.htbot.domain.shop.presentation.data.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,13 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RandomShopItemTemp {
-
-    private String id;
-
-    private String name;
+public class SuccessPurchaseResponse {
 
     private int gold;
-
-    private int quantity;
 }

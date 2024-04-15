@@ -2,6 +2,7 @@ package com.htmake.htbot.domain.shop.presentation;
 
 import com.htmake.htbot.domain.shop.presentation.data.request.RandomShopPurchaseRequest;
 import com.htmake.htbot.domain.shop.presentation.data.response.RandomShopItemListResponse;
+import com.htmake.htbot.domain.shop.presentation.data.response.SuccessPurchaseResponse;
 import com.htmake.htbot.domain.shop.service.RandomShopItemPurchaseService;
 import com.htmake.htbot.domain.shop.service.RandomShopItemService;
 import jakarta.validation.Valid;
@@ -24,11 +25,11 @@ public class ShopController {
     }
 
     @PostMapping("/random/purchase/{player_id}")
-    public ResponseEntity<Void> randomShopPurchase(
+    public ResponseEntity<SuccessPurchaseResponse> randomShopPurchase(
             @PathVariable("player_id") String playerId,
             @RequestBody @Valid RandomShopPurchaseRequest request
     ) {
-        randomShopItemPurchaseService.execute(playerId, request);
-        return new ResponseEntity<>(HttpStatus.OK);
+        SuccessPurchaseResponse response = randomShopItemPurchaseService.execute(playerId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

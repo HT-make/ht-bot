@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Getter
 @Builder
@@ -16,13 +14,19 @@ import java.util.List;
 public class RandomShop {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "random_shop_id")
-    private Long id;
+    @Column(name = "random_shop_item_id")
+    private String id;
 
-    @OneToMany(mappedBy = "randomShop", cascade = CascadeType.ALL)
-    private List<RandomShopWeapon> randomShopWeapons;
+    @Column(name = "random_shop_item_name", nullable = false)
+    private String name;
 
-    @OneToMany(mappedBy = "randomShop", cascade = CascadeType.ALL)
-    private List<RandomShopArmor> randomShopArmors;
+    @Column(name = "random_shop_item_gold", nullable = false)
+    private int gold;
+
+    @Column(name = "random_shop_item_quantity", nullable = false)
+    private int quantity;
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 }

@@ -6,7 +6,6 @@ import com.htmake.htbot.discord.commands.dungeon.DungeonCommand;
 import com.htmake.htbot.discord.commands.player.PlayerCommand;
 import com.htmake.htbot.discord.commands.GlobalCommand;
 import com.htmake.htbot.discord.commands.shop.ShopCommand;
-import com.htmake.htbot.discord.listeners.EventListener;
 import com.htmake.htbot.global.unirest.HttpClient;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
@@ -45,7 +44,6 @@ public class HtBot {
 
         // Register listeners
         shardManager.addEventListener(
-                new EventListener(),
                 new GlobalCommand(),
                 new PlayerCommand(this.httpClient),
                 new DungeonCommand(),
