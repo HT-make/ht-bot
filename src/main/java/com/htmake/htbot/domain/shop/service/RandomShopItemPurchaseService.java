@@ -1,8 +1,9 @@
 package com.htmake.htbot.domain.shop.service;
 
 import com.htmake.htbot.domain.shop.presentation.data.request.RandomShopPurchaseRequest;
+import com.htmake.htbot.domain.shop.presentation.data.response.SuccessPurchaseResponse;
 
 public interface RandomShopItemPurchaseService {
 
-    void execute(String playerId, RandomShopPurchaseRequest request);
+    SuccessPurchaseResponse execute(String playerId, RandomShopPurchaseRequest request);
 }
