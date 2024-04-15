@@ -1,11 +1,9 @@
 package com.htmake.htbot.domain.shop.service.impl;
 
 import com.htmake.htbot.domain.shop.entity.RandomShop;
-import com.htmake.htbot.domain.shop.entity.RandomShopArmor;
-import com.htmake.htbot.domain.shop.entity.RandomShopWeapon;
-import com.htmake.htbot.domain.shop.presentation.data.response.RandomShopArmorResponse;
+import com.htmake.htbot.domain.shop.exception.NotFoundRandomShopException;
 import com.htmake.htbot.domain.shop.presentation.data.response.RandomShopItemListResponse;
-import com.htmake.htbot.domain.shop.presentation.data.response.RandomShopWeaponResponse;
+import com.htmake.htbot.domain.shop.presentation.data.response.RandomShopItemResponse;
 import com.htmake.htbot.domain.shop.repository.RandomShopRepository;
 import com.htmake.htbot.domain.shop.service.RandomShopItemService;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class RandomShopItemServiceImpl implements RandomShopItemService {
 
@@ -24,21 +22,18 @@ public class RandomShopItemServiceImpl implements RandomShopItemService {
 
     @Override
     public RandomShopItemListResponse execute() {
-        RandomShop randomShop = randomShopRepository.findAll().get(0);
+        List<RandomShop> randomShopList = randomShopRepository.findAll();
 
-        List<RandomShopArmor> randomShopArmorList = randomShop.getRandomShopArmors();
-        List<RandomShopWeapon> randomShopWeaponList = randomShop.getRandomShopWeapons();
+        if (randomShopList.isEmpty()) {
+            throw new NotFoundRandomShopException();
+        }
 
         return RandomShopItemListResponse.builder()
-                .randomShopArmorList(
-                        randomShopArmorList.stream()
-                                .map(RandomShopArmorResponse::toResponse)
+                .itemList(
+                        randomShopList.stream()
+                                .map(RandomShopItemResponse::toResponse)
                                 .collect(Collectors.toList())
                 )
-                .randomShopWeaponList(
-                        randomShopWeaponList.stream()
-                                .map(RandomShopWeaponResponse::toResponse)
-                                .collect(Collectors.toList())
-                ).build();
+                .build();
     }
 }
