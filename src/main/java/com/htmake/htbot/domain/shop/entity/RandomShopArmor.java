@@ -29,4 +29,8 @@ public class RandomShopArmor {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "random_shop_id")
     private RandomShop randomShop;
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 }
