@@ -10,5 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class RegisterSkillRequest {
 
-    private String name;
+    private Long id;
+
+    private int number;
 }
