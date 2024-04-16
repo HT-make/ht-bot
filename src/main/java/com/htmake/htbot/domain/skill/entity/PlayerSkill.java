@@ -16,11 +16,18 @@ public class PlayerSkill {
     @Column(name = "player_skill_id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(name = "player_skill_number", nullable = false)
+    private int number;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "player_id")
     private Player player;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "skill_id")
     private Skill skill;
+
+    public void setSkill(Skill skill) {
+        this.skill = skill;
+    }
 }
