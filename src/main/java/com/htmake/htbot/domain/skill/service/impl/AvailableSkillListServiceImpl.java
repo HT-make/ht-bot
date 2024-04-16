@@ -10,6 +10,7 @@ import com.htmake.htbot.domain.skill.presentation.data.response.AvailableSkillRe
 import com.htmake.htbot.domain.skill.repository.PlayerSkillRepository;
 import com.htmake.htbot.domain.skill.repository.SkillRepository;
 import com.htmake.htbot.domain.skill.service.AvailableSkillListService;
+import com.htmake.htbot.global.util.SkillUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ public class AvailableSkillListServiceImpl implements AvailableSkillListService 
     private final SkillRepository skillRepository;
     private final PlayerRepository playerRepository;
     private final PlayerSkillRepository playerSkillRepository;
+    private final SkillUtil skillUtil;
 
     @Override
     public AvailableSkillListResponse execute(String playerId) {
@@ -37,23 +39,10 @@ public class AvailableSkillListServiceImpl implements AvailableSkillListService 
         List<AvailableSkillResponse> responseList = new ArrayList<>();
 
         for (Skill skill : skillList) {
-            String isRegistered = "false";
+            boolean isRegistered = playerSkillList.stream()
+                    .anyMatch(playerSkill -> skill.equals(playerSkill.getSkill()));
 
-            for (PlayerSkill playerSkill : playerSkillList) {
-                if (skill.equals(playerSkill.getSkill())) {
-                    isRegistered = "true";
-                    break;
-                }
-            }
-
-            AvailableSkillResponse response = AvailableSkillResponse.builder()
-                    .name(skill.getName())
-                    .value(skill.getValue())
-                    .mana(skill.getMana())
-                    .skillType(skill.getSkillType().name())
-                    .isRegistered(isRegistered)
-                    .build();
-
+            AvailableSkillResponse response = skillUtil.buildAvailableSkillResponse(skill, isRegistered);
             responseList.add(response);
         }
 
