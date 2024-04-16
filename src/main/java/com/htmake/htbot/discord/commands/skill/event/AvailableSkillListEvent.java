@@ -1,5 +1,6 @@
 package com.htmake.htbot.discord.commands.skill.event;
 
+import com.htmake.htbot.discord.commands.skill.util.SkillEventUtil;
 import com.htmake.htbot.domain.skill.presentation.data.response.AvailableSkillResponse;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
@@ -10,18 +11,18 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class AvailableSkillListEvent {
 
     private final HttpClient httpClient;
+    private final SkillEventUtil skillEventUtil;
 
     public AvailableSkillListEvent() {
         this.httpClient = new HttpClientImpl();
+        this.skillEventUtil = new SkillEventUtil();
     }
 
     public void execute(SlashCommandInteractionEvent event) {
@@ -29,9 +30,9 @@ public class AvailableSkillListEvent {
 
         if (response.getStatus() == 200) {
             JSONArray skillArray = response.getBody().getObject().getJSONArray("skillResponseList");
-            successGetList(event, skillArray);
+            requestSuccess(event, skillArray);
         } else {
-            errorMessage(event);
+            skillEventUtil.errorMessage(event, "스킬 목록", "스킬 목록을 불러올 수 없습니다.");
         }
     }
 
@@ -41,32 +42,10 @@ public class AvailableSkillListEvent {
         return httpClient.sendGetRequest(endPoint, routeParam);
     }
 
-    private void successGetList(SlashCommandInteractionEvent event, JSONArray skillArray) {
-        List<AvailableSkillResponse> skillList = toSkillList(skillArray);
-
+    private void requestSuccess(SlashCommandInteractionEvent event, JSONArray skillArray) {
+        List<AvailableSkillResponse> skillList = skillEventUtil.toSkillList(skillArray);
         MessageEmbed embed = buildEmbed(skillList);
-
         event.replyEmbeds(embed).queue();
-    }
-
-    private List<AvailableSkillResponse> toSkillList(JSONArray skillArray) {
-        List<AvailableSkillResponse> skillList = new ArrayList<>();
-
-        for (int i = 0; i < skillArray.length(); i++) {
-            JSONObject skillObject = skillArray.getJSONObject(i);
-
-            AvailableSkillResponse skill = AvailableSkillResponse.builder()
-                    .name(skillObject.getString("name"))
-                    .value(skillObject.getInt("value"))
-                    .mana(skillObject.getInt("mana"))
-                    .skillType(skillObject.getString("skillType"))
-                    .isRegistered(skillObject.getString("isRegistered"))
-                    .build();
-
-            skillList.add(skill);
-        }
-
-        return skillList;
     }
 
     private MessageEmbed buildEmbed(List<AvailableSkillResponse> skillList) {
@@ -82,25 +61,9 @@ public class AvailableSkillListEvent {
                 title += "(등록됨)";
             }
 
-            embedBuilder.addField(title, format(skill), false);
+            embedBuilder.addField(title, skillEventUtil.format(skill), false);
         }
 
         return embedBuilder.build();
-    }
-
-    private String format(AvailableSkillResponse skill) {
-        String skillType = skill.getSkillType().equals("ATTACK") ? "데미지" : "치유량";
-        return String.format("%s: %d%% 마나: %d", skillType, skill.getValue(), skill.getMana());
-    }
-
-
-    private void errorMessage(SlashCommandInteractionEvent event) {
-        MessageEmbed embed = new EmbedBuilder()
-                .setColor(Color.ORANGE)
-                .setTitle(":warning: 스킬 목록")
-                .setDescription("스킬 목록을 불러올 수 없습니다.")
-                .build();
-
-        event.replyEmbeds(embed).queue();
     }
 }
