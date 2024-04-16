@@ -52,12 +52,19 @@ public class GlobalCommand extends ListenerAdapter {
     public void onReady(@NotNull ReadyEvent event) {
         List<CommandData> commandData = List.of(
                 Commands.slash("게임-가입", "게임 기능을 사용하기 위해 가입합니다."),
+
                 Commands.slash("유저-정보", "유저 정보를 검색합니다.").addOptions(selectUser()),
+
                 Commands.slash("던전-입장", "던전에 입장합니다."),
+
                 Commands.slash("인벤토리", "인벤토리를 확인합니다."),
+
                 Commands.slash("상점", "상점에 입장합니다."),
                 Commands.slash("랜덤-상점", "랜덤 상점에 입장합니다."),
-                Commands.slash("랜덤-상점-구매", "랜덤 상점에서 장비를 구입합니다.").addOptions(insertEquipmentName().setRequired(true))
+                Commands.slash("랜덤-상점-구매", "랜덤 상점에서 장비를 구입합니다.").addOptions(insertEquipmentName().setRequired(true)),
+
+                Commands.slash("스킬-목록", "사용 가능한 스킬을 확인합니다."),
+                Commands.slash("스킬-등록", "스킬을 등록합니다.").addOptions(registerSkillName().setRequired(true))
         );
 
         event.getJDA().updateCommands().addCommands(commandData).queue();
@@ -67,7 +74,11 @@ public class GlobalCommand extends ListenerAdapter {
         return new OptionData(OptionType.USER, "유저", "정보 검색을 원하는 유저를 선택해 주세요!");
     }
 
-    private OptionData insertEquipmentName(){
+    private OptionData insertEquipmentName() {
         return new OptionData(OptionType.STRING, "장비이름", "장비 이름을 입력해 주세요!");
+    }
+
+    private OptionData registerSkillName() {
+        return new OptionData(OptionType.STRING, "스킬이름", "스킬 이름을 입력해 주세요!");
     }
 }
