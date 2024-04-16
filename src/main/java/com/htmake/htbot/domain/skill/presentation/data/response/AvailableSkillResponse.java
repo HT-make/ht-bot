@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AvailableSkillResponse {
 
+    private Long id;
+
     private String name;
 
     private int value;
