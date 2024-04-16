@@ -6,6 +6,7 @@ import com.htmake.htbot.discord.commands.dungeon.DungeonCommand;
 import com.htmake.htbot.discord.commands.player.PlayerCommand;
 import com.htmake.htbot.discord.commands.GlobalCommand;
 import com.htmake.htbot.discord.commands.shop.ShopCommand;
+import com.htmake.htbot.discord.commands.skill.SkillCommand;
 import com.htmake.htbot.global.unirest.HttpClient;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
@@ -49,7 +50,8 @@ public class HtBot {
                 new DungeonCommand(),
                 new BattleCommand(),
                 new InventoryCommand(this.httpClient),
-                new ShopCommand()
+                new ShopCommand(),
+                new SkillCommand()
         );
     }
 }
