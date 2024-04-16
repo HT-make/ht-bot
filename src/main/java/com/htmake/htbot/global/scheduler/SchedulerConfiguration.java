@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class SchedulerConfiguration {
     private final RandomShopItemShuffleService randomShopItemShuffleService;
 
-    @Scheduled(cron = "0 * * * *")
+    @Scheduled(cron = "0 0 * * * *")
     public void run() {
         randomShopItemShuffleService.execute();
     }
