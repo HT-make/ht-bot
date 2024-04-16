@@ -1,4 +1,4 @@
-package com.htmake.htbot.discord.util;
+package com.htmake.htbot.global.util;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
