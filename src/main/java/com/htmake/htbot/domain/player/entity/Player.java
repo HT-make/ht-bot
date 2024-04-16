@@ -2,6 +2,7 @@ package com.htmake.htbot.domain.player.entity;
 
 import com.htmake.htbot.domain.inventory.entity.Inventory;
 import com.htmake.htbot.domain.player.enums.Job;
+import com.htmake.htbot.domain.skill.entity.PlayerSkill;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,6 +43,9 @@ public class Player {
 
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
     private List<Inventory> inventoryList;
+
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
+    private List<PlayerSkill> playerSkills;
 
     public void killMonster(int currentExp, int gold) {
         this.currentExp = currentExp;
