@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -27,12 +28,47 @@ public class QuestEvent{
         Pair<String, String> routeParam = new Pair<>("player_id", user.getId());
 
         HttpResponse<JsonNode> response = httpClient.sendGetRequest(endPoint, routeParam);
+        
+        if (response.getStatus() == 200) {
+            JSONObject questData = response.getBody().getObject();
 
-        JSONObject questData = response.getBody().getObject();
+            MessageEmbed embed = buildEmbed(questData);
 
-        MessageEmbed embed = buildEmbed(questData);
+            int monsterQuantity = questData.getInt("monsterQuantity");
+            int targetMonsterQuantity = questData.getInt("targetMonsterQuantity");
+            int itemQuantity = questData.getInt("itemQuantity");
+            int targetItemQuantity = questData.getInt("targetItemQuantity");
 
-        event.replyEmbeds(embed).queue();
+            Button completeButton = Button.primary("complete", "완료").asDisabled();
+
+            if (monsterQuantity >= targetMonsterQuantity && itemQuantity >= targetItemQuantity){
+                completeButton = Button.primary("complete", "완료").asEnabled();
+
+                event.replyEmbeds(embed)
+                        .addActionRow(
+                                completeButton,
+                                Button.danger("cancel", "닫기")
+                        )
+                        .queue();
+            } else {
+                event.replyEmbeds(embed)
+                        .addActionRow(
+                                completeButton,
+                                Button.danger("cancel", "닫기")
+                        )
+                        .queue();
+            }
+
+        } else {
+            MessageEmbed embed = new EmbedBuilder()
+                    .setColor(Color.RED)
+                    .setTitle(":warning: 퀘스트를 불러올 수 없습니다.")
+                    .setDescription("다시 한번 시도해 주세요.")
+                    .build();
+
+            event.replyEmbeds(embed).queue();
+        }
+        
     }
 
     private MessageEmbed buildEmbed(JSONObject questData) {
