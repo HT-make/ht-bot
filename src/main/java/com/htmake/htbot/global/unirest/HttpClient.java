@@ -13,4 +13,6 @@ public interface HttpClient {
     HttpResponse<JsonNode> sendGetRequest(String endPoint);
     HttpResponse<JsonNode> sendGetRequest(String endPoint, Pair<String, String> routeParam);
     HttpResponse<JsonNode> sendPatchRequest(String endPoint, Pair<String, String> routeParam, String requestBody);
+    HttpResponse<JsonNode> sendPatchRequest(String endPoint, Pair<String, String> routeParam);
 }
+
