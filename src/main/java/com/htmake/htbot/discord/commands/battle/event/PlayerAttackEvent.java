@@ -6,6 +6,8 @@ import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
 import com.htmake.htbot.discord.commands.battle.data.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.util.BattleUtil;
+import com.htmake.htbot.global.unirest.HttpClient;
+import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import kotlin.Pair;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.entities.User;
@@ -16,6 +18,8 @@ import java.util.*;
 @Slf4j
 public class PlayerAttackEvent {
 
+    private final HttpClient httpClient;
+
     private final BattleUtil battleUtil;
     private final MonsterAttackEvent monsterAttackEvent;
     private final GetAwardEvent getAwardEvent;
@@ -24,6 +28,8 @@ public class PlayerAttackEvent {
     private final MonsterStatusCache monsterStatusCache;
 
     public PlayerAttackEvent() {
+        this.httpClient = new HttpClientImpl();
+
         this.battleUtil = new BattleUtil();
         this.monsterAttackEvent = new MonsterAttackEvent();
         this.getAwardEvent = new GetAwardEvent();
@@ -41,6 +47,7 @@ public class PlayerAttackEvent {
 
         if (monsterStatus.getHealth() == 0) {
             killMonster(event, playerStatus, monsterStatus);
+            countMonster(event, monsterStatus);
         } else {
             monsterAttackEvent.execute(event, playerStatus, monsterStatus);
         }
@@ -105,5 +112,16 @@ public class PlayerAttackEvent {
         getAwardEvent.execute(event, monsterStatus.getId());
 
         battleUtil.removeCurrentBattleCache(playerId);
+    }
+
+    private void countMonster(ButtonInteractionEvent event, MonsterStatus monsterStatus) {
+        String playerId = event.getUser().getId();
+
+        String endPoint = "/quest/monster/{player_id}";
+        Pair<String, String> routeParam = new Pair<>("player_id", playerId);
+
+        String requestBody = "{\"name\": \"" + monsterStatus.getName() + "\"}";
+
+        httpClient.sendPatchRequest(endPoint, routeParam, requestBody);
     }
 }
