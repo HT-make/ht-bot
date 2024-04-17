@@ -10,5 +10,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PlayerQuestMonsterQuantityRequest {
-    String name;
+    private String name;
 }
