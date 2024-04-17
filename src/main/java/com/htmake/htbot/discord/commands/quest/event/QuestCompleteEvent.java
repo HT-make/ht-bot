@@ -9,10 +9,9 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.Collections;
 
 public class QuestCompleteEvent {
     private final HttpClient httpClient;
@@ -38,10 +37,7 @@ public class QuestCompleteEvent {
 
             event.getMessage().editMessageEmbeds(embed).queue();
 
-            ArrayList<ActionRow> actionRows = new ArrayList<>(event.getMessage().getActionRows());
-            actionRows.remove(0);
-
-            event.getMessage().editMessageComponents(actionRows).queue();
+            event.getMessage().editMessageComponents(Collections.emptyList()).queue();
         } else {
             MessageEmbed embed = new EmbedBuilder()
                     .setColor(Color.ORANGE)
