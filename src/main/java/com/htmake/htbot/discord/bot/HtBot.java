@@ -5,6 +5,7 @@ import com.htmake.htbot.discord.commands.battle.BattleCommand;
 import com.htmake.htbot.discord.commands.dungeon.DungeonCommand;
 import com.htmake.htbot.discord.commands.player.PlayerCommand;
 import com.htmake.htbot.discord.commands.GlobalCommand;
+import com.htmake.htbot.discord.commands.quest.QuestCommand;
 import com.htmake.htbot.discord.commands.shop.ShopCommand;
 import com.htmake.htbot.discord.commands.skill.SkillCommand;
 import com.htmake.htbot.global.unirest.HttpClient;
@@ -51,7 +52,8 @@ public class HtBot {
                 new BattleCommand(),
                 new InventoryCommand(this.httpClient),
                 new ShopCommand(),
-                new SkillCommand()
+                new SkillCommand(),
+                new QuestCommand()
         );
     }
 }
