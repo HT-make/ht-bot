@@ -70,7 +70,10 @@ public class GlobalCommand extends ListenerAdapter {
                 Commands.slash("랜덤-상점-구매", "랜덤 상점에서 장비를 구입합니다.").addOptions(insertEquipmentName().setRequired(true)),
 
                 Commands.slash("스킬-목록", "사용 가능한 스킬을 확인합니다."),
-                Commands.slash("스킬-등록", "스킬을 등록합니다.")
+                Commands.slash("스킬-등록", "스킬을 등록합니다."),
+
+                Commands.slash("퀘스트", "퀘스트를 확인합니다."),
+                Commands.slash("퀘스트-완료", "퀘스트를 완료합니다.")
         );
 
         event.getJDA().updateCommands().addCommands(commandData).queue();

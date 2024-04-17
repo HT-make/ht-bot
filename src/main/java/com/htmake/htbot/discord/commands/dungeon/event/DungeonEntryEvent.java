@@ -72,7 +72,7 @@ public class DungeonEntryEvent {
         MessageEmbed.Field field = embed.getFields().get(3);
         dungeonUtil.saveSituation(playerId, field);
 
-        event.editMessageEmbeds(embed)
+        event.getMessage().editMessageEmbeds(embed)
                 .setActionRow(
                         Button.success("attack", "공격"),
                         Button.primary("potion-open", "포션"),

@@ -17,7 +17,12 @@ public enum ErrorCode {
     NOT_FOUND_RANDOM_SHOP("랜덤 상점을 찾을 수 없습니다.", 404),
 
     //SKILL
-    SKILL_NOT_FOUND("스킬을 찾을 수 없습니다.", 404);
+    SKILL_NOT_FOUND("스킬을 찾을 수 없습니다.", 404),
+
+    //QUEST
+    NOT_FOUND_QUEST("퀘스트를 찾을 수 없습니다.", 404),
+    NOT_ENOUGH_MONSTER_QUANTITY("몬스터 수량이 부족합니다.", 400),
+    NOT_ENOUGH_ITEM_QUANTITY("아이템 수량이 부족합니다.", 400);
 
     private final String message;
     private final int status;
