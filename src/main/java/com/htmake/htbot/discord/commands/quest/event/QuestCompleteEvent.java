@@ -8,9 +8,10 @@ import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 
 import java.awt.*;
+import java.util.Collections;
 
 public class QuestCompleteEvent {
     private final HttpClient httpClient;
@@ -19,7 +20,7 @@ public class QuestCompleteEvent {
         this.httpClient = new HttpClientImpl();
     }
 
-    public void execute(SlashCommandInteractionEvent event) {
+    public void execute(ButtonInteractionEvent event) {
         User user = event.getUser();
 
         String endPoint = "/quest/progress/{player_id}";
@@ -34,7 +35,9 @@ public class QuestCompleteEvent {
                     .setDescription("다음 퀘스트를 확인해 주세요.")
                     .build();
 
-            event.replyEmbeds(embed).queue();
+            event.getMessage().editMessageEmbeds(embed).queue();
+
+            event.getMessage().editMessageComponents(Collections.emptyList()).queue();
         } else {
             MessageEmbed embed = new EmbedBuilder()
                     .setColor(Color.ORANGE)
@@ -42,7 +45,7 @@ public class QuestCompleteEvent {
                     .setDescription("목표를 달성하고 다시 시도해 주세요.")
                     .build();
 
-            event.replyEmbeds(embed).queue();
+            event.getMessage().editMessageEmbeds(embed).queue();
         }
     }
 }
