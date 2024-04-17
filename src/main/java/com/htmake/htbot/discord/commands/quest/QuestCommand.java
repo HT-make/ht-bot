@@ -12,8 +12,10 @@ import org.springframework.stereotype.Component;
 public class QuestCommand extends ListenerAdapter {
     private final QuestEvent questEvent;
 
+    private final QuestCompleteEvent questCompleteEvent;
     public QuestCommand() {
         this.questEvent = new QuestEvent();
+        this.questCompleteEvent = new QuestCompleteEvent();
     }
 
     @Override
@@ -29,7 +31,7 @@ public class QuestCommand extends ListenerAdapter {
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
         if (event.getComponentId().equals("complete")){
-            new QuestCompleteEvent().execute(event);
+            questCompleteEvent.execute(event);
         }
     }
 }
