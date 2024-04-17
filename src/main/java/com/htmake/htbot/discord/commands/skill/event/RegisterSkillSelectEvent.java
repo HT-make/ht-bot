@@ -1,5 +1,6 @@
 package com.htmake.htbot.discord.commands.skill.event;
 
+import com.htmake.htbot.discord.commands.skill.util.SkillEventUtil;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.htmake.htbot.global.util.ObjectMapperUtil;
@@ -8,40 +9,39 @@ import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionMapping;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 
 import java.awt.*;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegisterSkillEvent {
+public class RegisterSkillSelectEvent {
 
     private final HttpClient httpClient;
+    private final SkillEventUtil skillEventUtil;
     private final ObjectMapperUtil objectMapperUtil;
 
-    public RegisterSkillEvent() {
+    public RegisterSkillSelectEvent() {
         this.httpClient = new HttpClientImpl();
+        this.skillEventUtil = new SkillEventUtil();
         this.objectMapperUtil = new ObjectMapperUtil();
     }
 
-    public void execute(SlashCommandInteractionEvent event) {
-        OptionMapping nameOption = event.getOption("스킬이름");
-        String name = nameOption.getAsString();
-
-        HttpResponse<JsonNode> response = request(event.getUser().getId(), name);
+    public void execute(StringSelectInteractionEvent event, Pair<String, String> value) {
+        HttpResponse<JsonNode> response = request(event.getUser().getId(), value);
 
         if (response.getStatus() == 200) {
-            successRegisterSkill(event);
+            requestSuccess(event);
         } else {
-            String message = response.getBody().getObject().getString("message");
-            errorMessage(event, message);
+            skillEventUtil.errorMessage(event, "스킬 등록", "스킬을 등록 할 수 없습니다.");
         }
     }
 
-    private HttpResponse<JsonNode> request(String playerId, String name) {
+    private HttpResponse<JsonNode> request(String playerId, Pair<String, String> value) {
         Map<String, Object> requestData = new HashMap<>();
-        requestData.put("name", name);
+        requestData.put("id", Long.valueOf(value.getFirst()));
+        requestData.put("number", Integer.valueOf(value.getSecond()));
 
         String endPoint = "/skill/{player_id}";
         Pair<String, String> routeParam = new Pair<>("player_id", playerId);
@@ -50,23 +50,14 @@ public class RegisterSkillEvent {
         return httpClient.sendPostRequest(endPoint, routeParam, jsonBody);
     }
 
-    private void successRegisterSkill(SlashCommandInteractionEvent event) {
+    private void requestSuccess(StringSelectInteractionEvent event) {
         MessageEmbed embed = new EmbedBuilder()
                 .setColor(Color.GREEN)
-                .setTitle("스킬 등록")
+                .setTitle(":bookmark: 스킬 등록")
                 .setDescription("스킬 등록에 성공했습니다!")
                 .build();
 
-        event.replyEmbeds(embed).queue();
-    }
-
-    private void errorMessage(SlashCommandInteractionEvent event, String message) {
-        MessageEmbed embed = new EmbedBuilder()
-                .setColor(Color.ORANGE)
-                .setTitle(":warning: 스킬 등록")
-                .setDescription(message)
-                .build();
-
-        event.replyEmbeds(embed).queue();
+        event.getMessage().editMessageComponents(Collections.emptyList()).queue();
+        event.getMessage().editMessageEmbeds(embed).queue();
     }
 }

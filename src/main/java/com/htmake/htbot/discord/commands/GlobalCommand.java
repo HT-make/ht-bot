@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.InteractionHook;
@@ -49,6 +50,11 @@ public class GlobalCommand extends ListenerAdapter {
     }
 
     @Override
+    public void onStringSelectInteraction(StringSelectInteractionEvent event) {
+        event.deferEdit().queue();
+    }
+
+    @Override
     public void onReady(@NotNull ReadyEvent event) {
         List<CommandData> commandData = List.of(
                 Commands.slash("게임-가입", "게임 기능을 사용하기 위해 가입합니다."),
@@ -64,7 +70,7 @@ public class GlobalCommand extends ListenerAdapter {
                 Commands.slash("랜덤-상점-구매", "랜덤 상점에서 장비를 구입합니다.").addOptions(insertEquipmentName().setRequired(true)),
 
                 Commands.slash("스킬-목록", "사용 가능한 스킬을 확인합니다."),
-                Commands.slash("스킬-등록", "스킬을 등록합니다.").addOptions(registerSkillName().setRequired(true))
+                Commands.slash("스킬-등록", "스킬을 등록합니다.")
         );
 
         event.getJDA().updateCommands().addCommands(commandData).queue();
@@ -76,9 +82,5 @@ public class GlobalCommand extends ListenerAdapter {
 
     private OptionData insertEquipmentName() {
         return new OptionData(OptionType.STRING, "장비이름", "장비 이름을 입력해 주세요!");
-    }
-
-    private OptionData registerSkillName() {
-        return new OptionData(OptionType.STRING, "스킬이름", "스킬 이름을 입력해 주세요!");
     }
 }

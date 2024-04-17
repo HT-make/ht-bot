@@ -9,7 +9,7 @@ import com.htmake.htbot.domain.skill.presentation.data.response.AvailableSkillLi
 import com.htmake.htbot.domain.skill.presentation.data.response.AvailableSkillResponse;
 import com.htmake.htbot.domain.skill.repository.PlayerSkillRepository;
 import com.htmake.htbot.domain.skill.repository.SkillRepository;
-import com.htmake.htbot.domain.skill.service.AvailableSkillListService;
+import com.htmake.htbot.domain.skill.service.NotRegisteredSkillListService;
 import com.htmake.htbot.global.util.SkillUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class AvailableSkillListServiceImpl implements AvailableSkillListService {
+public class NotRegisteredSkillListServiceImpl implements NotRegisteredSkillListService {
 
     private final SkillRepository skillRepository;
     private final PlayerRepository playerRepository;
@@ -42,8 +42,10 @@ public class AvailableSkillListServiceImpl implements AvailableSkillListService 
             boolean isRegistered = playerSkillList.stream()
                     .anyMatch(playerSkill -> skill.equals(playerSkill.getSkill()));
 
-            AvailableSkillResponse response = skillUtil.buildAvailableSkillResponse(skill, isRegistered);
-            responseList.add(response);
+            if (!isRegistered) {
+                AvailableSkillResponse response = skillUtil.buildAvailableSkillResponse(skill, false);
+                responseList.add(response);
+            }
         }
 
         return AvailableSkillListResponse.builder()
