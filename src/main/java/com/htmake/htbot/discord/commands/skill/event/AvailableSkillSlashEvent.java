@@ -15,12 +15,12 @@ import org.json.JSONArray;
 import java.awt.*;
 import java.util.List;
 
-public class AvailableSkillListEvent {
+public class AvailableSkillSlashEvent {
 
     private final HttpClient httpClient;
     private final SkillEventUtil skillEventUtil;
 
-    public AvailableSkillListEvent() {
+    public AvailableSkillSlashEvent() {
         this.httpClient = new HttpClientImpl();
         this.skillEventUtil = new SkillEventUtil();
     }
