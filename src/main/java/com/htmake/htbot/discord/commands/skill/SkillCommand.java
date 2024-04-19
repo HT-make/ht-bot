@@ -45,21 +45,23 @@ public class SkillCommand extends ListenerAdapter {
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         List<String> componentList = List.of(event.getComponentId().split("-"));
-        String component = componentList.get(0);
 
-        if (component.equals("skill")) {
-            registerSkillButtonEvent.execute(event, componentList.get(1));
+        if (componentList.get(0).equals("skill")) {
+            if (componentList.get(1).equals("register")) {
+                registerSkillButtonEvent.execute(event, componentList.get(2));
+            }
         }
     }
 
     @Override
     public void onStringSelectInteraction(@NotNull StringSelectInteractionEvent event) {
         List<String> componentList = List.of(event.getValues().get(0).split("-"));
-        String component = componentList.get(0);
 
-        if (component.equals("skill")) {
-            Pair<String, String> value = new Pair<>(componentList.get(1), componentList.get(2));
-            registerSkillSelectEvent.execute(event, value);
+        if (componentList.get(0).equals("skill")) {
+            if (componentList.get(1).equals("register")) {
+                Pair<String, String> value = new Pair<>(componentList.get(2), componentList.get(3));
+                registerSkillSelectEvent.execute(event, value);
+            }
         }
     }
 }

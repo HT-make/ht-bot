@@ -63,12 +63,12 @@ public class DungeonCommand extends ListenerAdapter {
         StringSelectMenu menu = StringSelectMenu.create("dungeonMenu")
                 .setPlaceholder("던전 선택")
                 .addOptions(Arrays.asList(
-                        SelectOption.of("드넓은 초원 | 권장 레벨 1~10", "enter-dungeon1"),
-                        SelectOption.of("깊은 동굴 | 권장 레벨 10~20", "enter-dungeon2"),
-                        SelectOption.of("끈적이는 늪 | 권장 레벨 20~30", "enter-dungeon3"),
-                        SelectOption.of("어두운 숲 | 권장 레벨 30~40", "enter-dungeon4"),
-                        SelectOption.of("몰락한 성 | 권장 레벨 40~50", "enter-dungeon5"),
-                        SelectOption.of("용암 지대 | 권장 레벨 50~60", "enter-dungeon6")
+                        SelectOption.of("드넓은 초원 | 권장 레벨 1~10", "dungeon-enter-dungeon1"),
+                        SelectOption.of("깊은 동굴 | 권장 레벨 10~20", "dungeon-enter-dungeon2"),
+                        SelectOption.of("끈적이는 늪 | 권장 레벨 20~30", "dungeon-enter-dungeon3"),
+                        SelectOption.of("어두운 숲 | 권장 레벨 30~40", "dungeon-enter-dungeon4"),
+                        SelectOption.of("몰락한 성 | 권장 레벨 40~50", "dungeon-enter-dungeon5"),
+                        SelectOption.of("용암 지대 | 권장 레벨 50~60", "dungeon-enter-dungeon6")
                 ))
                 .build();
 
@@ -80,21 +80,25 @@ public class DungeonCommand extends ListenerAdapter {
 
     @Override
     public void onStringSelectInteraction(StringSelectInteractionEvent event) {
-        List<String> components = List.of(event.getValues().get(0).split("-"));
+        List<String> componentList = List.of(event.getValues().get(0).split("-"));
 
-        if (components.get(0).equals("enter")) {
-            dungeonEntryEvent.execute(event, components.get(1));
+        if (componentList.get(0).equals("dungeon")) {
+            if (componentList.get(1).equals("enter")) {
+                dungeonEntryEvent.execute(event, componentList.get(2));
+            }
         }
     }
 
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
-        String component = event.getComponentId();
+        List<String> componentList = List.of(event.getComponentId().split("-"));
 
-        if (component.equals("next")) {
-            nextDungeonEntryEvent.execute(event);
-        } else if (component.equals("close")) {
-            dungeonCloseEvent.execute(event);
+        if (componentList.get(0).equals("dungeon")) {
+            if (componentList.get(1).equals("next")) {
+                nextDungeonEntryEvent.execute(event);
+            } else if (componentList.get(1).equals("close")) {
+                dungeonCloseEvent.execute(event);
+            }
         }
     }
 }

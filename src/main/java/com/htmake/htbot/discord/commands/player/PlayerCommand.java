@@ -43,11 +43,12 @@ public class PlayerCommand extends ListenerAdapter {
 
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
-        List<String> components = List.of(event.getComponentId().split("-"));
-        String component = components.get(0);
+        List<String> componentList = List.of(event.getComponentId().split("-"));
 
-        if (component.equals("job")) {
-            new PlayerJoinEvent(event, httpClient, components.get(1));
+        if (componentList.get(0).equals("player")) {
+            if (componentList.get(1).equals("job")) {
+                new PlayerJoinEvent(event, httpClient, componentList.get(2));
+            }
         }
     }
 
@@ -63,9 +64,9 @@ public class PlayerCommand extends ListenerAdapter {
 
         event.replyEmbeds(embed)
                 .setActionRow(
-                        Button.primary("job-warrior", "전사"),
-                        Button.primary("job-archer", "궁수"),
-                        Button.primary("job-wizard", "마법사")
+                        Button.primary("player-job-warrior", "전사"),
+                        Button.primary("player-job-archer", "궁수"),
+                        Button.primary("player-job-wizard", "마법사")
                 )
                 .queue();
     }
