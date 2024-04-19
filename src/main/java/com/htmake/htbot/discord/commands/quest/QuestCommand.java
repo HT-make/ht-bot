@@ -1,7 +1,7 @@
 package com.htmake.htbot.discord.commands.quest;
 
-import com.htmake.htbot.discord.commands.quest.event.QuestCompleteEvent;
-import com.htmake.htbot.discord.commands.quest.event.QuestEvent;
+import com.htmake.htbot.discord.commands.quest.event.QuestCompleteButtonEvent;
+import com.htmake.htbot.discord.commands.quest.event.QuestSlashEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -12,12 +12,12 @@ import java.util.List;
 
 @Component
 public class QuestCommand extends ListenerAdapter {
-    private final QuestEvent questEvent;
+    private final QuestSlashEvent questSlashEvent;
 
-    private final QuestCompleteEvent questCompleteEvent;
+    private final QuestCompleteButtonEvent questCompleteButtonEvent;
     public QuestCommand() {
-        this.questEvent = new QuestEvent();
-        this.questCompleteEvent = new QuestCompleteEvent();
+        this.questSlashEvent = new QuestSlashEvent();
+        this.questCompleteButtonEvent = new QuestCompleteButtonEvent();
     }
 
     @Override
@@ -25,10 +25,9 @@ public class QuestCommand extends ListenerAdapter {
         String command = event.getName();
 
         if (command.equals("퀘스트")) {
-            questEvent.execute(event);
+            questSlashEvent.execute(event);
         }
     }
-
 
     @Override
     public void onButtonInteraction(ButtonInteractionEvent event) {
@@ -36,7 +35,7 @@ public class QuestCommand extends ListenerAdapter {
 
         if (componentList.get(0).equals("quest")){
             if (componentList.get(1).equals("complete")) {
-                questCompleteEvent.execute(event);
+                questCompleteButtonEvent.execute(event);
             }
         }
     }

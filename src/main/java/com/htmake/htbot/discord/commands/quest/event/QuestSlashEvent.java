@@ -7,61 +7,68 @@ import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.json.JSONObject;
 
 import java.awt.*;
 
-public class QuestEvent{
+public class QuestSlashEvent {
+
     private final HttpClient httpClient;
 
-    public QuestEvent() {
+    public QuestSlashEvent() {
         this.httpClient = new HttpClientImpl();
     }
 
     public void execute(SlashCommandInteractionEvent event) {
-        User user = event.getUser();
-
-        String endPoint = "/quest/{player_id}";
-        Pair<String, String> routeParam = new Pair<>("player_id", user.getId());
-
-        HttpResponse<JsonNode> response = httpClient.sendGetRequest(endPoint, routeParam);
+        HttpResponse<JsonNode> response = request(event.getUser().getId());
         
         if (response.getStatus() == 200) {
             JSONObject questData = response.getBody().getObject();
-
-            MessageEmbed embed = buildEmbed(questData);
-
-            int monsterQuantity = questData.getInt("monsterQuantity");
-            int targetMonsterQuantity = questData.getInt("targetMonsterQuantity");
-            int itemQuantity = questData.getInt("itemQuantity");
-            int targetItemQuantity = questData.getInt("targetItemQuantity");
-
-            Button completeButton = Button.primary("quest-complete", "완료").asDisabled();
-
-            if (monsterQuantity >= targetMonsterQuantity && itemQuantity >= targetItemQuantity) {
-                completeButton = Button.primary("quest-complete", "완료").asEnabled();
-            }
-
-            event.replyEmbeds(embed)
-                    .addActionRow(
-                            completeButton,
-                            Button.danger("cancel", "닫기")
-                    )
-                    .queue();
-
+            requestSuccess(event, questData);
         } else {
-            MessageEmbed embed = new EmbedBuilder()
-                    .setColor(Color.RED)
-                    .setTitle(":warning: 퀘스트를 불러올 수 없습니다.")
-                    .setDescription("다시 한번 시도해 주세요.")
-                    .build();
-
-            event.replyEmbeds(embed).queue();
+            requestFail(event);
         }
         
+    }
+
+    private HttpResponse<JsonNode> request(String playerId) {
+        String endPoint = "/quest/{player_id}";
+        Pair<String, String> routeParam = new Pair<>("player_id", playerId);
+        return httpClient.sendGetRequest(endPoint, routeParam);
+    }
+
+    private void requestSuccess(SlashCommandInteractionEvent event, JSONObject questData) {
+        MessageEmbed embed = buildEmbed(questData);
+
+        int monsterQuantity = questData.getInt("monsterQuantity");
+        int targetMonsterQuantity = questData.getInt("targetMonsterQuantity");
+        int itemQuantity = questData.getInt("itemQuantity");
+        int targetItemQuantity = questData.getInt("targetItemQuantity");
+
+        Button completeButton = Button.primary("quest-complete", "완료").asDisabled();
+
+        if (monsterQuantity >= targetMonsterQuantity && itemQuantity >= targetItemQuantity) {
+            completeButton = Button.primary("quest-complete", "완료").asEnabled();
+        }
+
+        event.replyEmbeds(embed)
+                .addActionRow(
+                        completeButton,
+                        Button.danger("cancel", "닫기")
+                )
+                .queue();
+    }
+
+    private void requestFail(SlashCommandInteractionEvent event) {
+        MessageEmbed embed = new EmbedBuilder()
+                .setColor(Color.RED)
+                .setTitle(":warning: 퀘스트를 불러올 수 없습니다.")
+                .setDescription("다시 한번 시도해 주세요.")
+                .build();
+
+        event.replyEmbeds(embed).queue();
     }
 
     private MessageEmbed buildEmbed(JSONObject questData) {
@@ -91,7 +98,6 @@ public class QuestEvent{
 
         return sb.toString();
     }
-
 }
 
 
