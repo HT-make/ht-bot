@@ -74,9 +74,9 @@ public class DungeonEntryEvent {
 
         event.getMessage().editMessageEmbeds(embed)
                 .setActionRow(
-                        Button.success("attack", "공격"),
-                        Button.primary("potion-open", "포션"),
-                        Button.danger("run", "후퇴")
+                        Button.success("battle-attack", "공격"),
+                        Button.primary("battle-potion-open", "포션"),
+                        Button.danger("battle-retreat", "후퇴")
                 )
                 .queue();
 

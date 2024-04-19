@@ -53,13 +53,13 @@ public class RegisterSkillSlashEvent {
 
         event.replyEmbeds(embed)
                 .addActionRow(
-                        Button.primary("skill-1", "스킬1"),
-                        Button.primary("skill-2", "스킬2"),
-                        Button.primary("skill-3", "스킬3")
+                        Button.primary("skill-register-1", "스킬1"),
+                        Button.primary("skill-register-2", "스킬2"),
+                        Button.primary("skill-register-3", "스킬3")
                 )
                 .addActionRow(
-                        Button.primary("skill-4", "스킬4"),
-                        Button.primary("skill-5", "스킬5"),
+                        Button.primary("skill-register-4", "스킬4"),
+                        Button.primary("skill-register-5", "스킬5"),
                         Button.danger("cancel", "닫기")
                 )
                 .queue();

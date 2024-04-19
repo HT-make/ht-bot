@@ -78,7 +78,7 @@ public class RegisterSkillButtonEvent {
         List<SelectOption> optionList = new ArrayList<>();
 
         for (AvailableSkillResponse skill : skillList) {
-            String value = String.format("skill-%d-%s", skill.getId(), number);
+            String value = String.format("skill-register-%d-%s", skill.getId(), number);
             SelectOption option = SelectOption.of(skill.getName(), value);
             optionList.add(option);
         }

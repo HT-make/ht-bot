@@ -21,9 +21,9 @@ public class BattlePotionEvent {
 
         message.editMessageEmbeds(embed)
                 .setActionRow(
-                        Button.primary("potion-healing", "체력 포션"),
-                        Button.primary("potion-mana", "마나 포션"),
-                        Button.danger("potion-close", "닫기")
+                        Button.primary("battle-potion-healing", "체력 포션"),
+                        Button.primary("battle-potion-mana", "마나 포션"),
+                        Button.danger("battle-potion-close", "닫기")
                 ).queue();
     }
 
@@ -33,9 +33,9 @@ public class BattlePotionEvent {
 
         message.editMessageEmbeds(embed)
                 .setActionRow(
-                        Button.success("attack", "공격"),
-                        Button.primary("potion-open", "포션"),
-                        Button.danger("run", "후퇴")
+                        Button.success("battle-attack", "공격"),
+                        Button.primary("battle-potion-open", "포션"),
+                        Button.danger("battle-retreat", "후퇴")
                 )
                 .queue();
     }
