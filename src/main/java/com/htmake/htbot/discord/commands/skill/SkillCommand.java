@@ -1,6 +1,6 @@
 package com.htmake.htbot.discord.commands.skill;
 
-import com.htmake.htbot.discord.commands.skill.event.AvailableSkillListEvent;
+import com.htmake.htbot.discord.commands.skill.event.AvailableSkillSlashEvent;
 import com.htmake.htbot.discord.commands.skill.event.RegisterSkillButtonEvent;
 import com.htmake.htbot.discord.commands.skill.event.RegisterSkillSelectEvent;
 import com.htmake.htbot.discord.commands.skill.event.RegisterSkillSlashEvent;
@@ -17,14 +17,14 @@ import java.util.List;
 @Component
 public class SkillCommand extends ListenerAdapter {
 
-    private final AvailableSkillListEvent availableSkillListEvent;
+    private final AvailableSkillSlashEvent availableSkillSlashEvent;
 
     private final RegisterSkillSlashEvent registerSkillSlashEvent;
     private final RegisterSkillButtonEvent registerSkillButtonEvent;
     private final RegisterSkillSelectEvent registerSkillSelectEvent;
 
     public SkillCommand() {
-        this.availableSkillListEvent = new AvailableSkillListEvent();
+        this.availableSkillSlashEvent = new AvailableSkillSlashEvent();
 
         this.registerSkillSlashEvent = new RegisterSkillSlashEvent();
         this.registerSkillButtonEvent = new RegisterSkillButtonEvent();
@@ -36,7 +36,7 @@ public class SkillCommand extends ListenerAdapter {
         String command = event.getName();
 
         if (command.equals("스킬-목록")) {
-            availableSkillListEvent.execute(event);
+            availableSkillSlashEvent.execute(event);
         } else if (command.equals("스킬-등록")) {
             registerSkillSlashEvent.execute(event);
         }

@@ -1,7 +1,6 @@
 package com.htmake.htbot.domain.quest.entity;
 
 import com.htmake.htbot.domain.player.entity.Player;
-import com.htmake.htbot.domain.quest.entity.MainQuest;
 import jakarta.persistence.*;
 import lombok.*;
 
