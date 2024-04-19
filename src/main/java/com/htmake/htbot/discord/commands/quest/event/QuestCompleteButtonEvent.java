@@ -43,9 +43,9 @@ public class QuestCompleteButtonEvent {
                 .setDescription("다음 퀘스트를 확인해 주세요.")
                 .build();
 
-        event.getMessage().editMessageEmbeds(embed).queue();
-
         event.getMessage().editMessageComponents(Collections.emptyList()).queue();
+
+        event.getMessage().editMessageEmbeds(embed).queue();
     }
 
     public void requestFail(ButtonInteractionEvent event) {
@@ -54,6 +54,8 @@ public class QuestCompleteButtonEvent {
                 .setTitle(":warning: 퀘스트를 완료하지 못했습니다.")
                 .setDescription("목표를 달성하고 다시 시도해 주세요.")
                 .build();
+
+        event.getMessage().editMessageComponents(Collections.emptyList()).queue();
 
         event.getMessage().editMessageEmbeds(embed).queue();
     }
