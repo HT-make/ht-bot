@@ -44,8 +44,8 @@ public class BattleResultEvent {
 
         message.editMessageEmbeds(newEmbed)
                 .setActionRow(
-                        net.dv8tion.jda.api.interactions.components.buttons.Button.success("next", "전진하기"),
-                        Button.danger("close", "돌아가기")
+                        Button.success("dungeon-next", "전진하기"),
+                        Button.danger("dungeon-close", "돌아가기")
                 )
                 .queue();
     }

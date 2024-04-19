@@ -39,25 +39,18 @@ public class QuestEvent{
             int itemQuantity = questData.getInt("itemQuantity");
             int targetItemQuantity = questData.getInt("targetItemQuantity");
 
-            Button completeButton = Button.primary("complete", "완료").asDisabled();
+            Button completeButton = Button.primary("quest-complete", "완료").asDisabled();
 
-            if (monsterQuantity >= targetMonsterQuantity && itemQuantity >= targetItemQuantity){
-                completeButton = Button.primary("complete", "완료").asEnabled();
-
-                event.replyEmbeds(embed)
-                        .addActionRow(
-                                completeButton,
-                                Button.danger("cancel", "닫기")
-                        )
-                        .queue();
-            } else {
-                event.replyEmbeds(embed)
-                        .addActionRow(
-                                completeButton,
-                                Button.danger("cancel", "닫기")
-                        )
-                        .queue();
+            if (monsterQuantity >= targetMonsterQuantity && itemQuantity >= targetItemQuantity) {
+                completeButton = Button.primary("quest-complete", "완료").asEnabled();
             }
+
+            event.replyEmbeds(embed)
+                    .addActionRow(
+                            completeButton,
+                            Button.danger("cancel", "닫기")
+                    )
+                    .queue();
 
         } else {
             MessageEmbed embed = new EmbedBuilder()

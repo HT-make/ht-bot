@@ -20,14 +20,14 @@ public class BattleCommand extends ListenerAdapter {
 
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+        List<String> componentList = List.of(event.getComponentId().split("-"));
 
-        List<String> components = List.of(event.getComponentId().split("-"));
-        String component = components.get(0);
-
-        if (component.equals("attack")) {
-            playerAttackEvent.execute(event);
-        } else if (component.equals("potion")) {
-            new BattlePotionEvent(event, components.get(1));
+        if (componentList.get(0).equals("battle")) {
+            if (componentList.get(1).equals("attack")) {
+                playerAttackEvent.execute(event);
+            } else if (componentList.get(1).equals("potion")) {
+                new BattlePotionEvent(event, componentList.get(2));
+            }
         }
     }
 }
