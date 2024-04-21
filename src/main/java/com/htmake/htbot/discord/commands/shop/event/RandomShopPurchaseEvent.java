@@ -3,7 +3,7 @@ package com.htmake.htbot.discord.commands.shop.event;
 import com.htmake.htbot.discord.commands.shop.util.ShopUtil;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
-import com.htmake.htbot.global.util.ObjectMapperUtil;
+import com.htmake.htbot.discord.util.ObjectMapperUtil;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;

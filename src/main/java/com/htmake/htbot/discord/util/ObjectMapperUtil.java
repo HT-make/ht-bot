@@ -1,4 +1,4 @@
-package com.htmake.htbot.global.util;
+package com.htmake.htbot.discord.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
