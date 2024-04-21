@@ -12,7 +12,6 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 
 import java.awt.*;
-import java.util.Collections;
 import java.util.List;
 
 public class BattleUtil {
@@ -75,17 +74,6 @@ public class BattleUtil {
                 .build();
 
         event.getMessage().editMessageEmbeds(newEmbed).queue();
-    }
-
-    public void battleError(ButtonInteractionEvent event) {
-        event.getMessage().editMessageComponents(Collections.emptyList()).queue();
-        event.getMessage().editMessageEmbeds(new EmbedBuilder()
-                        .setColor(Color.ORANGE)
-                        .setTitle(":warning: 전투 오류")
-                        .setDescription("전투 처리를 실패했습니다.")
-                        .build()
-                )
-                .queue();
     }
 
     public void removeCurrentBattleCache(String playerId) {
