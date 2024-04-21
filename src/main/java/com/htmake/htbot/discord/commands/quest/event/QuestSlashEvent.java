@@ -31,7 +31,7 @@ public class QuestSlashEvent {
             JSONObject questData = response.getBody().getObject();
             requestSuccess(event, questData);
         } else {
-            errorUtil.sendError(event, "퀘스트를 불어올 수 없습니다.", "잠시 후 다시 이용해주세요.");
+            errorUtil.sendError(event, "퀘스트를 불러올 수 없습니다.", "잠시 후 다시 이용해주세요.");
         }
     }
 
