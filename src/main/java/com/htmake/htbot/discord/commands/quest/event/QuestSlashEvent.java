@@ -1,5 +1,6 @@
 package com.htmake.htbot.discord.commands.quest.event;
 
+import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
@@ -16,9 +17,11 @@ import java.awt.*;
 public class QuestSlashEvent {
 
     private final HttpClient httpClient;
+    private final ErrorUtil errorUtil;
 
     public QuestSlashEvent() {
         this.httpClient = new HttpClientImpl();
+        this.errorUtil = new ErrorUtil();
     }
 
     public void execute(SlashCommandInteractionEvent event) {
@@ -28,9 +31,8 @@ public class QuestSlashEvent {
             JSONObject questData = response.getBody().getObject();
             requestSuccess(event, questData);
         } else {
-            requestFail(event);
+            errorUtil.sendError(event, "퀘스트를 불러올 수 없습니다.", "잠시 후 다시 이용해주세요.");
         }
-        
     }
 
     private HttpResponse<JsonNode> request(String playerId) {
@@ -59,16 +61,6 @@ public class QuestSlashEvent {
                         Button.danger("cancel", "닫기")
                 )
                 .queue();
-    }
-
-    private void requestFail(SlashCommandInteractionEvent event) {
-        MessageEmbed embed = new EmbedBuilder()
-                .setColor(Color.RED)
-                .setTitle(":warning: 퀘스트를 불러올 수 없습니다.")
-                .setDescription("다시 한번 시도해 주세요.")
-                .build();
-
-        event.replyEmbeds(embed).queue();
     }
 
     private MessageEmbed buildEmbed(JSONObject questData) {

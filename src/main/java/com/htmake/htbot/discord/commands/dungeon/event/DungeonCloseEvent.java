@@ -2,6 +2,7 @@ package com.htmake.htbot.discord.commands.dungeon.event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.global.cache.Caches;
 import com.htmake.htbot.discord.commands.dungeon.cache.DungeonStatusCache;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonStatus;
@@ -27,11 +28,13 @@ import java.util.Map;
 public class DungeonCloseEvent {
 
     private final HttpClient httpClient;
+    private final ErrorUtil errorUtil;
 
     private final DungeonStatusCache dungeonStatusCache;
 
     public DungeonCloseEvent() {
         this.httpClient = new HttpClientImpl();
+        this.errorUtil = new ErrorUtil();
 
         this.dungeonStatusCache = Caches.dungeonStatusCache;
     }
@@ -48,7 +51,7 @@ public class DungeonCloseEvent {
             if (response.getStatus() == 200) {
                 handleSuccessResponse(event);
             } else {
-                handleErrorResponse(event, response);
+                errorUtil.sendError(event.getMessage(), "던전 퇴장", "던전 퇴장에 실패하였습니다.");
             }
         }
 
@@ -80,25 +83,10 @@ public class DungeonCloseEvent {
         MessageEmbed embed = new EmbedBuilder()
                 .setColor(Color.GREEN)
                 .setTitle("던전 퇴장")
-                .setDescription("던전에서 퇴장하였습니다!")
+                .setDescription("던전에서 퇴장하였습니다.")
                 .build();
 
         message.editMessageComponents(Collections.emptyList()).queue();
         message.editMessageEmbeds(embed).queue();
-    }
-
-    private void handleErrorResponse(ButtonInteractionEvent event, HttpResponse<JsonNode> response) {
-        Message message = event.getMessage();
-
-        MessageEmbed embed = new EmbedBuilder()
-                .setColor(Color.ORANGE)
-                .setTitle(":warning: 던전 퇴장")
-                .setDescription("던전 퇴장에 실패하였습니다!")
-                .build();
-
-        message.editMessageComponents(Collections.emptyList()).queue();
-        message.editMessageEmbeds(embed).queue();
-
-        log.error(String.valueOf(response.getBody()));
     }
 }

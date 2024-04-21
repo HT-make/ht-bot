@@ -1,9 +1,9 @@
 package com.htmake.htbot.discord.commands.skill.event;
 
-import com.htmake.htbot.discord.commands.skill.util.SkillEventUtil;
+import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
-import com.htmake.htbot.global.util.ObjectMapperUtil;
+import com.htmake.htbot.discord.util.ObjectMapperUtil;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
@@ -19,13 +19,13 @@ import java.util.Map;
 public class RegisterSkillSelectEvent {
 
     private final HttpClient httpClient;
-    private final SkillEventUtil skillEventUtil;
     private final ObjectMapperUtil objectMapperUtil;
+    private final ErrorUtil errorUtil;
 
     public RegisterSkillSelectEvent() {
         this.httpClient = new HttpClientImpl();
-        this.skillEventUtil = new SkillEventUtil();
         this.objectMapperUtil = new ObjectMapperUtil();
+        this.errorUtil = new ErrorUtil();
     }
 
     public void execute(StringSelectInteractionEvent event, Pair<String, String> value) {
@@ -34,7 +34,7 @@ public class RegisterSkillSelectEvent {
         if (response.getStatus() == 200) {
             requestSuccess(event);
         } else {
-            skillEventUtil.errorMessage(event, "스킬 등록", "스킬을 등록 할 수 없습니다.");
+            errorUtil.sendError(event.getMessage(), "스킬 등록", "스킬을 등록 할 수 없습니다.");
         }
     }
 

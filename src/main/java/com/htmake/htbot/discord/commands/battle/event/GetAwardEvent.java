@@ -2,44 +2,44 @@ package com.htmake.htbot.discord.commands.battle.event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.global.cache.Caches;
 import com.htmake.htbot.discord.commands.dungeon.cache.DungeonStatusCache;
 import com.htmake.htbot.discord.commands.dungeon.data.GetItem;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonStatus;
-import com.htmake.htbot.discord.commands.battle.util.BattleUtil;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
-import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.*;
 
-@Slf4j
 public class GetAwardEvent {
 
     private final HttpClient httpClient;
-    private final BattleUtil battleUtil;
+    private final ErrorUtil errorUtil;
     private final BattleResultEvent battleResultEvent;
 
     private final DungeonStatusCache dungeonStatusCache;
 
     public GetAwardEvent() {
         this.httpClient = new HttpClientImpl();
-        this.battleUtil = new BattleUtil();
+        this.errorUtil = new ErrorUtil();
         this.battleResultEvent = new BattleResultEvent();
 
         this.dungeonStatusCache = Caches.dungeonStatusCache;
     }
 
     public void execute(ButtonInteractionEvent event, String monsterId) {
-        JSONObject monsterLoot = getMonsterLoot(event, monsterId);
+        JSONObject monsterLoot = getMonsterLoot(monsterId);
 
-        if (monsterLoot == null) battleUtil.battleError(event);
+        if (monsterLoot == null) {
+            errorUtil.sendError(event.getMessage(), "전투", "보상을 획득하지 못했습니다.");
+        }
 
         List<GetItem> getItemList = updateGetItem(event.getUser().getId(), monsterLoot);
 
@@ -48,7 +48,7 @@ public class GetAwardEvent {
         battleResultEvent.execute(event, levelUp, monsterLoot, getItemList);
     }
 
-    private JSONObject getMonsterLoot(ButtonInteractionEvent event, String monsterId) {
+    private JSONObject getMonsterLoot(String monsterId) {
         String endPoint = "/monster/loot/{monster_id}";
         Pair<String, String> routeParam = new Pair<>("monster_id", monsterId);
 
@@ -57,9 +57,6 @@ public class GetAwardEvent {
         if (response.getStatus() == 200) {
             return response.getBody().getObject();
         }
-
-        log.error(String.valueOf(response.getBody()));
-        battleUtil.battleError(event);
 
         return null;
     }
@@ -126,8 +123,7 @@ public class GetAwardEvent {
         if (response.getStatus() == 200) {
             return response.getBody().getObject();
         } else {
-            log.error(String.valueOf(response.getBody()));
-            battleUtil.battleError(event);
+            errorUtil.sendError(event.getMessage(), "전투", "보상 획득에 실패하였습니다.");
         }
 
         return null;

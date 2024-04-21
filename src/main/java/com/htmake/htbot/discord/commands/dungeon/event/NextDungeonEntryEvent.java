@@ -1,5 +1,6 @@
 package com.htmake.htbot.discord.commands.dungeon.event;
 
+import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.global.cache.Caches;
 import com.htmake.htbot.discord.commands.dungeon.cache.DungeonStatusCache;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonStatus;
@@ -10,27 +11,25 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Collections;
 
 @Slf4j
 public class NextDungeonEntryEvent {
 
     private final DungeonUtil dungeonUtil;
+    private final ErrorUtil errorUtil;
 
     private final DungeonStatusCache dungeonStatusCache;
 
     public NextDungeonEntryEvent() {
         this.dungeonUtil = new DungeonUtil();
+        this.errorUtil = new ErrorUtil();
 
         this.dungeonStatusCache = Caches.dungeonStatusCache;
     }
@@ -48,7 +47,7 @@ public class NextDungeonEntryEvent {
         if (response.getStatus() == 200) {
             handleSuccessfulResponse(event, response, stage);
         } else {
-            handleErrorResponse(event, response);
+            errorUtil.sendError(event.getMessage(), "던전 입장", "던전에 입장할 수 없습니다.");
         }
     }
 
@@ -69,7 +68,7 @@ public class NextDungeonEntryEvent {
         dungeonUtil.savePlayerStatus(playerId, playerObject);
 
         if (playerObject == null) {
-            handleErrorResponse(event, response);
+            errorUtil.sendError(event.getMessage(), "던전 입장", "플레이어를 찾을 수 없습니다.");
         }
 
         Pair<Monster, MonsterSkill> monster = dungeonUtil.randomMonster(monsterList, stage);
@@ -95,20 +94,5 @@ public class NextDungeonEntryEvent {
         DungeonStatus dungeonStatus = dungeonStatusCache.get(playerId);
         dungeonStatus.setStage(stage);
         dungeonStatusCache.put(playerId, dungeonStatus);
-    }
-
-    private void handleErrorResponse(ButtonInteractionEvent event, HttpResponse<JsonNode> response) {
-        Message message = event.getMessage();
-
-        MessageEmbed embed = new EmbedBuilder()
-                .setColor(Color.ORANGE)
-                .setTitle(":warning: 던전 입장")
-                .setDescription("던전 입장에 실패하였습니다!")
-                .build();
-
-        message.editMessageComponents(Collections.emptyList()).queue();
-        message.editMessageEmbeds(embed).queue();
-
-        log.error(String.valueOf(response.getBody()));
     }
 }

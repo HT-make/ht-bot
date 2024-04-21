@@ -1,6 +1,7 @@
 package com.htmake.htbot.discord.commands.skill.event;
 
 import com.htmake.htbot.discord.commands.skill.util.SkillEventUtil;
+import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.domain.skill.presentation.data.response.AvailableSkillResponse;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
@@ -19,10 +20,12 @@ public class AvailableSkillSlashEvent {
 
     private final HttpClient httpClient;
     private final SkillEventUtil skillEventUtil;
+    private final ErrorUtil errorUtil;
 
     public AvailableSkillSlashEvent() {
         this.httpClient = new HttpClientImpl();
         this.skillEventUtil = new SkillEventUtil();
+        this.errorUtil = new ErrorUtil();
     }
 
     public void execute(SlashCommandInteractionEvent event) {
@@ -32,7 +35,7 @@ public class AvailableSkillSlashEvent {
             JSONArray skillArray = response.getBody().getObject().getJSONArray("skillResponseList");
             requestSuccess(event, skillArray);
         } else {
-            skillEventUtil.errorMessage(event, "스킬 목록", "스킬 목록을 불러올 수 없습니다.");
+            errorUtil.sendError(event, "스킬 목록", "스킬 목록을 불러올 수 없습니다.");
         }
     }
 

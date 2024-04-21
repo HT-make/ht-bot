@@ -1,6 +1,6 @@
 package com.htmake.htbot.discord.commands.shop.event;
 
-import com.htmake.htbot.discord.commands.shop.util.ShopUtil;
+import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.domain.shop.entity.RandomShop;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
@@ -23,7 +23,7 @@ import java.util.List;
 public class RandomShopEvent {
 
     private final HttpClient httpClient;
-    private final ShopUtil shopUtil;
+    private final ErrorUtil errorUtil;
 
     private final List<String> itemType = new ArrayList<>() {{
             add(":shield: 방어구");
@@ -32,7 +32,7 @@ public class RandomShopEvent {
 
     public RandomShopEvent() {
         this.httpClient = new HttpClientImpl();
-        this.shopUtil = new ShopUtil();
+        this.errorUtil = new ErrorUtil();
     }
 
     public void execute(SlashCommandInteractionEvent event) {
@@ -56,9 +56,8 @@ public class RandomShopEvent {
                     .addActionRow(Button.danger("cancel", "닫기"))
                     .queue();
         } else {
-            String title = "랜덤 상점";
-            String message = response.getBody().getObject().getString("message");
-            shopUtil.errorMessage(event, title, message);
+            String description = response.getBody().getObject().getString("message");
+            errorUtil.sendError(event, "랜덤 상점", description);
         }
     }
 
