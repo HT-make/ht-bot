@@ -1,6 +1,7 @@
 package com.htmake.htbot.discord.commands.skill.event;
 
 import com.htmake.htbot.discord.commands.skill.util.SkillEventUtil;
+import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.domain.skill.presentation.data.response.AvailableSkillResponse;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
@@ -22,10 +23,12 @@ public class RegisterSkillButtonEvent {
 
     private final HttpClient httpClient;
     private final SkillEventUtil skillEventUtil;
+    private final ErrorUtil errorUtil;
 
     public RegisterSkillButtonEvent() {
         this.httpClient = new HttpClientImpl();
         this.skillEventUtil = new SkillEventUtil();
+        this.errorUtil = new ErrorUtil();
     }
 
     public void execute(ButtonInteractionEvent event, String number) {
@@ -35,7 +38,7 @@ public class RegisterSkillButtonEvent {
             JSONArray skillArray = response.getBody().getObject().getJSONArray("skillResponseList");
             requestSuccess(event, skillArray, number);
         } else {
-            skillEventUtil.errorMessage(event, "스킬 등록", "스킬 목록을 불러오지 못했습니다.");
+            errorUtil.sendError(event.getMessage(), "스킬 등록", "스킬 목록을 불러오지 못했습니다.");
         }
     }
 

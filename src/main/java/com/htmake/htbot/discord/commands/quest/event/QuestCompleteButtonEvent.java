@@ -1,5 +1,6 @@
 package com.htmake.htbot.discord.commands.quest.event;
 
+import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
@@ -15,9 +16,11 @@ import java.util.Collections;
 public class QuestCompleteButtonEvent {
 
     private final HttpClient httpClient;
+    private final ErrorUtil errorUtil;
 
     public QuestCompleteButtonEvent() {
         this.httpClient = new HttpClientImpl();
+        this.errorUtil = new ErrorUtil();
     }
 
     public void execute(ButtonInteractionEvent event) {
@@ -26,7 +29,7 @@ public class QuestCompleteButtonEvent {
         if (response.getStatus() == 200) {
             requestSuccess(event);
         } else {
-            requestFail(event);
+            errorUtil.sendError(event.getMessage(), "퀘스트를 완료하지 못했습니다.", "목표를 달성하고 다시 시도해 주세요.");
         }
     }
 
@@ -41,18 +44,6 @@ public class QuestCompleteButtonEvent {
                 .setColor(Color.GREEN)
                 .setTitle(":tada: 퀘스트를 완료했습니다.")
                 .setDescription("다음 퀘스트를 확인해 주세요.")
-                .build();
-
-        event.getMessage().editMessageComponents(Collections.emptyList()).queue();
-
-        event.getMessage().editMessageEmbeds(embed).queue();
-    }
-
-    public void requestFail(ButtonInteractionEvent event) {
-        MessageEmbed embed = new EmbedBuilder()
-                .setColor(Color.ORANGE)
-                .setTitle(":warning: 퀘스트를 완료하지 못했습니다.")
-                .setDescription("목표를 달성하고 다시 시도해 주세요.")
                 .build();
 
         event.getMessage().editMessageComponents(Collections.emptyList()).queue();

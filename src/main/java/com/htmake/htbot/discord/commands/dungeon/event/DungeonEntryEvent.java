@@ -1,5 +1,6 @@
 package com.htmake.htbot.discord.commands.dungeon.event;
 
+import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.global.cache.Caches;
 import com.htmake.htbot.discord.commands.dungeon.cache.DungeonStatusCache;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonStatus;
@@ -10,37 +11,36 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
 import lombok.extern.slf4j.Slf4j;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.awt.*;
 import java.util.*;
 
 @Slf4j
 public class DungeonEntryEvent {
 
     private final DungeonUtil dungeonUtil;
+    private final ErrorUtil errorUtil;
 
     private final DungeonStatusCache dungeonStatusCache;
 
     public DungeonEntryEvent() {
         this.dungeonUtil = new DungeonUtil();
+        this.errorUtil = new ErrorUtil();
 
         this.dungeonStatusCache = Caches.dungeonStatusCache;
     }
 
     public void execute(StringSelectInteractionEvent event, String dungeonId) {
-
         HttpResponse<JsonNode> response = dungeonUtil.dungeonResponse(dungeonId);
 
         if (response.getStatus() == 200) {
             handleSuccessfulResponse(event, response, dungeonId);
         } else {
-            handleErrorResponse(event, response);
+            errorUtil.sendError(event.getMessage(), "던전 입장", "던전에 입장할 수 없습니다.");
         }
     }
 
@@ -61,7 +61,7 @@ public class DungeonEntryEvent {
         dungeonUtil.savePlayerStatus(playerId, playerObject);
 
         if (playerObject == null) {
-            handleErrorResponse(event, response);
+            errorUtil.sendError(event.getMessage(), "던전 입장", "플레이어를 찾을 수 없습니다.");
         }
 
         Pair<Monster, MonsterSkill> monster = dungeonUtil.randomMonster(monsterList, 1);
@@ -91,18 +91,5 @@ public class DungeonEntryEvent {
                 .build();
 
         dungeonStatusCache.put(playerId, dungeonStatus);
-    }
-
-    private void handleErrorResponse(StringSelectInteractionEvent event, HttpResponse<JsonNode> response) {
-        MessageEmbed embed = new EmbedBuilder()
-                .setColor(Color.ORANGE)
-                .setTitle(":warning: 던전 입장")
-                .setDescription("던전 입장에 실패하였습니다!")
-                .build();
-
-        event.getMessage().editMessageComponents(Collections.emptyList()).queue();
-        event.editMessageEmbeds(embed).queue();
-
-        log.error(String.valueOf(response.getBody()));
     }
 }

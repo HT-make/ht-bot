@@ -1,6 +1,7 @@
 package com.htmake.htbot.discord.commands.shop.event;
 
 import com.htmake.htbot.discord.commands.shop.util.ShopUtil;
+import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.htmake.htbot.discord.util.ObjectMapperUtil;
@@ -18,11 +19,13 @@ public class RandomShopPurchaseEvent {
     private final HttpClient httpClient;
     private final ShopUtil shopUtil;
     private final ObjectMapperUtil objectMapperUtil;
+    private final ErrorUtil errorUtil;
 
     public RandomShopPurchaseEvent() {
         this.httpClient = new HttpClientImpl();
         this.shopUtil = new ShopUtil();
         this.objectMapperUtil = new ObjectMapperUtil();
+        this.errorUtil = new ErrorUtil();
     }
 
     public void execute(SlashCommandInteractionEvent event) {
@@ -35,9 +38,8 @@ public class RandomShopPurchaseEvent {
             int gold = response.getBody().getObject().getInt("gold");
             shopUtil.successPurchase(event, gold);
         } else {
-            String title = "랜덤 상점 구매";
-            String message = response.getBody().getObject().getString("message");
-            shopUtil.errorMessage(event, title, message);
+            String description = response.getBody().getObject().getString("message");
+            errorUtil.sendError(event, "랜덤 상점", description);
         }
     }
 
