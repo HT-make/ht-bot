@@ -11,8 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PlayerBattleResponse {
 
-    private String name;
-
     private int level;
 
     private int damage;

@@ -47,7 +47,7 @@ public class HtBot {
         // Register listeners
         shardManager.addEventListener(
                 new GlobalCommand(),
-                new PlayerCommand(this.httpClient),
+                new PlayerCommand(),
                 new DungeonCommand(),
                 new BattleCommand(),
                 new InventoryCommand(this.httpClient),

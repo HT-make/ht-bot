@@ -20,9 +20,6 @@ public class Player {
     @Column(name = "player_id")
     private String id;
 
-    @Column(name = "player_name", nullable = false)
-    private String name;
-
     @Column(name = "player_level", nullable = false)
     private int level;
 

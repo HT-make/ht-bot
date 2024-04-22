@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlayerJoinResponse {
+public class PlayerJoinCheckResponse {
 
-    private String message;
+    private String exists;
 }
