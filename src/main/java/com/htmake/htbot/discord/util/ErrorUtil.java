@@ -18,7 +18,7 @@ public class ErrorUtil {
     public void sendError(Message message, String title, String description) {
         MessageEmbed embed = buildEmbed(title, description);
         message.editMessageComponents(Collections.emptyList()).queue();
-        message.replyEmbeds(embed).queue();
+        message.editMessageEmbeds(embed).queue();
     }
 
     private MessageEmbed buildEmbed(String title, String description) {
