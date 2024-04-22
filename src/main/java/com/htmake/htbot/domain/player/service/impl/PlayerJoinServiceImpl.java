@@ -9,7 +9,6 @@ import com.htmake.htbot.domain.player.entity.Player;
 import com.htmake.htbot.domain.player.enums.BasicStatus;
 import com.htmake.htbot.domain.player.enums.Job;
 import com.htmake.htbot.domain.player.presentation.data.request.PlayerJoinRequest;
-import com.htmake.htbot.domain.player.presentation.data.response.PlayerJoinResponse;
 import com.htmake.htbot.domain.player.repository.EquipmentRepository;
 import com.htmake.htbot.domain.player.repository.PlayerRepository;
 import com.htmake.htbot.domain.player.service.PlayerJoinService;
@@ -32,28 +31,12 @@ public class PlayerJoinServiceImpl implements PlayerJoinService {
     private final ArmorRepository armorRepository;
 
     @Override
-    public PlayerJoinResponse execute(PlayerJoinRequest request) {
+    public void execute(PlayerJoinRequest request) {
 
-        String message;
-
-        if (playerRepository.existsById(request.getUserId())) {
-            message = "이미 가입한 유저입니다.";
-        } else {
-            newPlayer(request);
-            message = "가입에 성공했습니다!";
-        }
-
-        return PlayerJoinResponse.builder()
-                .message(message)
-                .build();
-    }
-
-    private void newPlayer(PlayerJoinRequest request) {
         Job job = Job.toEnum(request.getJob());
 
         Player player = Player.builder()
-                .id(request.getUserId())
-                .name(request.getName())
+                .id(request.getPlayerId())
                 .level(1)
                 .currentExp(0)
                 .maxExp(100)
