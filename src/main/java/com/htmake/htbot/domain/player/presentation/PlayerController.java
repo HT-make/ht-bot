@@ -2,14 +2,8 @@ package com.htmake.htbot.domain.player.presentation;
 
 import com.htmake.htbot.domain.player.presentation.data.request.KillMonsterRequest;
 import com.htmake.htbot.domain.player.presentation.data.request.PlayerJoinRequest;
-import com.htmake.htbot.domain.player.presentation.data.response.LevelUpResponse;
-import com.htmake.htbot.domain.player.presentation.data.response.PlayerBattleResponse;
-import com.htmake.htbot.domain.player.presentation.data.response.PlayerInfoResponse;
-import com.htmake.htbot.domain.player.presentation.data.response.PlayerJoinResponse;
-import com.htmake.htbot.domain.player.service.KillMonsterService;
-import com.htmake.htbot.domain.player.service.PlayerBattleService;
-import com.htmake.htbot.domain.player.service.PlayerInfoService;
-import com.htmake.htbot.domain.player.service.PlayerJoinService;
+import com.htmake.htbot.domain.player.presentation.data.response.*;
+import com.htmake.htbot.domain.player.service.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -22,13 +16,20 @@ import org.springframework.web.bind.annotation.*;
 public class PlayerController {
 
     private final PlayerJoinService playerJoinService;
+    private final PlayerJoinCheckService playerJoinCheckService;
     private final PlayerInfoService playerInfoService;
     private final PlayerBattleService playerBattleService;
     private final KillMonsterService killMonsterService;
 
     @PostMapping("/join")
-    public ResponseEntity<PlayerJoinResponse> join(@RequestBody @Valid PlayerJoinRequest request) {
-        PlayerJoinResponse response = playerJoinService.execute(request);
+    public ResponseEntity<Void> join(@RequestBody @Valid PlayerJoinRequest request) {
+        playerJoinService.execute(request);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/check/{player_id}")
+    public ResponseEntity<PlayerJoinCheckResponse> check(@PathVariable("player_id") String playerId) {
+        PlayerJoinCheckResponse response = playerJoinCheckService.execute(playerId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
