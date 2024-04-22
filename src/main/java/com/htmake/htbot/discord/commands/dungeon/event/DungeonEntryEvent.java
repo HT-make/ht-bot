@@ -67,7 +67,7 @@ public class DungeonEntryEvent {
         Pair<Monster, MonsterSkill> monster = dungeonUtil.randomMonster(monsterList, 1);
         dungeonUtil.saveMonsterStatus(playerId, monster);
 
-        MessageEmbed embed = dungeonUtil.buildEmbed(dungeonName, monster.getFirst(), playerObject);
+        MessageEmbed embed = dungeonUtil.buildEmbed(dungeonName, monster.getFirst(), playerObject, event.getUser().getName());
 
         MessageEmbed.Field field = embed.getFields().get(3);
         dungeonUtil.saveSituation(playerId, field);

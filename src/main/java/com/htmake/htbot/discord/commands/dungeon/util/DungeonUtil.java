@@ -43,7 +43,7 @@ public class DungeonUtil {
         this.situationCache = Caches.situationCache;
     }
 
-    public MessageEmbed buildEmbed(String dungeonName, Monster monster, JSONObject playerObject) {
+    public MessageEmbed buildEmbed(String dungeonName, Monster monster, JSONObject playerObject, String name) {
 
         return new EmbedBuilder()
                 .setColor(Color.GREEN)
@@ -65,7 +65,7 @@ public class DungeonUtil {
                 .addField(":boom: 치명타 확률", playerObject.getInt("criticalChance") + "%", true)
                 .addField(":boom: 치명타 데미지", playerObject.getInt("criticalDamage") + "%", true)
 
-                .setFooter("Lv." + playerObject.getInt("level") + " " + playerObject.get("name"))
+                .setFooter("Lv." + playerObject.getInt("level") + " " + name)
                 .build();
     }
 

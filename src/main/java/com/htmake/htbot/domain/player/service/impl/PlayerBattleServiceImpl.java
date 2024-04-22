@@ -28,7 +28,6 @@ public class PlayerBattleServiceImpl implements PlayerBattleService {
                 .orElseThrow(RuntimeException::new);
 
         return PlayerBattleResponse.builder()
-                .name(player.getName())
                 .level(player.getLevel())
                 .damage(status.getDamage())
                 .health(status.getHealth())

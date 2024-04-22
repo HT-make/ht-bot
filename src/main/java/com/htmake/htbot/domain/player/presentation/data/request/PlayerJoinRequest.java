@@ -12,10 +12,7 @@ import lombok.NoArgsConstructor;
 public class PlayerJoinRequest {
 
     @NotBlank(message = "id는 필수 입니다.")
-    private String userId;
-
-    @NotBlank(message = "이름은 필수 입니다.")
-    private String name;
+    private String playerId;
 
     @NotBlank(message = "직업은 필수 입니다.")
     private String job;
