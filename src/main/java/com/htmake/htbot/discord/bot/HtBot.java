@@ -1,8 +1,8 @@
 package com.htmake.htbot.discord.bot;
 
-import com.htmake.htbot.discord.commands.InventoryCommand;
 import com.htmake.htbot.discord.commands.battle.BattleCommand;
 import com.htmake.htbot.discord.commands.dungeon.DungeonCommand;
+import com.htmake.htbot.discord.commands.inventory.InventoryCommand;
 import com.htmake.htbot.discord.commands.player.PlayerCommand;
 import com.htmake.htbot.discord.commands.GlobalCommand;
 import com.htmake.htbot.discord.commands.quest.QuestCommand;
@@ -50,7 +50,7 @@ public class HtBot {
                 new PlayerCommand(),
                 new DungeonCommand(),
                 new BattleCommand(),
-                new InventoryCommand(this.httpClient),
+                new InventoryCommand(),
                 new ShopCommand(),
                 new SkillCommand(),
                 new QuestCommand()
