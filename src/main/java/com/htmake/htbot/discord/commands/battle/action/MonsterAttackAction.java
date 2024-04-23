@@ -1,4 +1,4 @@
-package com.htmake.htbot.discord.commands.battle.event;
+package com.htmake.htbot.discord.commands.battle.action;
 
 import com.htmake.htbot.discord.commands.battle.data.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
@@ -12,11 +12,11 @@ import org.apache.commons.math3.random.RandomGenerator;
 import java.awt.*;
 import java.util.Collections;
 
-public class MonsterAttackEvent {
+public class MonsterAttackAction {
 
     private final BattleUtil battleUtil;
 
-    public MonsterAttackEvent() {
+    public MonsterAttackAction() {
         this.battleUtil = new BattleUtil();
     }
 
@@ -24,6 +24,7 @@ public class MonsterAttackEvent {
         String playerId = event.getUser().getId();
 
         int damage;
+
         if (monsterStatus.getSkillName() != null && skillChance()) {
             damage = skillAttack(event, playerStatus, monsterStatus);
         } else {
@@ -34,7 +35,6 @@ public class MonsterAttackEvent {
 
         String message = damage + "의 데미지를 입혔다!";
         battleUtil.updateSituation(playerId, message);
-
         battleUtil.editEmbed(event, playerStatus, monsterStatus);
 
         if (playerStatus.getHealth() == 0) {
@@ -49,9 +49,8 @@ public class MonsterAttackEvent {
     }
 
     private int skillAttack(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
-        String message = monsterStatus.getName() + "의 " + monsterStatus.getSkillName();
+        String message = monsterStatus.getName() + "의 " + monsterStatus.getSkillName() + "!";
         battleUtil.updateSituation(event.getUser().getId(), message);
-
         battleUtil.editEmbed(event, playerStatus, monsterStatus);
 
         return Math.max(0, monsterStatus.getSkillDamage() - playerStatus.getDefence());
@@ -60,21 +59,18 @@ public class MonsterAttackEvent {
     private int normalAttack(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
         String message = monsterStatus.getName() + "의 공격.";
         battleUtil.updateSituation(event.getUser().getId(), message);
-
         battleUtil.editEmbed(event, playerStatus, monsterStatus);
 
         return Math.max(0, monsterStatus.getDamage() - playerStatus.getDefence());
     }
 
     private void killPlayer(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
-
         User user = event.getUser();
         String playerId = user.getId();
         String name = user.getName();
 
         String message = name + "이/가 사망했다.";
         battleUtil.updateSituation(playerId, message);
-
         battleUtil.editEmbed(event, playerStatus, monsterStatus);
 
         event.getMessage().editMessageComponents(Collections.emptyList()).queue();
