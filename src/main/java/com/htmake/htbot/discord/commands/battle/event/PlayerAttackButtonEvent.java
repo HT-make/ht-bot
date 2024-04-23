@@ -88,13 +88,11 @@ public class PlayerAttackButtonEvent {
         }
 
         battleUtil.updateSituation(playerId, message);
-        battleUtil.editEmbed(event, playerStatus, monsterStatus);
 
         monsterStatus.setHealth(Math.max(0, (monsterStatus.getHealth() - damage.getFirst())));
 
         message = damage.getFirst() + "의 데미지를 입혔다!";
         battleUtil.updateSituation(playerId, message);
-        battleUtil.editEmbed(event, playerStatus, monsterStatus);
     }
 
     private void killMonster(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {

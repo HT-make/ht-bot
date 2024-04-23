@@ -30,7 +30,7 @@ public class BattleUtil {
         Situation situation = situationCache.get(playerId);
         List<String> messageList = situation.getMessageList();
 
-        if (messageList.size() >= 5) {
+        if (messageList.size() >= 7) {
             messageList.remove(0);
         }
         messageList.add(message);
@@ -46,9 +46,16 @@ public class BattleUtil {
         List<String> messageList = situation.getMessageList();
 
         StringBuilder sb = new StringBuilder();
-        for (String message : messageList) {
-            sb.append("\n").append(message);
+
+        sb.append("```");
+        for (int i = 0; i < 7; i++) {
+            if (i < messageList.size()) {
+                sb.append("| ").append(messageList.get(i)).append("\n");
+            } else {
+                sb.append("|\n");
+            }
         }
+        sb.append("```");
 
         MessageEmbed newEmbed = new EmbedBuilder()
                 .setColor(Color.GREEN)
@@ -59,7 +66,7 @@ public class BattleUtil {
                 .addField(":heart: 체력", "" + monsterStatus.getHealth(), true)
                 .addField(":shield: 방어력", "" + monsterStatus.getDefence(), true)
 
-                .addField(":video_game: 전투 현황", "" + sb, false)
+                .addField(":video_game: 전투 현황", sb.toString(), false)
                 .addBlankField(false)
 
                 .addField(":crossed_swords: 공격력", "" + playerStatus.getDamage(), true)
