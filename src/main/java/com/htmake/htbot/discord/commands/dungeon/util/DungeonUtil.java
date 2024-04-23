@@ -45,6 +45,12 @@ public class DungeonUtil {
 
     public MessageEmbed buildEmbed(String dungeonName, Monster monster, JSONObject playerObject, String name) {
 
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("```| ").append(monster.getName()).append("이/가 나타났다!\n");
+        sb.append("|\n".repeat(6));
+        sb.append("```");
+
         return new EmbedBuilder()
                 .setColor(Color.GREEN)
                 .setTitle(dungeonName)
@@ -54,7 +60,7 @@ public class DungeonUtil {
                 .addField(":heart: 체력", "" + monster.getHealth(), true)
                 .addField(":shield: 방어력", "" + monster.getDefence(), true)
 
-                .addField(":video_game: 전투 현황", monster.getName() +"이/가 나타났다!", false)
+                .addField(":video_game: 전투 현황", sb.toString(), false)
                 .addBlankField(false)
 
                 .addField(":crossed_swords: 공격력", "" + playerObject.getInt("damage"), true)
@@ -167,9 +173,9 @@ public class DungeonUtil {
         playerStatusCache.put(playerId, playerStatus);
     }
 
-    public void saveSituation(String playerId, MessageEmbed.Field field) {
+    public void saveSituation(String playerId, Monster monster) {
         List<String> messageList = new ArrayList<>();
-        messageList.add(field.getValue());
+        messageList.add(monster.getName() + "이/가 나타났다!");
 
         Situation situation = Situation.builder()
                 .messageList(messageList)

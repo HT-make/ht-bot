@@ -69,8 +69,7 @@ public class DungeonEntryEvent {
 
         MessageEmbed embed = dungeonUtil.buildEmbed(dungeonName, monster.getFirst(), playerObject, event.getUser().getName());
 
-        MessageEmbed.Field field = embed.getFields().get(3);
-        dungeonUtil.saveSituation(playerId, field);
+        dungeonUtil.saveSituation(playerId, monster.getFirst());
 
         event.getMessage().editMessageEmbeds(embed)
                 .setActionRow(
