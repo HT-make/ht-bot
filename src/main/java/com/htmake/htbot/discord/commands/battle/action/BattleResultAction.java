@@ -1,5 +1,6 @@
 package com.htmake.htbot.discord.commands.battle.action;
 
+import com.htmake.htbot.discord.commands.dungeon.data.DungeonPlayer;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.discord.util.ObjectMapperUtil;
 import com.htmake.htbot.global.cache.Caches;
@@ -82,8 +83,11 @@ public class BattleResultAction {
     }
 
     private void requestSuccess(ButtonInteractionEvent event, JSONObject monsterLoot, boolean levelUp) {
-        List<GetItem> getItemList = getNewGetItemList(event.getUser().getId(), monsterLoot);
-        MessageEmbed embed = buildEmbed(monsterLoot, getItemList, levelUp);
+        String playerId = event.getUser().getId();
+
+        List<GetItem> getItemList = getNewGetItemList(playerId, monsterLoot);
+        String levelUpMessage = levelUpCheck(playerId, levelUp);
+        MessageEmbed embed = buildEmbed(monsterLoot, getItemList, levelUpMessage);
 
         event.getMessage().editMessageEmbeds(embed)
                 .setActionRow(
@@ -132,9 +136,23 @@ public class BattleResultAction {
         return getItemList;
     }
 
-    private MessageEmbed buildEmbed(JSONObject monsterLoot, List<GetItem> getItemList, boolean levelUp) {
-        String levelUpMessage = levelUp ? ":up: 레벨업!!" : "";
+    private String levelUpCheck(String playerId, boolean levelUp) {
+        if (levelUp) {
+            DungeonStatus dungeonStatus = dungeonStatusCache.get(playerId);
+            DungeonPlayer dungeonPlayer = dungeonStatus.getDungeonPlayer();
 
+            dungeonPlayer.setLevel(dungeonPlayer.getLevel() + 1);
+            dungeonStatus.setDungeonPlayer(dungeonPlayer);
+
+            dungeonStatusCache.put(playerId, dungeonStatus);
+
+            return ":up: 레벨업!!";
+        } else {
+            return "";
+        }
+    }
+
+    private MessageEmbed buildEmbed(JSONObject monsterLoot, List<GetItem> getItemList, String levelUpMessage) {
         StringBuilder getItemMessage = new StringBuilder();
 
         if (getItemList.size() > 0) {
