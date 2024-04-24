@@ -11,9 +11,13 @@ import java.util.List;
 @NoArgsConstructor
 public class DungeonStatus {
 
-    private String id;
+    private String name;
 
     private int stage;
+
+    private List<DungeonMonster> dungeonMonsterList;
+
+    private DungeonPlayer dungeonPlayer;
 
     private List<GetItem> getItemList;
 }
