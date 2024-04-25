@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class InventoryInfoResponse {
 
-    private String itemId;
+    private String id;
 
     private String name;
 
@@ -20,7 +20,7 @@ public class InventoryInfoResponse {
 
     public static InventoryInfoResponse toResponse(Inventory inventory) {
         return InventoryInfoResponse.builder()
-                .itemId(inventory.getItemId())
+                .id(inventory.getItemId())
                 .name(inventory.getName())
                 .quantity(inventory.getQuantity())
                 .build();

@@ -12,5 +12,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InventoryInfoListResponse {
-    List<InventoryInfoResponse> inventoryList;
+
+    private int gold;
+
+    private int gem;
+
+    private List<InventoryInfoResponse> inventoryList;
 }
