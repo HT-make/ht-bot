@@ -1,96 +1,82 @@
 package com.htmake.htbot.discord.commands.inventory.event;
 
+import com.htmake.htbot.discord.commands.inventory.cache.InventoryCache;
+import com.htmake.htbot.discord.commands.inventory.data.Inventory;
+import com.htmake.htbot.discord.commands.inventory.data.InventoryItem;
+import com.htmake.htbot.discord.commands.inventory.util.InventoryUtil;
 import com.htmake.htbot.discord.util.ErrorUtil;
-import com.htmake.htbot.global.unirest.HttpClient;
-import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import kotlin.Pair;
+import com.htmake.htbot.global.cache.CacheFactory;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class InventoryButtonEvent {
 
-    private final HttpClient httpClient;
     private final ErrorUtil errorUtil;
+    private final InventoryUtil inventoryUtil;
+
+    private final InventoryCache inventoryCache;
 
     public InventoryButtonEvent() {
-        this.httpClient = new HttpClientImpl();
         this.errorUtil = new ErrorUtil();
+        this.inventoryUtil = new InventoryUtil();
+
+        this.inventoryCache = CacheFactory.inventoryCache;
     }
 
-    public void execute(ButtonInteractionEvent event, int page){
-        HttpResponse<JsonNode> response = request(event.getUser().getId());
-
-        if (response.getStatus() == 200) {
-            JSONObject inventoryObject = response.getBody().getObject();
-            JSONArray inventoryObjectJSONArray = inventoryObject.getJSONArray("inventoryList");
-
-            requestSuccess(event, inventoryObjectJSONArray, page);
-        } else {
-            errorUtil.sendError(event.getMessage(), "인벤토리", "인벤토리를 찾을 수 없습니다." );
-        }
-    }
-
-    private HttpResponse<JsonNode> request(String playerId) {
-        String endPoint = "/inventory/info/{player_id}";
-        Pair<String, String> routeParam = new Pair<>("player_id", playerId);
-        return httpClient.sendGetRequest(endPoint, routeParam);
-    }
-
-    public void requestSuccess(ButtonInteractionEvent event, JSONArray inventoryArray, int page) {
+    public void execute(ButtonInteractionEvent event, int page) {
         MessageEmbed embed = event.getMessage().getEmbeds().get(0);
 
-        MessageEmbed newEmbed = buildEmbed(embed, inventoryArray, page);
+        Inventory inventory = inventoryCache.get(event.getUser().getId());
 
-        List<Button> buttonList = new ArrayList<>();
-
-        buttonEmbed(page, buttonList);
-
-        event.getMessage().editMessageEmbeds(newEmbed)
-                .setActionRow(buttonList)
-                .queue();
-    }
-
-    private MessageEmbed buildEmbed(MessageEmbed embed, JSONArray inventoryArray, int page) {
-
-        EmbedBuilder embedBuilder = new EmbedBuilder()
-                .setColor(Color.GREEN)
-                .setAuthor(embed.getAuthor().getName(), null, embed.getAuthor().getIconUrl())
-                .setTitle(embed.getTitle());
-
-        int min = page - 1;
-
-        int cnt = 0;
-
-        for (int i = min * 9; i < page * 9; i++) {
-            if (i >= inventoryArray.length()) break;
-
-            JSONObject item = inventoryArray.getJSONObject(i);
-            String itemName = item.getString("name");
-            int itemQuantity = item.getInt("quantity");
-
-            embedBuilder.addField(itemName, "수량: " + itemQuantity, true);
-
-            cnt++;
+        if (inventory == null) {
+            errorUtil.sendError(event.getMessage(), "인벤토리", "인벤토리를 찾을 수 없습니다.");
+            return;
         }
 
-        for (int i = cnt; i < 9; i++) {
-            embedBuilder.addBlankField(true);
+        String convertedCategory = inventoryUtil.getCategory(inventory.getCategory());
+
+        MessageEmbed newEmbed = buildEmbed(embed, page, inventory, convertedCategory);
+
+        List<ActionRow> actionRowList = new ArrayList<>();
+
+        List<Button> buttonList = buttonEmbed(page);
+        StringSelectMenu menu = InventoryUtil.createInventoryMenu("현재 페이지 : " + convertedCategory);
+
+        ActionRow actionRowButton = ActionRow.of(buttonList);
+        ActionRow actionRowSelect = ActionRow.of(menu);
+
+        actionRowList.add(actionRowButton);
+        actionRowList.add(actionRowSelect);
+
+        event.getMessage().editMessageEmbeds(newEmbed)
+                .setComponents(actionRowList)
+                .queue();
+    }
+    private MessageEmbed buildEmbed(MessageEmbed embed, int page, Inventory inventory, String convertedCategory) {
+        EmbedBuilder embedBuilder = inventoryUtil.embedBuilder(embed, inventory);
+
+        List<InventoryItem> inventoryItemList = inventory.getInventoryItemList();
+        List<InventoryItem> categoryItemList = inventory.getCategoryItemList();
+
+        if (convertedCategory.equals("전체")){
+            embedBuilder = inventoryUtil.addItemField(embedBuilder, inventoryItemList, page);
+        } else {
+            embedBuilder = inventoryUtil.addItemField(embedBuilder, categoryItemList, page);
         }
 
         return embedBuilder.build();
     }
 
-    public void buttonEmbed(int page, List<Button> buttonList) {
+    public List<Button> buttonEmbed(int page) {
+        List<Button> buttonList = new ArrayList<>();
+
         String leftId = "inventory-left-" + page;
         String pageLabel = page + "/5";
         String rightId = "inventory-right-" + (page + 1);
@@ -98,19 +84,25 @@ public class InventoryButtonEvent {
         Button pageButton = Button.secondary("blank", pageLabel).asDisabled();
         Button leftButton = Button.primary(leftId, "◄");
         Button rightButton = Button.primary(rightId, "►");
+        Button cancelButton = Button.danger("cancel", "닫기");
 
         if (page == 1) {
             buttonList.add(leftButton.asDisabled());
             buttonList.add(pageButton);
             buttonList.add(rightButton);
+            buttonList.add(cancelButton);
         } else if (page == 5) {
             buttonList.add(leftButton);
             buttonList.add(pageButton);
             buttonList.add(rightButton.asDisabled());
+            buttonList.add(cancelButton);
         } else {
             buttonList.add(leftButton.asEnabled());
             buttonList.add(pageButton);
             buttonList.add(rightButton.asEnabled());
+            buttonList.add(cancelButton);
         }
+
+        return buttonList;
     }
 }
