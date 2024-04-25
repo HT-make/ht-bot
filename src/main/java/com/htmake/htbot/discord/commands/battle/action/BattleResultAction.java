@@ -3,7 +3,7 @@ package com.htmake.htbot.discord.commands.battle.action;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonPlayer;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.discord.util.ObjectMapperUtil;
-import com.htmake.htbot.global.cache.Caches;
+import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.dungeon.cache.DungeonStatusCache;
 import com.htmake.htbot.discord.commands.dungeon.data.GetItem;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonStatus;
@@ -36,7 +36,7 @@ public class BattleResultAction {
         this.errorUtil = new ErrorUtil();
         this.objectMapperUtil = new ObjectMapperUtil();
 
-        this.dungeonStatusCache = Caches.dungeonStatusCache;
+        this.dungeonStatusCache = CacheFactory.dungeonStatusCache;
     }
 
     public void execute(ButtonInteractionEvent event, String monsterId) {

@@ -2,7 +2,7 @@ package com.htmake.htbot.discord.commands.dungeon.event;
 
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.discord.util.ObjectMapperUtil;
-import com.htmake.htbot.global.cache.Caches;
+import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.dungeon.cache.DungeonStatusCache;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonStatus;
 import com.htmake.htbot.discord.commands.dungeon.data.GetItem;
@@ -34,7 +34,7 @@ public class DungeonCloseButtonEvent {
         this.errorUtil = new ErrorUtil();
         this.objectMapperUtil = new ObjectMapperUtil();
 
-        this.dungeonStatusCache = Caches.dungeonStatusCache;
+        this.dungeonStatusCache = CacheFactory.dungeonStatusCache;
     }
 
     public void execute(ButtonInteractionEvent event) {

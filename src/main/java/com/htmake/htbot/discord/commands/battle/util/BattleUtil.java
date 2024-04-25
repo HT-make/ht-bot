@@ -1,6 +1,6 @@
 package com.htmake.htbot.discord.commands.battle.util;
 
-import com.htmake.htbot.global.cache.Caches;
+import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.SituationCache;
@@ -21,9 +21,9 @@ public class BattleUtil {
     private final SituationCache situationCache;
 
     public BattleUtil() {
-        this.playerStatusCache = Caches.playerStatusCache;
-        this.monsterStatusCache = Caches.monsterStatusCache;
-        this.situationCache = Caches.situationCache;
+        this.playerStatusCache = CacheFactory.playerStatusCache;
+        this.monsterStatusCache = CacheFactory.monsterStatusCache;
+        this.situationCache = CacheFactory.situationCache;
     }
 
     public void updateSituation(String playerId, String message) {

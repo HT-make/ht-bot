@@ -2,7 +2,7 @@ package com.htmake.htbot.discord.commands.battle.event;
 
 import com.htmake.htbot.discord.commands.battle.action.BattleResultAction;
 import com.htmake.htbot.discord.commands.battle.action.MonsterAttackAction;
-import com.htmake.htbot.global.cache.Caches;
+import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
 import com.htmake.htbot.discord.commands.battle.data.MonsterStatus;
@@ -32,8 +32,8 @@ public class PlayerAttackButtonEvent {
         this.monsterAttackAction = new MonsterAttackAction();
         this.battleResultAction = new BattleResultAction();
 
-        this.playerStatusCache = Caches.playerStatusCache;
-        this.monsterStatusCache = Caches.monsterStatusCache;
+        this.playerStatusCache = CacheFactory.playerStatusCache;
+        this.monsterStatusCache = CacheFactory.monsterStatusCache;
     }
 
     public void execute(ButtonInteractionEvent event) {
