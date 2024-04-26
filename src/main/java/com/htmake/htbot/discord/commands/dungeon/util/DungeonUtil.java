@@ -94,6 +94,7 @@ public class DungeonUtil {
                 .mana(dungeonPlayer.getMana())
                 .criticalChance(dungeonPlayer.getCriticalChance())
                 .criticalDamage(dungeonPlayer.getCriticalDamage())
+                .playerSkill(dungeonPlayer.getPlayerSkill())
                 .build();
 
         playerStatusCache.put(playerId, playerStatus);
