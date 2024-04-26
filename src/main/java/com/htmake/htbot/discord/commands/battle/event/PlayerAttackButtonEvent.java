@@ -1,36 +1,32 @@
 package com.htmake.htbot.discord.commands.battle.event;
 
-import com.htmake.htbot.discord.commands.battle.action.BattleResultAction;
 import com.htmake.htbot.discord.commands.battle.action.MonsterAttackAction;
+import com.htmake.htbot.discord.commands.battle.action.MonsterKillAction;
 import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
 import com.htmake.htbot.discord.commands.battle.data.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.util.BattleUtil;
-import com.htmake.htbot.global.unirest.HttpClient;
-import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import kotlin.Pair;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-
-import java.util.*;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
 
 public class PlayerAttackButtonEvent {
 
-    private final HttpClient httpClient;
     private final BattleUtil battleUtil;
+    private final MonsterKillAction monsterKillAction;
     private final MonsterAttackAction monsterAttackAction;
-    private final BattleResultAction battleResultAction;
 
     private final PlayerStatusCache playerStatusCache;
     private final MonsterStatusCache monsterStatusCache;
 
     public PlayerAttackButtonEvent() {
-        this.httpClient = new HttpClientImpl();
         this.battleUtil = new BattleUtil();
+        this.monsterKillAction = new MonsterKillAction();
         this.monsterAttackAction = new MonsterAttackAction();
-        this.battleResultAction = new BattleResultAction();
 
         this.playerStatusCache = CacheFactory.playerStatusCache;
         this.monsterStatusCache = CacheFactory.monsterStatusCache;
@@ -44,32 +40,10 @@ public class PlayerAttackButtonEvent {
         playerTurn(event, playerStatus, monsterStatus);
 
         if (monsterStatus.getHealth() == 0) {
-            killMonster(event, playerStatus, monsterStatus);
-            countMonster(event, monsterStatus);
+            monsterKillAction.execute(event, playerStatus, monsterStatus);
         } else {
             monsterAttackAction.execute(event, playerStatus, monsterStatus);
         }
-    }
-
-    private Pair<Integer, Boolean> playerAttackDamage(PlayerStatus playerStatus, MonsterStatus monsterStatus) {
-        Random random = new Random();
-        int randomNum = random.nextInt(100);
-
-        int damage = playerStatus.getDamage();
-        int criticalChance = playerStatus.getCriticalChance();
-        int criticalDamage = playerStatus.getCriticalDamage();
-
-        int monsterDefence = monsterStatus.getDefence();
-
-        if (randomNum < criticalChance) {
-            double criticalDamageMultiple = (double) criticalDamage / 100;
-            damage = (int) (damage * criticalDamageMultiple) - monsterDefence;
-
-            return new Pair<>(Math.max(damage, 0), true);
-        }
-
-        damage -= monsterDefence;
-        return new Pair<>(Math.max(damage, 0), false);
     }
 
     private void playerTurn(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
@@ -95,26 +69,24 @@ public class PlayerAttackButtonEvent {
         battleUtil.updateSituation(playerId, message);
     }
 
-    private void killMonster(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
-        String playerId = event.getUser().getId();
+    private Pair<Integer, Boolean> playerAttackDamage(PlayerStatus playerStatus, MonsterStatus monsterStatus) {
+        RandomGenerator random = new MersenneTwister();
+        int randomNum = random.nextInt(100);
 
-        String message = monsterStatus.getName() + "을/를 처치했다!";
-        battleUtil.updateSituation(playerId, message);
-        battleUtil.editEmbed(event, playerStatus, monsterStatus);
+        int damage = playerStatus.getDamage();
+        int criticalChance = playerStatus.getCriticalChance();
+        int criticalDamage = playerStatus.getCriticalDamage();
 
-        battleResultAction.execute(event, monsterStatus.getId());
+        int monsterDefence = monsterStatus.getDefence();
 
-        battleUtil.removeCurrentBattleCache(playerId);
-    }
+        if (randomNum < criticalChance) {
+            double criticalDamageMultiple = (double) criticalDamage / 100;
+            damage = (int) (damage * criticalDamageMultiple) - monsterDefence;
 
-    private void countMonster(ButtonInteractionEvent event, MonsterStatus monsterStatus) {
-        String playerId = event.getUser().getId();
+            return new Pair<>(Math.max(damage, 0), true);
+        }
 
-        String endPoint = "/quest/monster/{player_id}";
-        Pair<String, String> routeParam = new Pair<>("player_id", playerId);
-
-        String requestBody = "{\"name\": \"" + monsterStatus.getName() + "\"}";
-
-        httpClient.sendPatchRequest(endPoint, routeParam, requestBody);
+        damage -= monsterDefence;
+        return new Pair<>(Math.max(damage, 0), false);
     }
 }
