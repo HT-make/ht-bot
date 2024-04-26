@@ -2,6 +2,8 @@ package com.htmake.htbot.discord.commands.battle.data;
 
 import lombok.*;
 
+import java.util.Map;
+
 @Getter
 @Setter
 @Builder
@@ -20,4 +22,6 @@ public class PlayerStatus {
     private int criticalChance;
 
     private int criticalDamage;
+
+    private Map<Integer, PlayerSkillStatus> playerSkill;
 }

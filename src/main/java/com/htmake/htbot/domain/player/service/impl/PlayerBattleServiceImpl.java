@@ -3,12 +3,18 @@ package com.htmake.htbot.domain.player.service.impl;
 import com.htmake.htbot.domain.player.entity.Player;
 import com.htmake.htbot.domain.player.entity.Status;
 import com.htmake.htbot.domain.player.presentation.data.response.PlayerBattleResponse;
+import com.htmake.htbot.domain.player.presentation.data.response.PlayerSkillResponse;
 import com.htmake.htbot.domain.player.repository.PlayerRepository;
 import com.htmake.htbot.domain.player.repository.StatusRepository;
 import com.htmake.htbot.domain.player.service.PlayerBattleService;
+import com.htmake.htbot.domain.skill.entity.PlayerSkill;
+import com.htmake.htbot.domain.skill.entity.Skill;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -27,6 +33,24 @@ public class PlayerBattleServiceImpl implements PlayerBattleService {
         Status status = statusRepository.findById(playerId)
                 .orElseThrow(RuntimeException::new);
 
+        List<PlayerSkillResponse> responseList = new ArrayList<>();
+
+        List<PlayerSkill> playerSkillList = player.getPlayerSkills();
+
+        for (PlayerSkill playerSkill : playerSkillList) {
+            Skill skill = playerSkill.getSkill();
+
+            PlayerSkillResponse response = PlayerSkillResponse.builder()
+                    .number(playerSkill.getNumber())
+                    .name(skill.getName())
+                    .value(skill.getValue())
+                    .mana(skill.getMana())
+                    .skillType(skill.getSkillType().toString())
+                    .build();
+
+            responseList.add(response);
+        }
+
         return PlayerBattleResponse.builder()
                 .level(player.getLevel())
                 .damage(status.getDamage())
@@ -35,6 +59,7 @@ public class PlayerBattleServiceImpl implements PlayerBattleService {
                 .mana(status.getMana())
                 .criticalChance(status.getCriticalChance())
                 .criticalDamage(status.getCriticalDamage())
+                .skillList(responseList)
                 .build();
     }
 }

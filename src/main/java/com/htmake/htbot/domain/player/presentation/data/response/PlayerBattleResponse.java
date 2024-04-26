@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -24,4 +26,6 @@ public class PlayerBattleResponse {
     private int criticalChance;
 
     private int criticalDamage;
+
+    private List<PlayerSkillResponse> skillList;
 }
