@@ -5,6 +5,9 @@ import com.htmake.htbot.domain.inventory.presentation.data.response.InventoryInf
 import com.htmake.htbot.domain.inventory.presentation.data.response.InventoryInfoResponse;
 import com.htmake.htbot.domain.inventory.repository.InventoryRepository;
 import com.htmake.htbot.domain.inventory.service.InventoryInfoService;
+import com.htmake.htbot.domain.player.entity.Player;
+import com.htmake.htbot.domain.player.exception.NotFoundPlayerException;
+import com.htmake.htbot.domain.player.repository.PlayerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,14 +21,20 @@ import java.util.stream.Collectors;
 public class InventoryInfoServiceImpl implements InventoryInfoService {
 
     private final InventoryRepository inventoryRepository;
+    private final PlayerRepository playerRepository;
 
     @Override
     public InventoryInfoListResponse execute(String playerId) {
-        List<Inventory> inventory = inventoryRepository.findByPlayerId(playerId);
+        List<Inventory> inventoryList = inventoryRepository.findByPlayerId(playerId);
+
+        Player player = playerRepository.findById(playerId)
+                .orElseThrow(NotFoundPlayerException::new);
 
         return InventoryInfoListResponse.builder()
+                .gold(player.getGold())
+                .gem(player.getGem())
                 .inventoryList(
-                        inventory.stream()
+                        inventoryList.stream()
                                 .map(InventoryInfoResponse::toResponse)
                                 .collect(Collectors.toList())
                 )

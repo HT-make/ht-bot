@@ -49,7 +49,11 @@ public class PlayerQuestProgressServiceImpl implements PlayerQuestProgressServic
         }
         if (targetItem != null && targetItem.getQuantity() >= mainQuest.getTargetItemQuantity()) {
             targetItem.setQuantity(targetItem.getQuantity() - mainQuest.getRewardItemQuantity());
-            inventoryRepository.save(targetItem);
+            if (targetItem.getQuantity() == 0) {
+                inventoryRepository.delete(targetItem);
+            } else {
+                inventoryRepository.save(targetItem);
+            }
         } else {
             throw new NotEnoughItemQuantityException();
         }

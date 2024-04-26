@@ -3,7 +3,7 @@ package com.htmake.htbot.discord.commands.dungeon.event;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonMonster;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonPlayer;
 import com.htmake.htbot.discord.util.ErrorUtil;
-import com.htmake.htbot.global.cache.Caches;
+import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.dungeon.cache.DungeonStatusCache;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonStatus;
 import com.htmake.htbot.discord.commands.dungeon.util.DungeonUtil;
@@ -33,7 +33,7 @@ public class DungeonEntrySelectEvent {
         this.dungeonUtil = new DungeonUtil();
         this.errorUtil = new ErrorUtil();
 
-        this.dungeonStatusCache = Caches.dungeonStatusCache;
+        this.dungeonStatusCache = CacheFactory.dungeonStatusCache;
     }
 
     public void execute(StringSelectInteractionEvent event, String dungeonId) {

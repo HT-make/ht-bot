@@ -6,7 +6,7 @@ import com.htmake.htbot.discord.commands.dungeon.data.DungeonPlayer;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonStatus;
 import com.htmake.htbot.discord.commands.dungeon.util.DungeonUtil;
 import com.htmake.htbot.discord.util.ErrorUtil;
-import com.htmake.htbot.global.cache.Caches;
+import com.htmake.htbot.global.cache.CacheFactory;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -24,7 +24,7 @@ public class NextDungeonEntryButtonEvent {
         this.errorUtil = new ErrorUtil();
         this.dungeonUtil = new DungeonUtil();
 
-        this.dungeonStatusCache = Caches.dungeonStatusCache;
+        this.dungeonStatusCache = CacheFactory.dungeonStatusCache;
     }
 
     public void execute(ButtonInteractionEvent event) {

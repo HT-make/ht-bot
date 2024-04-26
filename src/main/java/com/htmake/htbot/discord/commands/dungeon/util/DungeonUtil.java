@@ -2,7 +2,7 @@ package com.htmake.htbot.discord.commands.dungeon.util;
 
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonMonster;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonPlayer;
-import com.htmake.htbot.global.cache.Caches;
+import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.SituationCache;
@@ -25,9 +25,9 @@ public class DungeonUtil {
     private final SituationCache situationCache;
 
     public DungeonUtil() {
-        this.playerStatusCache = Caches.playerStatusCache;
-        this.monsterStatusCache = Caches.monsterStatusCache;
-        this.situationCache = Caches.situationCache;
+        this.playerStatusCache = CacheFactory.playerStatusCache;
+        this.monsterStatusCache = CacheFactory.monsterStatusCache;
+        this.situationCache = CacheFactory.situationCache;
     }
 
     public MessageEmbed buildEmbed(String dungeonTitle, DungeonMonster dungeonMonster, DungeonPlayer dungeonPlayer, String name) {
