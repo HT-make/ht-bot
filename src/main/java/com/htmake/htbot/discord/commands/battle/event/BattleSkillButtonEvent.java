@@ -60,7 +60,7 @@ public class BattleSkillButtonEvent {
         String playerId = event.getUser().getId();
 
         if (!playerStatusCache.containsKey(playerId)) {
-            errorUtil.sendError(event.getMessage(), "전투", "스킬을 불러오지 못했습니다.");
+            errorUtil.sendError(event.getHook(), "전투", "스킬을 불러오지 못했습니다.");
             return;
         }
 
@@ -118,7 +118,7 @@ public class BattleSkillButtonEvent {
         String playerId = event.getUser().getId();
 
         if (!playerStatusCache.containsKey(playerId) || !monsterStatusCache.containsKey(playerId)) {
-            errorUtil.sendError(event.getMessage(), "전투", "스킬을 불러오지 못했습니다.");
+            errorUtil.sendError(event.getHook(), "전투", "정보를 불러오지 못했습니다.");
             return;
         }
 
@@ -129,10 +129,12 @@ public class BattleSkillButtonEvent {
         PlayerSkillStatus usedSkill = playerSkill.get(number);
 
         if (usedSkill == null) {
+            errorUtil.sendError(event.getHook(), "스킬 사용", "스킬 등록을 해주세요.");
             return;
         }
 
         if (playerStatus.getMana() < usedSkill.getMana()) {
+            errorUtil.sendError(event.getHook(), "스킬 사용", "마나가 부족합니다.");
             return;
         }
 
@@ -140,13 +142,14 @@ public class BattleSkillButtonEvent {
 
         String message = event.getUser().getName() + "의 " + usedSkill.getName() + ".";
         battleUtil.updateSituation(playerId, message);
+        battleUtil.editEmbed(event, playerStatus, monsterStatus);
 
         int skillDamage = skillDamage(playerStatus, monsterStatus, usedSkill.getValue());
+        monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - skillDamage));
 
         message = skillDamage + "의 데미지를 입혔다.";
         battleUtil.updateSituation(playerId, message);
-
-        monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - skillDamage));
+        battleUtil.editEmbed(event, playerStatus, monsterStatus);
 
         if (monsterStatus.getHealth() == 0) {
             monsterKillAction.execute(event, playerStatus, monsterStatus);
