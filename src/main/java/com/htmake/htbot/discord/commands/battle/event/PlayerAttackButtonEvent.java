@@ -2,6 +2,7 @@ package com.htmake.htbot.discord.commands.battle.event;
 
 import com.htmake.htbot.discord.commands.battle.action.MonsterAttackAction;
 import com.htmake.htbot.discord.commands.battle.action.MonsterKillAction;
+import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
@@ -16,6 +17,7 @@ import org.apache.commons.math3.random.RandomGenerator;
 
 public class PlayerAttackButtonEvent {
 
+    private final ErrorUtil errorUtil;
     private final BattleUtil battleUtil;
     private final MonsterKillAction monsterKillAction;
     private final MonsterAttackAction monsterAttackAction;
@@ -24,6 +26,7 @@ public class PlayerAttackButtonEvent {
     private final MonsterStatusCache monsterStatusCache;
 
     public PlayerAttackButtonEvent() {
+        this.errorUtil = new ErrorUtil();
         this.battleUtil = new BattleUtil();
         this.monsterKillAction = new MonsterKillAction();
         this.monsterAttackAction = new MonsterAttackAction();
@@ -34,6 +37,12 @@ public class PlayerAttackButtonEvent {
 
     public void execute(ButtonInteractionEvent event) {
         String playerId = event.getUser().getId();
+
+        if (!playerStatusCache.containsKey(playerId) || !monsterStatusCache.containsKey(playerId)) {
+            errorUtil.sendError(event.getHook(), "전투", "정보를 불러오지 못했습니다.");
+            return;
+        }
+
         PlayerStatus playerStatus = playerStatusCache.get(playerId);
         MonsterStatus monsterStatus = monsterStatusCache.get(playerId);
 
@@ -62,11 +71,13 @@ public class PlayerAttackButtonEvent {
         }
 
         battleUtil.updateSituation(playerId, message);
+        battleUtil.editEmbed(event, playerStatus, monsterStatus);
 
         monsterStatus.setHealth(Math.max(0, (monsterStatus.getHealth() - damage.getFirst())));
 
         message = damage.getFirst() + "의 데미지를 입혔다!";
         battleUtil.updateSituation(playerId, message);
+        battleUtil.editEmbed(event, playerStatus, monsterStatus);
     }
 
     private Pair<Integer, Boolean> playerAttackDamage(PlayerStatus playerStatus, MonsterStatus monsterStatus) {
