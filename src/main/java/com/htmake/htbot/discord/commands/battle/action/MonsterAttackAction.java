@@ -51,12 +51,16 @@ public class MonsterAttackAction {
     private int skillAttack(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
         String message = monsterStatus.getName() + "의 " + monsterStatus.getSkillName() + "!";
         battleUtil.updateSituation(event.getUser().getId(), message);
+        battleUtil.editEmbed(event, playerStatus, monsterStatus);
+
         return Math.max(0, monsterStatus.getSkillDamage() - playerStatus.getDefence());
     }
 
     private int normalAttack(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
         String message = monsterStatus.getName() + "의 공격.";
         battleUtil.updateSituation(event.getUser().getId(), message);
+        battleUtil.editEmbed(event, playerStatus, monsterStatus);
+
         return Math.max(0, monsterStatus.getDamage() - playerStatus.getDefence());
     }
 
