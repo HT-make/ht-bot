@@ -29,7 +29,7 @@ public class QuestCompleteButtonEvent {
         if (response.getStatus() == 200) {
             requestSuccess(event);
         } else {
-            errorUtil.sendError(event.getMessage(), "퀘스트를 완료하지 못했습니다.", "목표를 달성하고 다시 시도해 주세요.");
+            errorUtil.sendError(event.getHook(), "퀘스트를 완료하지 못했습니다.", "목표를 달성하고 다시 시도해 주세요.");
         }
     }
 
@@ -46,8 +46,7 @@ public class QuestCompleteButtonEvent {
                 .setDescription("다음 퀘스트를 확인해 주세요.")
                 .build();
 
-        event.getMessage().editMessageComponents(Collections.emptyList()).queue();
-
-        event.getMessage().editMessageEmbeds(embed).queue();
+        event.getHook().editOriginalComponents(Collections.emptyList()).queue();
+        event.getHook().editOriginalEmbeds(embed).queue();
     }
 }

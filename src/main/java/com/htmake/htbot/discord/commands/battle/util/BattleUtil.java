@@ -77,10 +77,10 @@ public class BattleUtil {
                 .addField(":boom: 치명타 확률", playerStatus.getCriticalChance() + "%", true)
                 .addField(":boom: 치명타 데미지", playerStatus.getCriticalDamage() + "%", true)
 
-                .setFooter("" + embed.getFooter().getText())
+                .setFooter(embed.getFooter().getText())
                 .build();
 
-        event.getMessage().editMessageEmbeds(newEmbed).queue();
+        event.getHook().editOriginalEmbeds(newEmbed).queue();
     }
 
     public void removeCurrentBattleCache(String playerId) {

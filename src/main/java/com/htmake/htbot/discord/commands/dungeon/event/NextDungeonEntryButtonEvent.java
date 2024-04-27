@@ -31,7 +31,8 @@ public class NextDungeonEntryButtonEvent {
         String playerId = event.getUser().getId();
 
         if (!dungeonStatusCache.containsKey(playerId)) {
-            errorUtil.sendError(event.getMessage(), "던전 입장", "던전 입장에 실패했습니다.");
+            errorUtil.sendError(event.getHook(), "던전 입장", "던전 입장에 실패했습니다.");
+            return;
         }
 
         DungeonStatus dungeonStatus = dungeonStatusCache.get(playerId);
@@ -53,7 +54,7 @@ public class NextDungeonEntryButtonEvent {
 
         MessageEmbed embed = dungeonUtil.buildEmbed(dungeonTitle, dungeonMonster, dungeonPlayer, event.getUser().getName());
 
-        event.getMessage().editMessageEmbeds(embed)
+        event.getHook().editOriginalEmbeds(embed)
                 .setActionRow(
                         Button.success("battle-attack", "공격"),
                         Button.primary("battle-skill-open", "스킬"),

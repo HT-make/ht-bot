@@ -33,7 +33,7 @@ public class PlayerJoinButtonEvent {
         if (response.getStatus() == 200) {
             requestSuccess(event);
         } else {
-            errorUtil.sendError(event.getMessage(), "게임 가입", "게임 가입을 이용할 수 없습니다. 잠시 후 다시 이용해주세요.");
+            errorUtil.sendError(event.getHook(), "게임 가입", "게임 가입을 이용할 수 없습니다. 잠시 후 다시 이용해주세요.");
         }
     }
 
@@ -54,7 +54,7 @@ public class PlayerJoinButtonEvent {
                 .setDescription("게임 가입에 성공했습니다!")
                 .build();
 
-        event.getMessage().editMessageComponents(Collections.emptyList()).queue();
-        event.getMessage().editMessageEmbeds(embed).queue();
+        event.getHook().editOriginalComponents(Collections.emptyList()).queue();
+        event.getHook().editOriginalEmbeds(embed).queue();
     }
 }
