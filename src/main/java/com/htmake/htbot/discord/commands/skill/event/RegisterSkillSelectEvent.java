@@ -34,7 +34,7 @@ public class RegisterSkillSelectEvent {
         if (response.getStatus() == 200) {
             requestSuccess(event);
         } else {
-            errorUtil.sendError(event.getMessage(), "스킬 등록", "스킬을 등록 할 수 없습니다.");
+            errorUtil.sendError(event.getHook(), "스킬 등록", "스킬을 등록 할 수 없습니다.");
         }
     }
 
@@ -57,7 +57,7 @@ public class RegisterSkillSelectEvent {
                 .setDescription("스킬 등록에 성공했습니다!")
                 .build();
 
-        event.getMessage().editMessageComponents(Collections.emptyList()).queue();
-        event.getMessage().editMessageEmbeds(embed).queue();
+        event.getHook().editOriginalComponents(Collections.emptyList()).queue();
+        event.getHook().editOriginalEmbeds(embed).queue();
     }
 }

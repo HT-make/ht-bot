@@ -43,7 +43,7 @@ public class BattleResultAction {
         JSONObject monsterLoot = getMonsterLoot(monsterId);
 
         if (monsterLoot == null) {
-            errorUtil.sendError(event.getMessage(), "전투", "보상을 획득하지 못했습니다.");
+            errorUtil.sendError(event.getHook(), "전투", "보상을 획득하지 못했습니다.");
             return;
         }
 
@@ -53,7 +53,7 @@ public class BattleResultAction {
             boolean levelUp = response.getBody().getObject().getBoolean("levelUp");
             requestSuccess(event, monsterLoot, levelUp);
         } else {
-            errorUtil.sendError(event.getMessage(), "전투", "보상을 획득하지 못했습니다.");
+            errorUtil.sendError(event.getHook(), "전투", "보상을 획득하지 못했습니다.");
         }
     }
 
@@ -89,7 +89,7 @@ public class BattleResultAction {
         String levelUpMessage = levelUpCheck(playerId, levelUp);
         MessageEmbed embed = buildEmbed(monsterLoot, getItemList, levelUpMessage);
 
-        event.getMessage().editMessageEmbeds(embed)
+        event.getHook().editOriginalEmbeds(embed)
                 .setActionRow(
                         Button.success("dungeon-next", "전진하기"),
                         Button.danger("dungeon-close", "돌아가기")

@@ -1,12 +1,11 @@
 package com.htmake.htbot.discord.util;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.InteractionHook;
 
 import java.awt.*;
-import java.util.Collections;
 
 public class ErrorUtil {
 
@@ -15,10 +14,10 @@ public class ErrorUtil {
         event.replyEmbeds(embed).queue();
     }
 
-    public void sendError(Message message, String title, String description) {
+    public void sendError(InteractionHook hook, String title, String description) {
         MessageEmbed embed = buildEmbed(title, description);
-        message.editMessageComponents(Collections.emptyList()).queue();
-        message.editMessageEmbeds(embed).queue();
+        hook.setEphemeral(true);
+        hook.sendMessageEmbeds(embed).queue();
     }
 
     private MessageEmbed buildEmbed(String title, String description) {

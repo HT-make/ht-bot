@@ -47,7 +47,7 @@ public class DungeonEntrySelectEvent {
 
             requestSuccess(event, playerObject, dungeonObject);
         } else {
-            errorUtil.sendError(event.getMessage(), "던전 입장", "던전에 입장할 수 없습니다.");
+            errorUtil.sendError(event.getHook(), "던전 입장", "던전에 입장할 수 없습니다.");
         }
     }
 
@@ -83,7 +83,7 @@ public class DungeonEntrySelectEvent {
 
         MessageEmbed embed = dungeonUtil.buildEmbed(dungeonTitle, dungeonMonster, dungeonPlayer, event.getUser().getName());
 
-        event.getMessage().editMessageEmbeds(embed)
+        event.getHook().editOriginalEmbeds(embed)
                 .setActionRow(
                         Button.success("battle-attack", "공격"),
                         Button.primary("battle-skill-open", "스킬"),

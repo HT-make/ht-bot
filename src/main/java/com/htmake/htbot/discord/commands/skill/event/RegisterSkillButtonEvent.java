@@ -38,7 +38,7 @@ public class RegisterSkillButtonEvent {
             JSONArray skillArray = response.getBody().getObject().getJSONArray("skillResponseList");
             requestSuccess(event, skillArray, number);
         } else {
-            errorUtil.sendError(event.getMessage(), "스킬 등록", "스킬 목록을 불러오지 못했습니다.");
+            errorUtil.sendError(event.getHook(), "스킬 등록", "스킬 목록을 불러오지 못했습니다.");
         }
     }
 
@@ -53,7 +53,7 @@ public class RegisterSkillButtonEvent {
         MessageEmbed embed = buildEmbed(skillList);
         StringSelectMenu menu = buildMenu(skillList, number);
 
-        event.getMessage().editMessageEmbeds(embed)
+        event.getHook().editOriginalEmbeds(embed)
                 .setActionRow(menu)
                 .queue();
     }

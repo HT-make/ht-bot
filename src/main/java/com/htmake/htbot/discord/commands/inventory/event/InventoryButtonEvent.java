@@ -36,7 +36,7 @@ public class InventoryButtonEvent {
         Inventory inventory = inventoryCache.get(event.getUser().getId());
 
         if (inventory == null) {
-            errorUtil.sendError(event.getMessage(), "인벤토리", "인벤토리를 찾을 수 없습니다.");
+            errorUtil.sendError(event.getHook(), "인벤토리", "인벤토리를 찾을 수 없습니다.");
             return;
         }
 
@@ -55,7 +55,7 @@ public class InventoryButtonEvent {
         actionRowList.add(actionRowButton);
         actionRowList.add(actionRowSelect);
 
-        event.getMessage().editMessageEmbeds(newEmbed)
+        event.getHook().editOriginalEmbeds(newEmbed)
                 .setComponents(actionRowList)
                 .queue();
     }
