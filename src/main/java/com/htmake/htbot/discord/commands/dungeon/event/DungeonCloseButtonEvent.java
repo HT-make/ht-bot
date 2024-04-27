@@ -48,12 +48,11 @@ public class DungeonCloseButtonEvent {
 
             if (response.getStatus() == 200) {
                 requestSuccess(event);
+                dungeonStatusCache.remove(playerId);
             } else {
-                errorUtil.sendError(event.getMessage(), "던전 퇴장", "던전 퇴장에 실패하였습니다.");
+                errorUtil.sendError(event.getHook(), "던전 퇴장", "던전 퇴장에 실패하였습니다.");
             }
         }
-
-        dungeonStatusCache.remove(playerId);
     }
 
     private HttpResponse<JsonNode> request(List<GetItem> getItemList, String playerId) {
@@ -74,7 +73,7 @@ public class DungeonCloseButtonEvent {
                 .setDescription("던전에서 퇴장하였습니다.")
                 .build();
 
-        event.getMessage().editMessageComponents(Collections.emptyList()).queue();
-        event.getMessage().editMessageEmbeds(embed).queue();
+        event.getHook().editOriginalComponents(Collections.emptyList()).queue();
+        event.getHook().editOriginalEmbeds(embed).queue();
     }
 }
