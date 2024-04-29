@@ -71,13 +71,13 @@ public class PlayerAttackButtonEvent {
         }
 
         battleUtil.updateSituation(playerId, message);
-        battleUtil.editEmbed(event, playerStatus, monsterStatus);
+        battleUtil.editEmbed(event, playerStatus, monsterStatus, "start");
 
         monsterStatus.setHealth(Math.max(0, (monsterStatus.getHealth() - damage.getFirst())));
 
-        message = damage.getFirst() + "의 데미지를 입혔다!";
+        message = damage.getFirst() + "의 데미지를 입혔다.";
         battleUtil.updateSituation(playerId, message);
-        battleUtil.editEmbed(event, playerStatus, monsterStatus);
+        battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
     }
 
     private Pair<Integer, Boolean> playerAttackDamage(PlayerStatus playerStatus, MonsterStatus monsterStatus) {
