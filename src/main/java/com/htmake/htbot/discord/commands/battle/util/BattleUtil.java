@@ -10,8 +10,10 @@ import com.htmake.htbot.discord.commands.battle.data.Situation;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class BattleUtil {
@@ -39,7 +41,7 @@ public class BattleUtil {
         situationCache.put(playerId, situation);
     }
 
-    public void editEmbed(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
+    public void editEmbed(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus, String type) {
         MessageEmbed embed = event.getMessage().getEmbeds().get(0);
 
         Situation situation = situationCache.get(event.getUser().getId());
@@ -80,7 +82,34 @@ public class BattleUtil {
                 .setFooter(embed.getFooter().getText())
                 .build();
 
-        event.getHook().editOriginalEmbeds(newEmbed).queue();
+        if (type.equals("progress")) {
+            event.getHook().editOriginalEmbeds(newEmbed).queue();
+        } else {
+            event.getHook().editOriginalEmbeds(newEmbed)
+                    .setActionRow(getButtonList(type))
+                    .queue();
+        }
+    }
+
+    private List<Button> getButtonList(String type) {
+        List<Button> buttonList = new ArrayList<>();
+
+        switch (type) {
+            case "start" -> {
+                buttonList.add(Button.success("battle-attack", "공격").asDisabled());
+                buttonList.add(Button.primary("battle-skill-open", "스킬").asDisabled());
+                buttonList.add(Button.primary("battle-potion-open", "포션").asDisabled());
+            }
+            case "end" -> {
+                buttonList.add(Button.success("battle-attack", "공격"));
+                buttonList.add(Button.primary("battle-skill-open", "스킬"));
+                buttonList.add(Button.primary("battle-potion-open", "포션"));
+            }
+        }
+
+        buttonList.add(Button.danger("battle-retreat", "후퇴"));
+
+        return buttonList;
     }
 
     public void removeCurrentBattleCache(String playerId) {

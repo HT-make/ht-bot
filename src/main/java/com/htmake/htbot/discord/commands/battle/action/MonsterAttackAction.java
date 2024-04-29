@@ -25,7 +25,7 @@ public class MonsterAttackAction {
 
         int damage;
 
-        if (monsterStatus.getSkillName() != null && skillChance()) {
+        if (!monsterStatus.getSkillName().equals("null") && skillChance()) {
             damage = skillAttack(event, playerStatus, monsterStatus);
         } else {
             damage = normalAttack(event, playerStatus, monsterStatus);
@@ -33,9 +33,9 @@ public class MonsterAttackAction {
 
         playerStatus.setHealth(Math.max(0, playerStatus.getHealth() - damage));
 
-        String message = damage + "의 데미지를 입혔다!";
+        String message = damage + "의 데미지를 입혔다.";
         battleUtil.updateSituation(playerId, message);
-        battleUtil.editEmbed(event, playerStatus, monsterStatus);
+        battleUtil.editEmbed(event, playerStatus, monsterStatus, "end");
 
         if (playerStatus.getHealth() == 0) {
             killPlayer(event, playerStatus, monsterStatus);
@@ -44,14 +44,14 @@ public class MonsterAttackAction {
 
     private boolean skillChance() {
         RandomGenerator random = new MersenneTwister();
-        int skillChance = random.nextInt(100) + 1;
-        return skillChance <= 20;
+        int skillChance = random.nextInt(100);
+        return skillChance < 20;
     }
 
     private int skillAttack(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
-        String message = monsterStatus.getName() + "의 " + monsterStatus.getSkillName() + "!";
+        String message = monsterStatus.getName() + "의 " + monsterStatus.getSkillName() + ".";
         battleUtil.updateSituation(event.getUser().getId(), message);
-        battleUtil.editEmbed(event, playerStatus, monsterStatus);
+        battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
 
         return Math.max(0, monsterStatus.getSkillDamage() - playerStatus.getDefence());
     }
@@ -59,7 +59,7 @@ public class MonsterAttackAction {
     private int normalAttack(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
         String message = monsterStatus.getName() + "의 공격.";
         battleUtil.updateSituation(event.getUser().getId(), message);
-        battleUtil.editEmbed(event, playerStatus, monsterStatus);
+        battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
 
         return Math.max(0, monsterStatus.getDamage() - playerStatus.getDefence());
     }
@@ -71,10 +71,10 @@ public class MonsterAttackAction {
 
         String message = name + "이/가 사망했다.";
         battleUtil.updateSituation(playerId, message);
-        battleUtil.editEmbed(event, playerStatus, monsterStatus);
+        battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
 
-        event.getMessage().editMessageComponents(Collections.emptyList()).queue();
-        event.getMessage().editMessageEmbeds(new EmbedBuilder()
+        event.getHook().editOriginalComponents(Collections.emptyList()).queue();
+        event.getHook().editOriginalEmbeds(new EmbedBuilder()
                         .setColor(Color.RED)
                         .setTitle(":skull: 전투 패배")
                         .setDescription("전투에서 패배했습니다.")

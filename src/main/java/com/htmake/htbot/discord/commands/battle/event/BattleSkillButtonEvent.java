@@ -142,14 +142,14 @@ public class BattleSkillButtonEvent {
 
         String message = event.getUser().getName() + "의 " + usedSkill.getName() + ".";
         battleUtil.updateSituation(playerId, message);
-        battleUtil.editEmbed(event, playerStatus, monsterStatus);
+        battleUtil.editEmbed(event, playerStatus, monsterStatus, "start");
 
         int skillDamage = skillDamage(playerStatus, monsterStatus, usedSkill.getValue());
         monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - skillDamage));
 
         message = skillDamage + "의 데미지를 입혔다.";
         battleUtil.updateSituation(playerId, message);
-        battleUtil.editEmbed(event, playerStatus, monsterStatus);
+        battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
 
         if (monsterStatus.getHealth() == 0) {
             monsterKillAction.execute(event, playerStatus, monsterStatus);

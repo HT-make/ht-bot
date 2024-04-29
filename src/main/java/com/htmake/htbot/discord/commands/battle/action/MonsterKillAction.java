@@ -30,7 +30,7 @@ public class MonsterKillAction {
 
         String message = monsterStatus.getName() + "을/를 처치했다!";
         battleUtil.updateSituation(playerId, message);
-        battleUtil.editEmbed(event, playerStatus, monsterStatus);
+        battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
 
         battleResultAction.execute(event, monsterStatus.getId());
 
