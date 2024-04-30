@@ -1,14 +1,11 @@
 package com.htmake.htbot.discord.commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -19,7 +16,6 @@ import org.springframework.stereotype.Component;
 import java.awt.*;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class GlobalCommand extends ListenerAdapter {
@@ -27,25 +23,17 @@ public class GlobalCommand extends ListenerAdapter {
     @Override
     public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
         event.deferEdit().queue();
+
         String component = event.getComponentId();
-        User user = event.getUser();
 
         if (component.equals("cancel")) {
-            Message message = event.getMessage();
-            MessageEmbed embed = message.getEmbeds().get(0);
-            String author = Objects.requireNonNull(embed.getAuthor()).getName();
+            MessageEmbed embed = new EmbedBuilder()
+                    .setColor(Color.GREEN)
+                    .setDescription("작업이 취소되었습니다.")
+                    .build();
 
-            if (!user.getName().equals(author)) {
-                InteractionHook hook = event.getHook().setEphemeral(true);
-                hook.sendMessage("이 버튼은 이용할 수 없습니다!").queue();
-            } else {
-                message.editMessageComponents(Collections.emptyList()).queue();
-                message.editMessageEmbeds(new EmbedBuilder()
-                        .setColor(Color.ORANGE)
-                        .setDescription("작업이 취소되었습니다.")
-                        .build()
-                ).queue();
-            }
+            event.getHook().editOriginalComponents(Collections.emptyList()).queue();
+            event.getHook().editOriginalEmbeds(embed).queue();
         }
     }
 

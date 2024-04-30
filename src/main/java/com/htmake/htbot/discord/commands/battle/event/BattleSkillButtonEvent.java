@@ -10,8 +10,6 @@ import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.util.BattleUtil;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
@@ -54,9 +52,6 @@ public class BattleSkillButtonEvent {
     }
 
     private void openSkill(ButtonInteractionEvent event) {
-        Message message = event.getMessage();
-        MessageEmbed embed = message.getEmbeds().get(0);
-
         String playerId = event.getUser().getId();
 
         if (!playerStatusCache.containsKey(playerId)) {
@@ -75,6 +70,7 @@ public class BattleSkillButtonEvent {
             if (playerSkill.containsKey(i)) {
                 skillName = playerSkill.get(i).getName();
             }
+
             skillNameList.add(skillName);
         }
 
@@ -95,23 +91,18 @@ public class BattleSkillButtonEvent {
         actionRowList.add((ActionRow.of(firstButtonList)));
         actionRowList.add((ActionRow.of(secondButtonList)));
 
-        message.editMessageEmbeds(embed)
-                .setComponents(actionRowList)
-                .queue();
+        event.getHook().editOriginalComponents(actionRowList).queue();
     }
 
     private void closeSkill(ButtonInteractionEvent event) {
-        Message message = event.getMessage();
-        MessageEmbed embed = message.getEmbeds().get(0);
+        List<Button> buttonList = new ArrayList<>(Arrays.asList(
+                Button.success("battle-attack", "공격"),
+                Button.primary("battle-skill-open", "스킬"),
+                Button.primary("battle-potion-open", "포션"),
+                Button.danger("battle-retreat", "후퇴")
+        ));
 
-        message.editMessageEmbeds(embed)
-                .setActionRow(
-                        Button.success("battle-attack", "공격"),
-                        Button.primary("battle-skill-open", "스킬"),
-                        Button.primary("battle-potion-open", "포션"),
-                        Button.danger("battle-retreat", "후퇴")
-                )
-                .queue();
+        event.getHook().editOriginalComponents(ActionRow.of(buttonList)).queue();
     }
 
     private void useSkill(ButtonInteractionEvent event, int number) {
