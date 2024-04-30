@@ -40,11 +40,7 @@ public class DictionarySlashEvent {
         HttpResponse<JsonNode> response = request(category, name);
 
         if (response.getStatus() == 200) {
-            DictionaryResponse dictionaryResponse = requestSuccess(category, response.getBody().getObject());
-
-            MessageEmbed embed = buildEmbed(dictionaryResponse, category);
-
-            event.replyEmbeds(embed).queue();
+            requestSuccess(event, category, response.getBody().getObject());
         } else {
             errorUtil.sendError(event, "사전", "올바르지 않은 이름입니다.");
         }
@@ -58,18 +54,18 @@ public class DictionarySlashEvent {
         return httpClient.sendGetRequest(endPoint, requestParamList);
     }
 
-    private DictionaryResponse requestSuccess(String category, JSONObject dictionaryObject) {
-        DictionaryResponse response = new DictionaryResponse();
+    private void requestSuccess(SlashCommandInteractionEvent event, String category, JSONObject dictionaryObject) {
+        new DictionaryResponse();
+        DictionaryResponse response = switch (category) {
+            case "weapon" -> toWeaponResponse(dictionaryObject);
+            case "armor" -> toArmorResponse(dictionaryObject);
+            case "misc" -> toMiscResponse(dictionaryObject);
+            default -> new DictionaryResponse();
+        };
 
-        if (category.equals("weapon")) {
-            response = toWeaponResponse(dictionaryObject);
-        } else if (category.equals("armor")) {
-            response = toArmorResponse(dictionaryObject);
-        } else if (category.equals("misc")) {
-            response = toMiscResponse(dictionaryObject);
-        }
+        MessageEmbed embed = buildEmbed(response, category);
 
-        return response;
+        event.replyEmbeds(embed).queue();
     }
 
     private DictionaryResponse toWeaponResponse(JSONObject dictionaryObject) {
