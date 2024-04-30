@@ -3,13 +3,12 @@ package com.htmake.htbot.discord.commands.battle.action;
 import com.htmake.htbot.discord.commands.battle.data.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.util.BattleUtil;
-import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 
-import java.awt.*;
 import java.util.Collections;
 
 public class MonsterAttackAction {
@@ -73,14 +72,10 @@ public class MonsterAttackAction {
         battleUtil.updateSituation(playerId, message);
         battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
 
+        MessageEmbed embed = battleUtil.battleDefeat();
+
         event.getHook().editOriginalComponents(Collections.emptyList()).queue();
-        event.getHook().editOriginalEmbeds(new EmbedBuilder()
-                        .setColor(Color.RED)
-                        .setTitle(":skull: 전투 패배")
-                        .setDescription("전투에서 패배했습니다.")
-                        .build()
-                )
-                .queue();
+        event.getHook().editOriginalEmbeds(embed).queue();
 
         battleUtil.removeCurrentBattleCache(playerId);
     }
