@@ -17,7 +17,8 @@ public class DictionaryController {
     @GetMapping("/info")
     public ResponseEntity<DictionaryResponse> getDictionaryInfo(
             @RequestParam("category") String category,
-            @RequestParam("name") String name) {
+            @RequestParam("name") String name
+    ) {
         DictionaryResponse res = dictionaryService.execute(category, name);
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
