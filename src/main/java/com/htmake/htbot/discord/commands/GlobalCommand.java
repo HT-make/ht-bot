@@ -60,7 +60,9 @@ public class GlobalCommand extends ListenerAdapter {
                 Commands.slash("스킬-목록", "사용 가능한 스킬을 확인합니다."),
                 Commands.slash("스킬-등록", "스킬을 등록합니다."),
 
-                Commands.slash("퀘스트", "퀘스트를 확인합니다.")
+                Commands.slash("퀘스트", "퀘스트를 확인합니다."),
+
+                Commands.slash("도감", "도감을 확인합니다.").addOptions(selectCategory().setRequired(true), insertName().setRequired(true))
         );
 
         event.getJDA().updateCommands().addCommands(commandData).queue();
@@ -72,5 +74,16 @@ public class GlobalCommand extends ListenerAdapter {
 
     private OptionData insertEquipmentName() {
         return new OptionData(OptionType.STRING, "장비이름", "장비 이름을 입력해 주세요!");
+    }
+
+    private OptionData selectCategory() {
+        return new OptionData(OptionType.STRING, "카테고리", "카테고리를 선택해 주세요!")
+                .addChoice("아이템-무기", "weapon")
+                .addChoice("아이템-갑옷", "armor")
+                .addChoice("아이템-기타", "misc");
+    }
+
+    private OptionData insertName() {
+        return new OptionData(OptionType.STRING, "이름", "원하시는 옵션의 이름을 입력해 주세요!");
     }
 }
