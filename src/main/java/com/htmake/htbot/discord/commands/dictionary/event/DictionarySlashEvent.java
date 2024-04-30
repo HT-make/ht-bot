@@ -60,6 +60,7 @@ public class DictionarySlashEvent {
             case "weapon" -> toWeaponResponse(dictionaryObject);
             case "armor" -> toArmorResponse(dictionaryObject);
             case "misc" -> toMiscResponse(dictionaryObject);
+            default -> new DictionaryResponse();
         };
 
         MessageEmbed embed = buildEmbed(response, category);

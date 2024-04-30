@@ -34,10 +34,10 @@ public class DictionaryServiceImpl implements DictionaryService {
             case "weapon" -> createWeaponResponse(decodedName);
             case "armor" -> createArmorResponse(decodedName);
             case "misc" -> createMiscResponse(decodedName);
-
             default -> throw new NotFoundCategoryException();
         };
     }
+
     private DictionaryResponse createWeaponResponse(String name) {
         Weapon weapon = weaponRepository.findByName(name).orElseThrow(NotFoundNameException::new);
         return DictionaryResponse.builder()
