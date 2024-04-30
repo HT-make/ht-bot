@@ -1,5 +1,6 @@
 package com.htmake.htbot.discord.commands.battle;
 
+import com.htmake.htbot.discord.commands.battle.event.BattleRetreatButtonEvent;
 import com.htmake.htbot.discord.commands.battle.event.BattleSkillButtonEvent;
 import com.htmake.htbot.discord.commands.battle.event.PlayerAttackButtonEvent;
 import com.htmake.htbot.discord.commands.battle.event.BattlePotionEvent;
@@ -15,10 +16,12 @@ public class BattleCommand extends ListenerAdapter {
 
     private final PlayerAttackButtonEvent playerAttackButtonEvent;
     private final BattleSkillButtonEvent battleSkillButtonEvent;
+    private final BattleRetreatButtonEvent battleRetreatButtonEvent;
 
     public BattleCommand() {
         this.playerAttackButtonEvent = new PlayerAttackButtonEvent();
         this.battleSkillButtonEvent = new BattleSkillButtonEvent();
+        this.battleRetreatButtonEvent = new BattleRetreatButtonEvent();
     }
 
     @Override
@@ -30,6 +33,7 @@ public class BattleCommand extends ListenerAdapter {
                 case "attack" -> playerAttackButtonEvent.execute(event);
                 case "skill" -> battleSkillButtonEvent.execute(event, componentList.get(2));
                 case "potion" -> new BattlePotionEvent(event, componentList.get(2));
+                case "retreat" -> battleRetreatButtonEvent.execute(event);
             }
         }
     }
