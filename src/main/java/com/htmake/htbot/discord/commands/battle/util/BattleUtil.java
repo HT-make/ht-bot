@@ -117,4 +117,12 @@ public class BattleUtil {
         monsterStatusCache.remove(playerId);
         situationCache.remove(playerId);
     }
+
+    public MessageEmbed battleDefeat() {
+        return new EmbedBuilder()
+                .setColor(Color.RED)
+                .setTitle(":skull: 전투 패배")
+                .setDescription("전투에서 패배했습니다.")
+                .build();
+    }
 }
