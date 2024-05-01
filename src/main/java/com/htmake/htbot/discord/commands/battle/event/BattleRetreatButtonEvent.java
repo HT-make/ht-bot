@@ -26,7 +26,7 @@ public class BattleRetreatButtonEvent {
         battleUtil.removeCurrentBattleCache(playerId);
         dungeonStatusCache.remove(playerId);
 
-        MessageEmbed embed = battleUtil.battleDefeat();
+        MessageEmbed embed = battleUtil.battleDefeat(playerId);
 
         event.getHook().editOriginalComponents(Collections.emptyList()).queue();
         event.getHook().editOriginalEmbeds(embed).queue();
