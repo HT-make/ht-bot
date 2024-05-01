@@ -1,4 +1,4 @@
-package com.htmake.htbot.discord.commands;
+package com.htmake.htbot.discord.commands.global;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
