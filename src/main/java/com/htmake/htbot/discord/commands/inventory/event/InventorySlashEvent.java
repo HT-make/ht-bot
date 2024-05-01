@@ -73,9 +73,9 @@ public class InventorySlashEvent {
 
         event.replyEmbeds(embed)
                 .addActionRow(
-                        Button.primary("inventory-left-0", "◄").asDisabled(),
+                        Button.primary("inventory-0", "◄").asDisabled(),
                         Button.secondary("blank", "1/5").asDisabled(),
-                        Button.primary("inventory-right-2", "►"),
+                        Button.primary("inventory-2", "►"),
                         Button.danger("cancel", "닫기")
                 )
                 .addActionRow(menu)
