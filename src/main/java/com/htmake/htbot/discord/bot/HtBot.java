@@ -5,7 +5,7 @@ import com.htmake.htbot.discord.commands.dictionary.DictionaryCommand;
 import com.htmake.htbot.discord.commands.dungeon.DungeonCommand;
 import com.htmake.htbot.discord.commands.inventory.InventoryCommand;
 import com.htmake.htbot.discord.commands.player.PlayerCommand;
-import com.htmake.htbot.discord.commands.GlobalCommand;
+import com.htmake.htbot.discord.commands.global.GlobalCommand;
 import com.htmake.htbot.discord.commands.quest.QuestCommand;
 import com.htmake.htbot.discord.commands.shop.ShopCommand;
 import com.htmake.htbot.discord.commands.skill.SkillCommand;

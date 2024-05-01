@@ -4,6 +4,8 @@ import com.htmake.htbot.discord.commands.skill.event.AvailableSkillSlashEvent;
 import com.htmake.htbot.discord.commands.skill.event.RegisterSkillButtonEvent;
 import com.htmake.htbot.discord.commands.skill.event.RegisterSkillSelectEvent;
 import com.htmake.htbot.discord.commands.skill.event.RegisterSkillSlashEvent;
+import com.htmake.htbot.discord.util.ErrorUtil;
+import com.htmake.htbot.discord.util.MessageUtil;
 import kotlin.Pair;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -23,12 +25,18 @@ public class SkillCommand extends ListenerAdapter {
     private final RegisterSkillButtonEvent registerSkillButtonEvent;
     private final RegisterSkillSelectEvent registerSkillSelectEvent;
 
+    private final ErrorUtil errorUtil;
+    private final MessageUtil messageUtil;
+
     public SkillCommand() {
         this.availableSkillSlashEvent = new AvailableSkillSlashEvent();
 
         this.registerSkillSlashEvent = new RegisterSkillSlashEvent();
         this.registerSkillButtonEvent = new RegisterSkillButtonEvent();
         this.registerSkillSelectEvent = new RegisterSkillSelectEvent();
+
+        this.errorUtil = new ErrorUtil();
+        this.messageUtil = new MessageUtil();
     }
 
     @Override
@@ -36,8 +44,18 @@ public class SkillCommand extends ListenerAdapter {
         String command = event.getName();
 
         if (command.equals("스킬-목록")) {
+            if (messageUtil.validCheck(event.getUser().getId())) {
+                errorUtil.sendError(event, "작업 실패", "현재 다른 작업을 진행중입니다.");
+                return;
+            }
+
             availableSkillSlashEvent.execute(event);
         } else if (command.equals("스킬-등록")) {
+            if (messageUtil.validCheck(event.getUser().getId())) {
+                errorUtil.sendError(event, "작업 실패", "현재 다른 작업을 진행중입니다.");
+                return;
+            }
+
             registerSkillSlashEvent.execute(event);
         }
     }
@@ -47,6 +65,11 @@ public class SkillCommand extends ListenerAdapter {
         List<String> componentList = List.of(event.getComponentId().split("-"));
 
         if (componentList.get(0).equals("skill")) {
+            if (messageUtil.validCheck(event.getMessage(), event.getUser().getName())) {
+                errorUtil.sendError(event.getHook(), "제한된 버튼", "이 버튼은 이용할 수 없습니다.");
+                return;
+            }
+
             if (componentList.get(1).equals("register")) {
                 registerSkillButtonEvent.execute(event, componentList.get(2));
             }
@@ -58,6 +81,11 @@ public class SkillCommand extends ListenerAdapter {
         List<String> componentList = List.of(event.getValues().get(0).split("-"));
 
         if (componentList.get(0).equals("skill")) {
+            if (messageUtil.validCheck(event.getMessage(), event.getUser().getName())) {
+                errorUtil.sendError(event.getHook(), "제한된 버튼", "이 버튼은 이용할 수 없습니다.");
+                return;
+            }
+
             if (componentList.get(1).equals("register")) {
                 Pair<String, String> value = new Pair<>(componentList.get(2), componentList.get(3));
                 registerSkillSelectEvent.execute(event, value);

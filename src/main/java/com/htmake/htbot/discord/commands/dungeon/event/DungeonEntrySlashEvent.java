@@ -2,6 +2,7 @@ package com.htmake.htbot.discord.commands.dungeon.event;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
@@ -13,7 +14,7 @@ import java.util.Arrays;
 public class DungeonEntrySlashEvent {
 
     public void execute(SlashCommandInteractionEvent event) {
-        MessageEmbed embed = buildEmbed();
+        MessageEmbed embed = buildEmbed(event.getUser());
         StringSelectMenu menu = buildMenu();
 
         event.replyEmbeds(embed)
@@ -22,9 +23,12 @@ public class DungeonEntrySlashEvent {
                 .queue();
     }
 
-    private MessageEmbed buildEmbed() {
+    private MessageEmbed buildEmbed(User user) {
+        String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
+
         return new EmbedBuilder()
                 .setColor(Color.GREEN)
+                .setAuthor(user.getName(), null, profileUrl)
                 .setTitle(":key: 던전")
                 .setDescription(
                         """

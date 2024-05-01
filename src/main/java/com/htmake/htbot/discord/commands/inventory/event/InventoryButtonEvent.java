@@ -77,12 +77,12 @@ public class InventoryButtonEvent {
     public List<Button> buttonEmbed(int page) {
         List<Button> buttonList = new ArrayList<>();
 
-        String leftId = "inventory-left-" + page;
+        String leftId = "inventory-" + (page - 1);
         String pageLabel = page + "/5";
-        String rightId = "inventory-right-" + (page + 1);
+        String rightId = "inventory-" + (page + 1);
 
-        Button pageButton = Button.secondary("blank", pageLabel).asDisabled();
         Button leftButton = Button.primary(leftId, "◄");
+        Button pageButton = Button.secondary("blank", pageLabel).asDisabled();
         Button rightButton = Button.primary(rightId, "►");
         Button cancelButton = Button.danger("cancel", "닫기");
 

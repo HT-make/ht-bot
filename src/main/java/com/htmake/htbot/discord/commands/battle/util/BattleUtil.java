@@ -1,5 +1,6 @@
 package com.htmake.htbot.discord.commands.battle.util;
 
+import com.htmake.htbot.discord.util.MessageUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
@@ -18,11 +19,15 @@ import java.util.List;
 
 public class BattleUtil {
 
+    private final MessageUtil messageUtil;
+
     private final PlayerStatusCache playerStatusCache;
     private final MonsterStatusCache monsterStatusCache;
     private final SituationCache situationCache;
 
     public BattleUtil() {
+        this.messageUtil = new MessageUtil();
+
         this.playerStatusCache = CacheFactory.playerStatusCache;
         this.monsterStatusCache = CacheFactory.monsterStatusCache;
         this.situationCache = CacheFactory.situationCache;
@@ -61,6 +66,7 @@ public class BattleUtil {
 
         MessageEmbed newEmbed = new EmbedBuilder()
                 .setColor(Color.GREEN)
+                .setAuthor(embed.getAuthor().getName(), null, embed.getAuthor().getIconUrl())
                 .setTitle(embed.getTitle())
                 .setDescription(embed.getDescription())
 
@@ -118,7 +124,9 @@ public class BattleUtil {
         situationCache.remove(playerId);
     }
 
-    public MessageEmbed battleDefeat() {
+    public MessageEmbed battleDefeat(String playerId) {
+        messageUtil.remove(playerId);
+
         return new EmbedBuilder()
                 .setColor(Color.RED)
                 .setTitle(":skull: 전투 패배")

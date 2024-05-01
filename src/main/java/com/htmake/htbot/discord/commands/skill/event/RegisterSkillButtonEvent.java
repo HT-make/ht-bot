@@ -50,7 +50,7 @@ public class RegisterSkillButtonEvent {
 
     private void requestSuccess(ButtonInteractionEvent event, JSONArray skillArray, String number) {
         List<AvailableSkillResponse> skillList = skillEventUtil.toSkillList(skillArray);
-        MessageEmbed embed = buildEmbed(skillList);
+        MessageEmbed embed = buildEmbed(skillList, event.getMessage().getEmbeds().get(0));
         StringSelectMenu menu = buildMenu(skillList, number);
 
         event.getHook().editOriginalEmbeds(embed)
@@ -58,9 +58,10 @@ public class RegisterSkillButtonEvent {
                 .queue();
     }
 
-    private MessageEmbed buildEmbed(List<AvailableSkillResponse> skillList) {
+    private MessageEmbed buildEmbed(List<AvailableSkillResponse> skillList, MessageEmbed embed) {
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setColor(Color.GREEN)
+                .setAuthor(embed.getAuthor().getName(), null, embed.getAuthor().getIconUrl())
                 .setTitle(":bookmark: 스킬 등록")
                 .setDescription("등록할 스킬을 선택해 주세요.");
 

@@ -8,6 +8,7 @@ import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.json.JSONObject;
@@ -48,7 +49,7 @@ public class PlayerJoinSlashEvent {
             MessageEmbed embed = buildExistsPlayerEmbed();
             event.replyEmbeds(embed).queue();
         } else {
-            MessageEmbed embed = buildPlayerJoinEmbed();
+            MessageEmbed embed = buildPlayerJoinEmbed(event.getUser());
             event.replyEmbeds(embed)
                     .setActionRow(
                             Button.primary("player-job-WARRIOR", "전사"),
@@ -67,9 +68,12 @@ public class PlayerJoinSlashEvent {
                 .build();
     }
 
-    private MessageEmbed buildPlayerJoinEmbed() {
+    private MessageEmbed buildPlayerJoinEmbed(User user) {
+        String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
+
         return new EmbedBuilder()
                 .setColor(Color.GREEN)
+                .setAuthor(user.getName(), null, profileUrl)
                 .setTitle(":video_game: 게임 가입")
                 .setDescription("직업을 선택해주세요!\n한 번 선택된 직업은 변경이 불가합니다!")
                 .addField("전사", "기본 공격력이 높고, 몸이 튼튼한 밸런스형", true)
