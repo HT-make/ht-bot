@@ -14,6 +14,7 @@ import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.json.JSONArray;
@@ -87,7 +88,7 @@ public class BattleResultAction {
 
         List<GetItem> getItemList = getNewGetItemList(playerId, monsterLoot);
         String levelUpMessage = levelUpCheck(playerId, levelUp);
-        MessageEmbed embed = buildEmbed(monsterLoot, getItemList, levelUpMessage);
+        MessageEmbed embed = buildEmbed(monsterLoot, getItemList, levelUpMessage, event.getUser());
 
         event.getHook().editOriginalEmbeds(embed)
                 .setActionRow(
@@ -152,7 +153,7 @@ public class BattleResultAction {
         }
     }
 
-    private MessageEmbed buildEmbed(JSONObject monsterLoot, List<GetItem> getItemList, String levelUpMessage) {
+    private MessageEmbed buildEmbed(JSONObject monsterLoot, List<GetItem> getItemList, String levelUpMessage, User user) {
         StringBuilder getItemMessage = new StringBuilder();
 
         if (getItemList.size() > 0) {
@@ -163,8 +164,11 @@ public class BattleResultAction {
             getItemMessage.append("획득한 아이템이 없습니다.");
         }
 
+        String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
+
         return new EmbedBuilder()
                 .setColor(Color.GREEN)
+                .setAuthor(user.getName(), null, profileUrl)
                 .setTitle(":crossed_swords: 전투 승리!")
                 .setDescription(levelUpMessage)
                 .addField(":sparkles: 획득 경험치", "" + monsterLoot.getInt("exp"), true)

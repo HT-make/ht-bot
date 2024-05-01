@@ -11,6 +11,7 @@ import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.data.Situation;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
 
@@ -30,7 +31,7 @@ public class DungeonUtil {
         this.situationCache = CacheFactory.situationCache;
     }
 
-    public MessageEmbed buildEmbed(String dungeonTitle, DungeonMonster dungeonMonster, DungeonPlayer dungeonPlayer, String name) {
+    public MessageEmbed buildEmbed(String dungeonTitle, DungeonMonster dungeonMonster, DungeonPlayer dungeonPlayer, User user) {
 
         StringBuilder sb = new StringBuilder();
 
@@ -38,8 +39,11 @@ public class DungeonUtil {
         sb.append("|\n".repeat(6));
         sb.append("```");
 
+        String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
+
         return new EmbedBuilder()
                 .setColor(Color.GREEN)
+                .setAuthor(user.getName(), null, profileUrl)
                 .setTitle(dungeonTitle)
                 .setDescription("Lv." + dungeonMonster.getLevel() + " " + dungeonMonster.getName())
 
@@ -57,7 +61,7 @@ public class DungeonUtil {
                 .addField(":boom: 치명타 확률",  dungeonPlayer.getCriticalChance()+ "%", true)
                 .addField(":boom: 치명타 데미지", dungeonPlayer.getCriticalDamage() + "%", true)
 
-                .setFooter("Lv." + dungeonPlayer.getLevel() + " " + name)
+                .setFooter("Lv." + dungeonPlayer.getLevel() + " " + user.getName())
                 .build();
     }
 

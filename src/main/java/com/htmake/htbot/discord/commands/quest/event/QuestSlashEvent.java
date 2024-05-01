@@ -8,6 +8,7 @@ import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.json.JSONObject;
@@ -42,7 +43,7 @@ public class QuestSlashEvent {
     }
 
     private void requestSuccess(SlashCommandInteractionEvent event, JSONObject questData) {
-        MessageEmbed embed = buildEmbed(questData);
+        MessageEmbed embed = buildEmbed(questData, event.getUser());
 
         int monsterQuantity = questData.getInt("monsterQuantity");
         int targetMonsterQuantity = questData.getInt("targetMonsterQuantity");
@@ -63,13 +64,14 @@ public class QuestSlashEvent {
                 .queue();
     }
 
-    private MessageEmbed buildEmbed(JSONObject questData) {
-        EmbedBuilder embedBuilder = new EmbedBuilder()
-                .setColor(Color.GREEN)
-                .setTitle("진행중인 퀘스트 정보");
-        embedBuilder.setDescription(format(questData));
+    private MessageEmbed buildEmbed(JSONObject questData, User user) {
+        String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
 
-        return embedBuilder.build();
+        return new EmbedBuilder()
+                .setColor(Color.GREEN)
+                .setAuthor(user.getName(), null, profileUrl)
+                .setTitle("진행중인 퀘스트 정보")
+                .setDescription(format(questData)).build();
     }
 
     private String format(JSONObject questData){

@@ -52,7 +52,7 @@ public class NextDungeonEntryButtonEvent {
 
         String dungeonTitle = dungeonName + "-" + stage;
 
-        MessageEmbed embed = dungeonUtil.buildEmbed(dungeonTitle, dungeonMonster, dungeonPlayer, event.getUser().getName());
+        MessageEmbed embed = dungeonUtil.buildEmbed(dungeonTitle, dungeonMonster, dungeonPlayer, event.getUser());
 
         event.getHook().editOriginalEmbeds(embed)
                 .setActionRow(

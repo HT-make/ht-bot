@@ -72,7 +72,7 @@ public class MonsterAttackAction {
         battleUtil.updateSituation(playerId, message);
         battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
 
-        MessageEmbed embed = battleUtil.battleDefeat();
+        MessageEmbed embed = battleUtil.battleDefeat(playerId);
 
         event.getHook().editOriginalComponents(Collections.emptyList()).queue();
         event.getHook().editOriginalEmbeds(embed).queue();

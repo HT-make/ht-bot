@@ -9,6 +9,7 @@ import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.json.JSONArray;
@@ -49,7 +50,7 @@ public class RegisterSkillSlashEvent {
 
     private void requestSuccess(SlashCommandInteractionEvent event, JSONArray skillArray) {
         List<RegisteredSkillResponse> skillList = toSkillList(skillArray);
-        MessageEmbed embed = buildEmbed(skillList);
+        MessageEmbed embed = buildEmbed(skillList, event.getUser());
 
         event.replyEmbeds(embed)
                 .addActionRow(
@@ -82,9 +83,12 @@ public class RegisterSkillSlashEvent {
         return skillList;
     }
 
-    private MessageEmbed buildEmbed(List<RegisteredSkillResponse> skillList) {
+    private MessageEmbed buildEmbed(List<RegisteredSkillResponse> skillList, User user) {
+        String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
+
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setColor(Color.GREEN)
+                .setAuthor(user.getName(), null, profileUrl)
                 .setTitle(":bookmark: 스킬 등록")
                 .setDescription("스킬을 등록할 곳을 선택해 주세요.");
 

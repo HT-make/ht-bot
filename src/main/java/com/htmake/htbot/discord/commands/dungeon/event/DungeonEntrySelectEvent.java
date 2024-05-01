@@ -81,7 +81,7 @@ public class DungeonEntrySelectEvent {
 
         String dungeonTitle = dungeonName + "-" + 1;
 
-        MessageEmbed embed = dungeonUtil.buildEmbed(dungeonTitle, dungeonMonster, dungeonPlayer, event.getUser().getName());
+        MessageEmbed embed = dungeonUtil.buildEmbed(dungeonTitle, dungeonMonster, dungeonPlayer, event.getUser());
 
         event.getHook().editOriginalEmbeds(embed)
                 .setActionRow(

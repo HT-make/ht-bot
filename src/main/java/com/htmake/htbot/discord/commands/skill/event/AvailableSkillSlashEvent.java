@@ -10,6 +10,7 @@ import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.json.JSONArray;
 
@@ -47,13 +48,16 @@ public class AvailableSkillSlashEvent {
 
     private void requestSuccess(SlashCommandInteractionEvent event, JSONArray skillArray) {
         List<AvailableSkillResponse> skillList = skillEventUtil.toSkillList(skillArray);
-        MessageEmbed embed = buildEmbed(skillList);
+        MessageEmbed embed = buildEmbed(skillList, event.getUser());
         event.replyEmbeds(embed).queue();
     }
 
-    private MessageEmbed buildEmbed(List<AvailableSkillResponse> skillList) {
+    private MessageEmbed buildEmbed(List<AvailableSkillResponse> skillList, User user) {
+        String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
+
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setColor(Color.GREEN)
+                .setAuthor(user.getName(), null, profileUrl)
                 .setTitle(":bookmark: 스킬 목록")
                 .setDescription("보유중인 스킬 목록을 보여줍니다.");
 
