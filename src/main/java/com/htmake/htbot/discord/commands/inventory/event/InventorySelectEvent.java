@@ -114,18 +114,11 @@ public class InventorySelectEvent {
     }
 
     public List<Button> buildButton() {
-        List<Button> buttonList = new ArrayList<>();
-
-        Button pageButton = Button.secondary("blank", "1/5").asDisabled();
-        Button leftButton = Button.primary("inventory-left-0", "◄").asDisabled();
-        Button rightButton = Button.primary("inventory-right-2", "►");
-        Button cancelButton = Button.danger("cancel", "닫기");
-
-        buttonList.add(leftButton.asDisabled());
-        buttonList.add(pageButton);
-        buttonList.add(rightButton);
-        buttonList.add(cancelButton);
-
-        return buttonList;
+        return new ArrayList<>(List.of(
+                Button.primary("inventory-0", "◄").asDisabled(),
+                Button.secondary("blank", "1/5").asDisabled(),
+                Button.primary("inventory-2", "►"),
+                Button.danger("cancel", "닫기")
+        ));
     }
 }
