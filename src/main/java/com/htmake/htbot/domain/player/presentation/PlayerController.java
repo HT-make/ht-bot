@@ -1,5 +1,6 @@
 package com.htmake.htbot.domain.player.presentation;
 
+import com.htmake.htbot.domain.player.presentation.data.request.EquipmentEquipRequest;
 import com.htmake.htbot.domain.player.presentation.data.request.KillMonsterRequest;
 import com.htmake.htbot.domain.player.presentation.data.request.PlayerJoinRequest;
 import com.htmake.htbot.domain.player.presentation.data.response.*;
@@ -20,6 +21,7 @@ public class PlayerController {
     private final PlayerInfoService playerInfoService;
     private final PlayerBattleService playerBattleService;
     private final KillMonsterService killMonsterService;
+    private final EquipmentEquipService equipmentEquipService;
 
     @PostMapping("/join")
     public ResponseEntity<Void> join(@RequestBody @Valid PlayerJoinRequest request) {
@@ -52,5 +54,14 @@ public class PlayerController {
     ) {
         LevelUpResponse response = killMonsterService.execute(playerId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping("/equip/{player_id}")
+    public ResponseEntity<Void> equip(
+            @PathVariable("player_id") String playerId,
+            @RequestBody @Valid EquipmentEquipRequest request
+    ) {
+        equipmentEquipService.execute(playerId, request);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
