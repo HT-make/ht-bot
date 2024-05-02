@@ -1,10 +1,10 @@
-package com.htmake.htbot.discord.commands.dungeon.event;
+package com.htmake.htbot.discord.commands.dungeon.event.fieldDungeon;
 
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.discord.util.ObjectMapperUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
-import com.htmake.htbot.discord.commands.dungeon.cache.DungeonStatusCache;
-import com.htmake.htbot.discord.commands.dungeon.data.DungeonStatus;
+import com.htmake.htbot.discord.commands.dungeon.cache.FieldDungeonStatusCache;
+import com.htmake.htbot.discord.commands.dungeon.data.FieldDungeonStatus;
 import com.htmake.htbot.discord.commands.dungeon.data.GetItem;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
@@ -21,34 +21,34 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DungeonCloseButtonEvent {
+public class FieldDungeonCloseButtonEvent {
 
     private final HttpClient httpClient;
     private final ErrorUtil errorUtil;
     private final ObjectMapperUtil objectMapperUtil;
 
-    private final DungeonStatusCache dungeonStatusCache;
+    private final FieldDungeonStatusCache fieldDungeonStatusCache;
 
-    public DungeonCloseButtonEvent() {
+    public FieldDungeonCloseButtonEvent() {
         this.httpClient = new HttpClientImpl();
         this.errorUtil = new ErrorUtil();
         this.objectMapperUtil = new ObjectMapperUtil();
 
-        this.dungeonStatusCache = CacheFactory.dungeonStatusCache;
+        this.fieldDungeonStatusCache = CacheFactory.fieldDungeonStatusCache;
     }
 
     public void execute(ButtonInteractionEvent event) {
         String playerId = event.getUser().getId();
 
-        DungeonStatus dungeonStatus = dungeonStatusCache.get(playerId);
-        List<GetItem> getItemList = dungeonStatus.getGetItemList();
+        FieldDungeonStatus fieldDungeonStatus = fieldDungeonStatusCache.get(playerId);
+        List<GetItem> getItemList = fieldDungeonStatus.getGetItemList();
 
         if (!getItemList.isEmpty())  {
             HttpResponse<JsonNode> response = request(getItemList, playerId);
 
             if (response.getStatus() == 200) {
                 requestSuccess(event);
-                dungeonStatusCache.remove(playerId);
+                fieldDungeonStatusCache.remove(playerId);
             } else {
                 errorUtil.sendError(event.getHook(), "던전 퇴장", "던전 퇴장에 실패하였습니다.");
             }
