@@ -12,8 +12,6 @@ import com.htmake.htbot.discord.commands.battle.data.Situation;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import org.apache.commons.math3.random.MersenneTwister;
-import org.apache.commons.math3.random.RandomGenerator;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -63,17 +61,6 @@ public class DungeonUtil {
 
                 .setFooter("Lv." + dungeonPlayer.getLevel() + " " + user.getName())
                 .build();
-    }
-
-    public DungeonMonster randomMonster(List<DungeonMonster> dungeonMonsterList, int stage) {
-        RandomGenerator random = new MersenneTwister();
-
-        int min = (stage % 2 == 0 ? stage / 2 : stage / 2 + 1) - 1;
-        int max = (stage % 2 == 0 ? min + 3 : min + 2) + 1;
-
-        int ran = random.nextInt(max) + min;
-
-        return dungeonMonsterList.get(ran);
     }
 
     public void saveMonsterStatus(String playerId, DungeonMonster dungeonMonster) {
