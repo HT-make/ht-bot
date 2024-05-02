@@ -4,9 +4,9 @@ import com.htmake.htbot.discord.commands.dungeon.data.DungeonPlayer;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.discord.util.ObjectMapperUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
-import com.htmake.htbot.discord.commands.dungeon.cache.DungeonStatusCache;
+import com.htmake.htbot.discord.commands.dungeon.cache.FieldDungeonStatusCache;
 import com.htmake.htbot.discord.commands.dungeon.data.GetItem;
-import com.htmake.htbot.discord.commands.dungeon.data.DungeonStatus;
+import com.htmake.htbot.discord.commands.dungeon.data.FieldDungeonStatus;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
@@ -30,14 +30,14 @@ public class BattleResultAction {
     private final ErrorUtil errorUtil;
     private final ObjectMapperUtil objectMapperUtil;
 
-    private final DungeonStatusCache dungeonStatusCache;
+    private final FieldDungeonStatusCache fieldDungeonStatusCache;
 
     public BattleResultAction() {
         this.httpClient = new HttpClientImpl();
         this.errorUtil = new ErrorUtil();
         this.objectMapperUtil = new ObjectMapperUtil();
 
-        this.dungeonStatusCache = CacheFactory.dungeonStatusCache;
+        this.fieldDungeonStatusCache = CacheFactory.fieldDungeonStatusCache;
     }
 
     public void execute(ButtonInteractionEvent event, String monsterId) {
@@ -85,30 +85,32 @@ public class BattleResultAction {
 
     private void requestSuccess(ButtonInteractionEvent event, JSONObject monsterLoot, boolean levelUp) {
         String playerId = event.getUser().getId();
+        FieldDungeonStatus fieldDungeonStatus = fieldDungeonStatusCache.get(playerId);
 
-        List<GetItem> getItemList = getNewGetItemList(playerId, monsterLoot);
-        String levelUpMessage = levelUpCheck(playerId, levelUp);
+        List<GetItem> getItemList = getNewGetItemList(playerId, monsterLoot, fieldDungeonStatus);
+        String levelUpMessage = levelUpCheck(playerId, levelUp, fieldDungeonStatus);
         MessageEmbed embed = buildEmbed(monsterLoot, getItemList, levelUpMessage, event.getUser());
 
+        List<Button> buttonList = new ArrayList<>();
+        int stage = fieldDungeonStatus.getStage();
+
+        if (stage != 10) buttonList.add(Button.success("dungeon-next", "전진하기"));
+        buttonList.add(Button.danger("dungeon-close", "돌아가기"));
+
         event.getHook().editOriginalEmbeds(embed)
-                .setActionRow(
-                        Button.success("dungeon-next", "전진하기"),
-                        Button.danger("dungeon-close", "돌아가기")
-                )
+                .setActionRow(buttonList)
                 .queue();
     }
 
-    private List<GetItem> getNewGetItemList(String playerId, JSONObject monsterLoot) {
+    private List<GetItem> getNewGetItemList(String playerId, JSONObject monsterLoot, FieldDungeonStatus fieldDungeonStatus) {
         JSONArray dropItemArray = monsterLoot.getJSONArray("dropItemList");
 
-        List<GetItem> currentGetItemList = dungeonStatusCache.get(playerId).getGetItemList();
+        List<GetItem> currentGetItemList = fieldDungeonStatus.getGetItemList();
         List<GetItem> newGetItemList = randomDropItemList(dropItemArray);
         currentGetItemList.addAll(newGetItemList);
 
-        DungeonStatus dungeonStatus = dungeonStatusCache.get(playerId);
-        dungeonStatus.setGetItemList(currentGetItemList);
-
-        dungeonStatusCache.put(playerId, dungeonStatus);
+        fieldDungeonStatus.setGetItemList(currentGetItemList);
+        fieldDungeonStatusCache.put(playerId, fieldDungeonStatus);
 
         return newGetItemList;
     }
@@ -137,15 +139,13 @@ public class BattleResultAction {
         return getItemList;
     }
 
-    private String levelUpCheck(String playerId, boolean levelUp) {
+    private String levelUpCheck(String playerId, boolean levelUp, FieldDungeonStatus fieldDungeonStatus) {
         if (levelUp) {
-            DungeonStatus dungeonStatus = dungeonStatusCache.get(playerId);
-            DungeonPlayer dungeonPlayer = dungeonStatus.getDungeonPlayer();
-
+            DungeonPlayer dungeonPlayer = fieldDungeonStatus.getDungeonPlayer();
             dungeonPlayer.setLevel(dungeonPlayer.getLevel() + 1);
-            dungeonStatus.setDungeonPlayer(dungeonPlayer);
 
-            dungeonStatusCache.put(playerId, dungeonStatus);
+            fieldDungeonStatus.setDungeonPlayer(dungeonPlayer);
+            fieldDungeonStatusCache.put(playerId, fieldDungeonStatus);
 
             return ":up: 레벨업!!";
         } else {
