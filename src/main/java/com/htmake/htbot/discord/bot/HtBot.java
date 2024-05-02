@@ -3,6 +3,7 @@ package com.htmake.htbot.discord.bot;
 import com.htmake.htbot.discord.commands.battle.BattleCommand;
 import com.htmake.htbot.discord.commands.dictionary.DictionaryCommand;
 import com.htmake.htbot.discord.commands.dungeon.DungeonCommand;
+import com.htmake.htbot.discord.commands.equipment.EquipmentCommand;
 import com.htmake.htbot.discord.commands.inventory.InventoryCommand;
 import com.htmake.htbot.discord.commands.player.PlayerCommand;
 import com.htmake.htbot.discord.commands.global.GlobalCommand;
@@ -55,7 +56,8 @@ public class HtBot {
                 new ShopCommand(),
                 new SkillCommand(),
                 new QuestCommand(),
-                new DictionaryCommand()
+                new DictionaryCommand(),
+                new EquipmentCommand()
         );
     }
 }
