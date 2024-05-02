@@ -25,4 +25,14 @@ public class Equipment {
 
     @Column(name = "player_armor_name", nullable = false)
     private String armorName;
+
+    public void updateWeapon(String weaponId, String weaponName) {
+        this.weaponId = weaponId;
+        this.weaponName = weaponName;
+    }
+
+    public void updateArmor(String armorId, String armorName) {
+        this.armorId = armorId;
+        this.armorName = armorName;
+    }
 }

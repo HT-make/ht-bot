@@ -33,4 +33,20 @@ public class Status {
 
     @Column(name = "player_criticalDamage", nullable = false)
     private int criticalDamage;
+
+    public void updateStatus(
+            int damage,
+            int health,
+            int defence,
+            int mana,
+            int criticalChance,
+            int criticalDamage
+    ) {
+        this.damage = damage;
+        this.health = health;
+        this.defence = defence;
+        this.mana = mana;
+        this.criticalChance = criticalChance;
+        this.criticalDamage = criticalDamage;
+    }
 }

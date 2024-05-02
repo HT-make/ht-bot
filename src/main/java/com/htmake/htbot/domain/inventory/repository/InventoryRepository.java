@@ -7,7 +7,12 @@ import java.util.List;
 import java.util.Optional;
 
 public interface InventoryRepository extends JpaRepository<Inventory, String> {
+
     List<Inventory> findByPlayerId(String playerId);
 
     Optional<Inventory> findByPlayerIdAndItemId(String playerId, String itemId);
+
+    Optional<Inventory> findByName(String name);
+
+    Long countByPlayerId(String playerId);
 }

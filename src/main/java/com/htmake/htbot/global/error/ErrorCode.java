@@ -26,7 +26,16 @@ public enum ErrorCode {
 
     //DICT
     NOT_FOUND_NAME("해당 이름을 찾을 수 없습니다.", 404),
-    NOT_FOUND_CATEGORY("해당 카테고리를 찾을 수 없습니다.", 404);
+    NOT_FOUND_CATEGORY("해당 카테고리를 찾을 수 없습니다.", 404),
+
+    //INVENTORY
+    INVENTORY_ITEM_NOT_FOUND("해당 아이템을 찾을 수 없습니다.", 404),
+    INVENTORY_IS_MAX("인벤토리가 가득 찼습니다.", 400),
+
+    //EQUIPMENT
+    EQUIPMENT_NOT_FOUND("해당 장비를 찾을 수 없습니다.", 404),
+    EQUIPMENT_TYPE_MISMATCH("장착할 수 없는 장비입니다.", 400);
+
     private final String message;
     private final int status;
 }
