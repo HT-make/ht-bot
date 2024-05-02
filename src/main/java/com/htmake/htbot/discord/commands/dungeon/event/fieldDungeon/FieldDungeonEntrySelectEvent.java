@@ -1,12 +1,12 @@
-package com.htmake.htbot.discord.commands.dungeon.event;
+package com.htmake.htbot.discord.commands.dungeon.event.fieldDungeon;
 
 import com.htmake.htbot.discord.commands.battle.data.PlayerSkillStatus;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonMonster;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonPlayer;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
-import com.htmake.htbot.discord.commands.dungeon.cache.DungeonStatusCache;
-import com.htmake.htbot.discord.commands.dungeon.data.DungeonStatus;
+import com.htmake.htbot.discord.commands.dungeon.cache.FieldDungeonStatusCache;
+import com.htmake.htbot.discord.commands.dungeon.data.FieldDungeonStatus;
 import com.htmake.htbot.discord.commands.dungeon.util.DungeonUtil;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
@@ -16,25 +16,27 @@ import kotlin.Pair;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.*;
 
-public class DungeonEntrySelectEvent {
+public class FieldDungeonEntrySelectEvent {
 
     private final HttpClient httpClient;
     private final DungeonUtil dungeonUtil;
     private final ErrorUtil errorUtil;
 
-    private final DungeonStatusCache dungeonStatusCache;
+    private final FieldDungeonStatusCache fieldDungeonStatusCache;
 
-    public DungeonEntrySelectEvent() {
+    public FieldDungeonEntrySelectEvent() {
         this.httpClient = new HttpClientImpl();
         this.dungeonUtil = new DungeonUtil();
         this.errorUtil = new ErrorUtil();
 
-        this.dungeonStatusCache = CacheFactory.dungeonStatusCache;
+        this.fieldDungeonStatusCache = CacheFactory.fieldDungeonStatusCache;
     }
 
     public void execute(StringSelectInteractionEvent event, String dungeonId) {
@@ -65,15 +67,16 @@ public class DungeonEntrySelectEvent {
 
     private void requestSuccess(StringSelectInteractionEvent event, JSONObject playerObject, JSONObject dungeonObject) {
         JSONArray dungeonMonsterArray = dungeonObject.getJSONArray("monsterList");
-        List<DungeonMonster> dungeonMonsterList = toDungeonMonsterList(dungeonMonsterArray);
+        Map<Integer, List<DungeonMonster>> monsterListByLevel = toMonsterListByLevel(dungeonMonsterArray);
+        Map<Integer, DungeonMonster> monsterByStage = toMonsterByStage(monsterListByLevel);
 
         String dungeonName = dungeonObject.getString("name");
-        DungeonMonster dungeonMonster = dungeonUtil.randomMonster(dungeonMonsterList, 1);
+        DungeonMonster dungeonMonster = monsterByStage.get(1);
         DungeonPlayer dungeonPlayer = toDungeonPlayer(playerObject);
 
         String playerId = event.getUser().getId();
 
-        saveDungeonStatus(playerId, dungeonName, dungeonMonsterList, dungeonPlayer);
+        saveDungeonStatus(playerId, dungeonName, monsterByStage, dungeonPlayer);
 
         dungeonUtil.savePlayerStatus(playerId, dungeonPlayer);
         dungeonUtil.saveMonsterStatus(playerId, dungeonMonster);
@@ -129,8 +132,8 @@ public class DungeonEntrySelectEvent {
         return playerSkillMap;
     }
 
-    private List<DungeonMonster> toDungeonMonsterList(JSONArray dungeonMonsterArray) {
-        List<DungeonMonster> dungeonMonsterList = new ArrayList<>();
+    private Map<Integer, List<DungeonMonster>> toMonsterListByLevel(JSONArray dungeonMonsterArray) {
+        Map<Integer, List<DungeonMonster>> monsterListByLevel = new HashMap<>();
 
         for (int i = 0; i < dungeonMonsterArray.length(); i++) {
             JSONObject dungeonMonsterObject = dungeonMonsterArray.getJSONObject(i);
@@ -154,28 +157,74 @@ public class DungeonEntrySelectEvent {
                     .skillDamage(skillDamage)
                     .build();
 
+            int level = dungeonMonster.getLevel() % 10;
+
+            List<DungeonMonster> dungeonMonsterList;
+
+            if (!monsterListByLevel.containsKey(level)) {
+                dungeonMonsterList = new ArrayList<>();
+            } else {
+                dungeonMonsterList = monsterListByLevel.get(level);
+            }
+
             dungeonMonsterList.add(dungeonMonster);
+            monsterListByLevel.put(level, dungeonMonsterList);
         }
 
-        dungeonMonsterList.sort(Comparator.comparingInt(DungeonMonster::getLevel));
+        return monsterListByLevel;
+    }
 
-        return dungeonMonsterList;
+    private Map<Integer, DungeonMonster> toMonsterByStage(Map<Integer, List<DungeonMonster>> monsterListByLevel) {
+        Map<Integer, DungeonMonster> monsterByStage = new HashMap<>();
+
+        for (int stage = 1; stage <= 10; stage++) {
+            RandomGenerator random = new MersenneTwister();
+
+            List<Integer> levelList = getLevelList(stage);
+
+            int randomLevel = random.nextInt(3);
+            int level = levelList.get(randomLevel);
+
+            List<DungeonMonster> dungeonMonsterList = monsterListByLevel.get(level);
+
+            int size = dungeonMonsterList.size();
+            int randomMonsterNumber = random.nextInt(size);
+            DungeonMonster dungeonMonster = dungeonMonsterList.get(randomMonsterNumber);
+
+            monsterByStage.put(stage, dungeonMonster);
+        }
+
+        return monsterByStage;
+    }
+
+    private List<Integer> getLevelList(int stage) {
+        List<Integer> levelList = new ArrayList<>();
+
+        if (stage == 1) {
+            levelList.addAll(Arrays.asList(1, 1, 2));
+        } else if (stage == 10) {
+            levelList.addAll(Arrays.asList(9, 0, 0));
+        } else {
+            levelList.addAll(Arrays.asList(stage - 1, stage, (stage + 1) % 10));
+        }
+
+        return levelList;
     }
 
     private void saveDungeonStatus(
             String playerId,
             String name,
-            List<DungeonMonster> dungeonMonsterList,
+            Map<Integer, DungeonMonster> monsterByStage,
             DungeonPlayer dungeonPlayer
     ) {
-        DungeonStatus dungeonStatus = DungeonStatus.builder()
+        FieldDungeonStatus fieldDungeonStatus = FieldDungeonStatus.builder()
                 .name(name)
                 .stage(1)
-                .dungeonMonsterList(dungeonMonsterList)
+                .monsterByStage(monsterByStage)
                 .dungeonPlayer(dungeonPlayer)
                 .getItemList(new ArrayList<>())
                 .build();
 
-        dungeonStatusCache.put(playerId, dungeonStatus);
+        fieldDungeonStatusCache.put(playerId, fieldDungeonStatus);
     }
 }
