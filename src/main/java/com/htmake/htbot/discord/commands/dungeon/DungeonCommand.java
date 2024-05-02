@@ -1,9 +1,9 @@
 package com.htmake.htbot.discord.commands.dungeon;
 
-import com.htmake.htbot.discord.commands.dungeon.event.DungeonCloseButtonEvent;
-import com.htmake.htbot.discord.commands.dungeon.event.DungeonEntrySelectEvent;
-import com.htmake.htbot.discord.commands.dungeon.event.DungeonEntrySlashEvent;
-import com.htmake.htbot.discord.commands.dungeon.event.NextDungeonEntryButtonEvent;
+import com.htmake.htbot.discord.commands.dungeon.event.fieldDungeon.FieldDungeonCloseButtonEvent;
+import com.htmake.htbot.discord.commands.dungeon.event.fieldDungeon.FieldDungeonEntrySelectEvent;
+import com.htmake.htbot.discord.commands.dungeon.event.fieldDungeon.FieldDungeonEntrySlashEvent;
+import com.htmake.htbot.discord.commands.dungeon.event.fieldDungeon.NextStageEntryButtonEvent;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.discord.util.MessageUtil;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -18,23 +18,23 @@ import java.util.List;
 @Component
 public class DungeonCommand extends ListenerAdapter {
 
-    private final DungeonEntrySlashEvent dungeonEntrySlashEvent;
-    private final DungeonEntrySelectEvent dungeonEntrySelectEvent;
+    private final FieldDungeonEntrySlashEvent fieldDungeonEntrySlashEvent;
+    private final FieldDungeonEntrySelectEvent fieldDungeonEntrySelectEvent;
 
-    private final NextDungeonEntryButtonEvent nextDungeonEntryButtonEvent;
+    private final NextStageEntryButtonEvent nextStageEntryButtonEvent;
 
-    private final DungeonCloseButtonEvent dungeonCloseButtonEvent;
+    private final FieldDungeonCloseButtonEvent fieldDungeonCloseButtonEvent;
 
     private final ErrorUtil errorUtil;
     private final MessageUtil messageUtil;
 
     public DungeonCommand() {
-        this.dungeonEntrySlashEvent = new DungeonEntrySlashEvent();
-        this.dungeonEntrySelectEvent = new DungeonEntrySelectEvent();
+        this.fieldDungeonEntrySlashEvent = new FieldDungeonEntrySlashEvent();
+        this.fieldDungeonEntrySelectEvent = new FieldDungeonEntrySelectEvent();
 
-        this.nextDungeonEntryButtonEvent = new NextDungeonEntryButtonEvent();
+        this.nextStageEntryButtonEvent = new NextStageEntryButtonEvent();
 
-        this.dungeonCloseButtonEvent = new DungeonCloseButtonEvent();
+        this.fieldDungeonCloseButtonEvent = new FieldDungeonCloseButtonEvent();
 
         this.errorUtil = new ErrorUtil();
         this.messageUtil = new MessageUtil();
@@ -54,7 +54,7 @@ public class DungeonCommand extends ListenerAdapter {
 
             messageUtil.put(playerId);
 
-            dungeonEntrySlashEvent.execute(event);
+            fieldDungeonEntrySlashEvent.execute(event);
         }
     }
 
@@ -69,7 +69,7 @@ public class DungeonCommand extends ListenerAdapter {
             }
 
             if (componentList.get(1).equals("enter")) {
-                dungeonEntrySelectEvent.execute(event, componentList.get(2));
+                fieldDungeonEntrySelectEvent.execute(event, componentList.get(2));
             }
         }
     }
@@ -85,10 +85,10 @@ public class DungeonCommand extends ListenerAdapter {
             }
 
             if (componentList.get(1).equals("next")) {
-                nextDungeonEntryButtonEvent.execute(event);
+                nextStageEntryButtonEvent.execute(event);
             } else if (componentList.get(1).equals("close")) {
                 messageUtil.remove(event.getUser().getId());
-                dungeonCloseButtonEvent.execute(event);
+                fieldDungeonCloseButtonEvent.execute(event);
             }
         }
     }
