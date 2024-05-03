@@ -20,6 +20,9 @@ public class Dungeon {
     @Column(name = "dungeon_name", nullable = false)
     private String name;
 
+    @Column(name = "dungeon_key")
+    private String key;
+
     @OneToMany(mappedBy = "dungeon", cascade = CascadeType.ALL)
-    private List<Monster> monsters;
+    private List<Monster> monsterList;
 }
