@@ -4,7 +4,7 @@ import com.htmake.htbot.domain.dungeon.entity.Dungeon;
 import com.htmake.htbot.domain.dungeon.presentation.data.response.DungeonResponse;
 import com.htmake.htbot.domain.dungeon.presentation.data.response.MonsterResponse;
 import com.htmake.htbot.domain.dungeon.repository.DungeonRepository;
-import com.htmake.htbot.domain.dungeon.service.DungeonService;
+import com.htmake.htbot.domain.dungeon.service.FieldDungeonEntryService;
 import com.htmake.htbot.domain.monster.entity.Monster;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class DungeonServiceImpl implements DungeonService {
+public class FieldDungeonEntryServiceImpl implements FieldDungeonEntryService {
 
     private final DungeonRepository dungeonRepository;
 
@@ -25,7 +25,7 @@ public class DungeonServiceImpl implements DungeonService {
         Dungeon dungeon = dungeonRepository.findById(dungeonId)
                 .orElseThrow();
 
-        List<Monster> monsterList = dungeon.getMonsters();
+        List<Monster> monsterList = dungeon.getMonsterList();
 
         return DungeonResponse.builder()
                 .name(dungeon.getName())
