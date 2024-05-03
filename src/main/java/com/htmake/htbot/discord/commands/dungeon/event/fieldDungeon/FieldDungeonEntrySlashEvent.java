@@ -1,4 +1,4 @@
-package com.htmake.htbot.discord.commands.dungeon.event;
+package com.htmake.htbot.discord.commands.dungeon.event.fieldDungeon;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import java.awt.*;
 import java.util.Arrays;
 
-public class DungeonEntrySlashEvent {
+public class FieldDungeonEntrySlashEvent {
 
     public void execute(SlashCommandInteractionEvent event) {
         MessageEmbed embed = buildEmbed(event.getUser());

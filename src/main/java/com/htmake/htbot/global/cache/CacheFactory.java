@@ -1,6 +1,6 @@
 package com.htmake.htbot.global.cache;
 
-import com.htmake.htbot.discord.commands.dungeon.cache.DungeonStatusCache;
+import com.htmake.htbot.discord.commands.dungeon.cache.FieldDungeonStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.SituationCache;
@@ -14,7 +14,7 @@ public class CacheFactory {
     public static PlayerStatusCache playerStatusCache;
     public static MonsterStatusCache monsterStatusCache;
     public static SituationCache situationCache;
-    public static DungeonStatusCache dungeonStatusCache;
+    public static FieldDungeonStatusCache fieldDungeonStatusCache;
     public static InventoryCache inventoryCache;
     public static MessageCache messageCache;
 
@@ -22,7 +22,7 @@ public class CacheFactory {
         playerStatusCache = new PlayerStatusCache();
         monsterStatusCache = new MonsterStatusCache();
         situationCache = new SituationCache();
-        dungeonStatusCache = new DungeonStatusCache();
+        fieldDungeonStatusCache = new FieldDungeonStatusCache();
         inventoryCache = new InventoryCache();
         messageCache = new MessageCache();
     }
