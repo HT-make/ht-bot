@@ -34,7 +34,13 @@ public enum ErrorCode {
 
     //EQUIPMENT
     EQUIPMENT_NOT_FOUND("해당 장비를 찾을 수 없습니다.", 404),
-    EQUIPMENT_TYPE_MISMATCH("장착할 수 없는 장비입니다.", 400);
+    EQUIPMENT_TYPE_MISMATCH("장착할 수 없는 장비입니다.", 400),
+
+    //DUNGEON
+    DUNGEON_NOT_FOUND("해당 던전을 찾을 수 없습니다.", 404),
+
+    //MISC
+    MISC_NOT_FOUND("해당 기타 아이템을 찾을 수 없습니다.", 404);
 
     private final String message;
     private final int status;
