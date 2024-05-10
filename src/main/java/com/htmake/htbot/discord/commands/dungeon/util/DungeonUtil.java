@@ -1,7 +1,10 @@
 package com.htmake.htbot.discord.commands.dungeon.util;
 
+import com.htmake.htbot.discord.commands.battle.data.PlayerSkillStatus;
+import com.htmake.htbot.discord.commands.dungeon.cache.DungeonTypeCache;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonMonster;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonPlayer;
+import com.htmake.htbot.discord.commands.dungeon.enums.DungeonType;
 import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
@@ -12,21 +15,27 @@ import com.htmake.htbot.discord.commands.battle.data.Situation;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DungeonUtil {
 
     private final PlayerStatusCache playerStatusCache;
     private final MonsterStatusCache monsterStatusCache;
     private final SituationCache situationCache;
+    private final DungeonTypeCache dungeonTypeCache;
 
     public DungeonUtil() {
         this.playerStatusCache = CacheFactory.playerStatusCache;
         this.monsterStatusCache = CacheFactory.monsterStatusCache;
         this.situationCache = CacheFactory.situationCache;
+        this.dungeonTypeCache = CacheFactory.dungeonTypeCache;
     }
 
     public MessageEmbed buildEmbed(String dungeonTitle, DungeonMonster dungeonMonster, DungeonPlayer dungeonPlayer, User user) {
@@ -100,5 +109,40 @@ public class DungeonUtil {
                 .build();
 
         situationCache.put(playerId, situation);
+    }
+
+    public DungeonPlayer toDungeonPlayer(JSONObject playerObject) {
+        JSONArray playerSkillArray = playerObject.getJSONArray("skillList");
+
+        Map<Integer, PlayerSkillStatus> playerSkillMap = new HashMap<>();
+
+        for (int i = 0;i < playerSkillArray.length(); i++) {
+            JSONObject playerSkillObject = playerSkillArray.getJSONObject(i);
+
+            Integer number = playerSkillObject.getInt("number");
+            PlayerSkillStatus playerSkillStatus = PlayerSkillStatus.builder()
+                    .name(playerSkillObject.getString("name"))
+                    .value(playerSkillObject.getInt("value"))
+                    .mana(playerSkillObject.getInt("mana"))
+                    .skillType(playerSkillObject.getString("skillType"))
+                    .build();
+
+            playerSkillMap.put(number, playerSkillStatus);
+        }
+
+        return DungeonPlayer.builder()
+                .level(playerObject.getInt("level"))
+                .damage(playerObject.getInt("damage"))
+                .health(playerObject.getInt("health"))
+                .defence(playerObject.getInt("defence"))
+                .mana(playerObject.getInt("mana"))
+                .criticalChance(playerObject.getInt("criticalChance"))
+                .criticalDamage(playerObject.getInt("criticalDamage"))
+                .playerSkill(playerSkillMap)
+                .build();
+    }
+
+    public void saveDungeonType(String playerId, DungeonType dungeonType) {
+        dungeonTypeCache.put(playerId, dungeonType);
     }
 }

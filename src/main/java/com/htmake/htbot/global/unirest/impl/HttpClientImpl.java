@@ -64,6 +64,19 @@ public class HttpClientImpl implements HttpClient {
     }
 
     @Override
+    public HttpResponse<JsonNode> sendGetRequest(String endPoint, Pair<String, String> firstRouteParam, Pair<String, String> secondRouteParam) {
+        try {
+            return Unirest.get(RestServiceType.DEFAULT_URL + endPoint)
+                    .routeParam(firstRouteParam.getFirst(), firstRouteParam.getSecond())
+                    .routeParam(secondRouteParam.getFirst(), secondRouteParam.getSecond())
+                    .asJson();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to send HTTP GET request", e);
+        }
+    }
+
+    @Override
     public HttpResponse<JsonNode> sendGetRequest(String endPoint, List<Pair<String, String>> requestParamList) {
         try {
             GetRequest getRequest = Unirest.get(RestServiceType.DEFAULT_URL + endPoint);
@@ -86,6 +99,19 @@ public class HttpClientImpl implements HttpClient {
                     .header("Content-Type", "application/json")
                     .routeParam(routeParam.getFirst(), routeParam.getSecond())
                     .body(requestBody)
+                    .asJson();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to send HTTP PATCH request", e);
+        }
+    }
+
+    @Override
+    public HttpResponse<JsonNode> sendPatchRequest(String endPoint, Pair<String, String> firstRouteParam, Pair<String, String> secondRouteParam) {
+        try {
+            return Unirest.patch(RestServiceType.DEFAULT_URL + endPoint)
+                    .routeParam(firstRouteParam.getFirst(), firstRouteParam.getSecond())
+                    .routeParam(secondRouteParam.getFirst(), secondRouteParam.getSecond())
                     .asJson();
         } catch (UnirestException e) {
             e.printStackTrace();

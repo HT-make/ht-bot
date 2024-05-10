@@ -1,8 +1,8 @@
 package com.htmake.htbot.discord.commands.dungeon.event.fieldDungeon;
 
-import com.htmake.htbot.discord.commands.battle.data.PlayerSkillStatus;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonMonster;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonPlayer;
+import com.htmake.htbot.discord.commands.dungeon.enums.DungeonType;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.dungeon.cache.FieldDungeonStatusCache;
@@ -72,15 +72,16 @@ public class FieldDungeonEntrySelectEvent {
 
         String dungeonName = dungeonObject.getString("name");
         DungeonMonster dungeonMonster = monsterByStage.get(1);
-        DungeonPlayer dungeonPlayer = toDungeonPlayer(playerObject);
+        DungeonPlayer dungeonPlayer = dungeonUtil.toDungeonPlayer(playerObject);
 
         String playerId = event.getUser().getId();
 
-        saveDungeonStatus(playerId, dungeonName, monsterByStage, dungeonPlayer);
+        saveFieldDungeonStatus(playerId, dungeonName, monsterByStage, dungeonPlayer);
 
         dungeonUtil.savePlayerStatus(playerId, dungeonPlayer);
         dungeonUtil.saveMonsterStatus(playerId, dungeonMonster);
         dungeonUtil.saveSituation(playerId, dungeonMonster.getName());
+        dungeonUtil.saveDungeonType(playerId, DungeonType.FIELD);
 
         String dungeonTitle = dungeonName + "-" + 1;
 
@@ -94,42 +95,6 @@ public class FieldDungeonEntrySelectEvent {
                         Button.danger("battle-retreat", "후퇴")
                 )
                 .queue();
-    }
-
-    private DungeonPlayer toDungeonPlayer(JSONObject playerObject) {
-        JSONArray playerSkillArray = playerObject.getJSONArray("skillList");
-        Map<Integer, PlayerSkillStatus> playerSkillMap = toPlayerSkillMap(playerSkillArray);
-
-        return DungeonPlayer.builder()
-                .level(playerObject.getInt("level"))
-                .damage(playerObject.getInt("damage"))
-                .health(playerObject.getInt("health"))
-                .defence(playerObject.getInt("defence"))
-                .mana(playerObject.getInt("mana"))
-                .criticalChance(playerObject.getInt("criticalChance"))
-                .criticalDamage(playerObject.getInt("criticalDamage"))
-                .playerSkill(playerSkillMap)
-                .build();
-    }
-
-    private Map<Integer, PlayerSkillStatus> toPlayerSkillMap(JSONArray playerSkillArray) {
-        Map<Integer, PlayerSkillStatus> playerSkillMap = new HashMap<>();
-
-        for (int i = 0;i < playerSkillArray.length(); i++) {
-            JSONObject playerSkillObject = playerSkillArray.getJSONObject(i);
-
-            Integer number = playerSkillObject.getInt("number");
-            PlayerSkillStatus playerSkillStatus = PlayerSkillStatus.builder()
-                    .name(playerSkillObject.getString("name"))
-                    .value(playerSkillObject.getInt("value"))
-                    .mana(playerSkillObject.getInt("mana"))
-                    .skillType(playerSkillObject.getString("skillType"))
-                    .build();
-
-            playerSkillMap.put(number, playerSkillStatus);
-        }
-
-        return playerSkillMap;
     }
 
     private Map<Integer, List<DungeonMonster>> toMonsterListByLevel(JSONArray dungeonMonsterArray) {
@@ -211,7 +176,7 @@ public class FieldDungeonEntrySelectEvent {
         return levelList;
     }
 
-    private void saveDungeonStatus(
+    private void saveFieldDungeonStatus(
             String playerId,
             String name,
             Map<Integer, DungeonMonster> monsterByStage,
