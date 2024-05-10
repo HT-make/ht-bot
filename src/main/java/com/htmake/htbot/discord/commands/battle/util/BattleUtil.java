@@ -1,6 +1,8 @@
 package com.htmake.htbot.discord.commands.battle.util;
 
+import com.htmake.htbot.discord.commands.dungeon.data.GetItem;
 import com.htmake.htbot.discord.util.MessageUtil;
+import com.htmake.htbot.discord.util.ObjectMapperUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
@@ -8,6 +10,11 @@ import com.htmake.htbot.discord.commands.battle.cache.SituationCache;
 import com.htmake.htbot.discord.commands.battle.data.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.data.Situation;
+import com.htmake.htbot.global.unirest.HttpClient;
+import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
+import com.mashape.unirest.http.HttpResponse;
+import com.mashape.unirest.http.JsonNode;
+import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -15,11 +22,15 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BattleUtil {
 
     private final MessageUtil messageUtil;
+    private final HttpClient httpClient;
+    private final ObjectMapperUtil objectMapperUtil;
 
     private final PlayerStatusCache playerStatusCache;
     private final MonsterStatusCache monsterStatusCache;
@@ -27,6 +38,8 @@ public class BattleUtil {
 
     public BattleUtil() {
         this.messageUtil = new MessageUtil();
+        this.httpClient = new HttpClientImpl();
+        this.objectMapperUtil = new ObjectMapperUtil();
 
         this.playerStatusCache = CacheFactory.playerStatusCache;
         this.monsterStatusCache = CacheFactory.monsterStatusCache;
@@ -132,5 +145,16 @@ public class BattleUtil {
                 .setTitle(":skull: 전투 패배")
                 .setDescription("전투에서 패배했습니다.")
                 .build();
+    }
+
+    public HttpResponse<JsonNode> insertGetItemList(List<GetItem> getItemList, String playerId) {
+        Map<String, Object> requestData = new HashMap<>();
+        requestData.put("dropItemList", getItemList);
+
+        String endPoint = "/inventory/insert/dropItem/{player_id}";
+        Pair<String, String> routeParam = new Pair<>("player_id", playerId);
+        String requestBody = objectMapperUtil.mapper(requestData);
+
+        return httpClient.sendPostRequest(endPoint, routeParam, requestBody);
     }
 }
