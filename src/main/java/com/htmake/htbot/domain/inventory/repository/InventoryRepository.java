@@ -12,7 +12,7 @@ public interface InventoryRepository extends JpaRepository<Inventory, String> {
 
     Optional<Inventory> findByPlayerIdAndItemId(String playerId, String itemId);
 
-    Optional<Inventory> findByName(String name);
+    Optional<Inventory> findByPlayerIdAndName(String playerId, String name);
 
     Long countByPlayerId(String playerId);
 }
