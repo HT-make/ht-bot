@@ -1,6 +1,7 @@
 package com.htmake.htbot.domain.dungeon.service.impl;
 
 import com.htmake.htbot.domain.dungeon.entity.Dungeon;
+import com.htmake.htbot.domain.dungeon.exception.DungeonNotFoundException;
 import com.htmake.htbot.domain.dungeon.presentation.data.response.DungeonResponse;
 import com.htmake.htbot.domain.dungeon.presentation.data.response.MonsterResponse;
 import com.htmake.htbot.domain.dungeon.repository.DungeonRepository;
@@ -23,7 +24,7 @@ public class FieldDungeonEntryServiceImpl implements FieldDungeonEntryService {
     @Override
     public DungeonResponse execute(String dungeonId) {
         Dungeon dungeon = dungeonRepository.findById(dungeonId)
-                .orElseThrow();
+                .orElseThrow(DungeonNotFoundException::new);
 
         List<Monster> monsterList = dungeon.getMonsterList();
 
