@@ -42,7 +42,7 @@ public class EquipmentEquipServiceImpl implements EquipmentEquipService {
 
         String name = request.getName();
 
-        Inventory item = inventoryRepository.findByName(name)
+        Inventory item = inventoryRepository.findByPlayerIdAndName(playerId, name)
                 .orElse(null);
 
         validateInventory(playerId, item);
@@ -141,7 +141,7 @@ public class EquipmentEquipServiceImpl implements EquipmentEquipService {
     }
 
     private void updateInventory(Player player, String id, String name) {
-        Inventory existsItem = inventoryRepository.findByName(name)
+        Inventory existsItem = inventoryRepository.findByPlayerIdAndName(player.getId(), name)
                 .orElse(null);
 
         if (existsItem != null) {
