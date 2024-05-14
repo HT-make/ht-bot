@@ -2,6 +2,7 @@ package com.htmake.htbot.discord.commands.dungeon.event.bossDungeon;
 
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.domain.dungeon.presentation.data.response.BossDungeonInfoResponse;
+import com.htmake.htbot.domain.dungeon.presentation.data.response.DungeonKeyResponse;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
@@ -13,6 +14,7 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -55,12 +57,12 @@ public class BossDungeonEntrySelectEvent {
 
         List<Button> buttonList = new ArrayList<>();
 
-        Button entryButton = Button.success("dungeon-boss-" + dungeonId, "입장");
+        Button entryButton = Button.success("dungeon-boss-entry-" + dungeonId, "입장");
 
-        if (dungeonInfo.getPlayerKeyQuantity() < 1) {
-            buttonList.add(entryButton.asDisabled());
-        } else {
+        if (quantityCheck(dungeonInfo.getDungeonKeyList())) {
             buttonList.add(entryButton);
+        } else {
+            buttonList.add(entryButton.asDisabled());
         }
 
         buttonList.add(Button.danger("cancel", "닫기"));
@@ -71,24 +73,95 @@ public class BossDungeonEntrySelectEvent {
     }
 
     private BossDungeonInfoResponse toBossDungeonInfoResponse(JSONObject bossDungeonObject) {
+        JSONArray dungeonKeyArray = bossDungeonObject.getJSONArray("dungeonKeyList");
+        List<DungeonKeyResponse> dungeonKeyList = toDungeonKeyList(dungeonKeyArray);
+
+        JSONArray monsterNameArray = bossDungeonObject.getJSONArray("monsterNameList");
+        List<String> monsterNameList = toMonsterNameList(monsterNameArray);
+
         return BossDungeonInfoResponse.builder()
                 .name(bossDungeonObject.getString("name"))
-                .dungeonKey(bossDungeonObject.getString("dungeonKey"))
-                .playerKeyQuantity(bossDungeonObject.getInt("playerKeyQuantity"))
+                .dungeonKeyList(dungeonKeyList)
+                .monsterNameList(monsterNameList)
                 .build();
+    }
+
+    private List<DungeonKeyResponse> toDungeonKeyList(JSONArray dungeonKeyArray) {
+        List<DungeonKeyResponse> dungeonKeyList = new ArrayList<>();
+
+        for (int i = 0; i < dungeonKeyArray.length(); i++) {
+            JSONObject dungeonKeyObject = dungeonKeyArray.getJSONObject(i);
+
+            DungeonKeyResponse dungeonKey = DungeonKeyResponse.builder()
+                    .name(dungeonKeyObject.getString("name"))
+                    .requireQuantity(dungeonKeyObject.getInt("requireQuantity"))
+                    .playerQuantity(dungeonKeyObject.getInt("playerQuantity"))
+                    .build();
+
+            dungeonKeyList.add(dungeonKey);
+        }
+
+        return dungeonKeyList;
+    }
+
+    private List<String> toMonsterNameList(JSONArray monsterNameArray) {
+        List<String> monsterNameList = new ArrayList<>();
+
+        for (int i = 0; i < monsterNameArray.length(); i++) {
+            monsterNameList.add(String.valueOf(monsterNameArray.get(i)));
+        }
+
+        return monsterNameList;
     }
 
     private MessageEmbed buildEmbed(User user, BossDungeonInfoResponse dungeonInfo) {
         String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
 
-        String entryStuffInfo = dungeonInfo.getDungeonKey() + " (" + dungeonInfo.getPlayerKeyQuantity() + "/1)";
+        String appearMonsterInfo = toAppearMonsterInfo(dungeonInfo.getMonsterNameList());
+        String dungeonKeyInfo = toDungeonKeyInfo(dungeonInfo.getDungeonKeyList());
 
         return new EmbedBuilder()
                 .setColor(Color.GREEN)
                 .setAuthor(user.getName(), null, profileUrl)
                 .setTitle(dungeonInfo.getName())
-                .addField("던전 정보", "\n보스1\n보스2", false)
-                .addField("-------------------------", entryStuffInfo, false)
+                .setDescription("던전 정보")
+                .addField("---------출현 보스---------", appearMonsterInfo, false)
+                .addField("---------입장 재료---------", dungeonKeyInfo, false)
                 .build();
+    }
+
+    private String toAppearMonsterInfo(List<String> monsterNameList) {
+        StringBuilder appearMonsterInfo = new StringBuilder();
+
+        for (String monsterName : monsterNameList) {
+            appearMonsterInfo.append(monsterName).append("\n");
+        }
+
+        return String.valueOf(appearMonsterInfo);
+    }
+
+    private String toDungeonKeyInfo(List<DungeonKeyResponse> dungeonKeyList) {
+        StringBuilder dungeonKeyInfo = new StringBuilder();
+
+        for (DungeonKeyResponse dungeonKey : dungeonKeyList) {
+            dungeonKeyInfo.append(dungeonKey.getName())
+                    .append(" (")
+                    .append(dungeonKey.getPlayerQuantity())
+                    .append("/")
+                    .append(dungeonKey.getRequireQuantity())
+                    .append(")\n");
+        }
+
+        return String.valueOf(dungeonKeyInfo);
+    }
+
+    private boolean quantityCheck(List<DungeonKeyResponse> dungeonKeyList) {
+        for (DungeonKeyResponse dungeonKey : dungeonKeyList) {
+            if (dungeonKey.getPlayerQuantity() < dungeonKey.getRequireQuantity()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
