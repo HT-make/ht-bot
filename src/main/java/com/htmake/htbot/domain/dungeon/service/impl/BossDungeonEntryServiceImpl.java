@@ -1,6 +1,7 @@
 package com.htmake.htbot.domain.dungeon.service.impl;
 
 import com.htmake.htbot.domain.dungeon.entity.Dungeon;
+import com.htmake.htbot.domain.dungeon.entity.DungeonKey;
 import com.htmake.htbot.domain.dungeon.exception.DungeonNotFoundException;
 import com.htmake.htbot.domain.dungeon.presentation.data.response.DungeonResponse;
 import com.htmake.htbot.domain.dungeon.presentation.data.response.MonsterResponse;
@@ -30,13 +31,18 @@ public class BossDungeonEntryServiceImpl implements BossDungeonEntryService {
         Dungeon dungeon = dungeonRepository.findById(dungeonId)
                 .orElseThrow(DungeonNotFoundException::new);
 
-        Inventory item = inventoryRepository.findByPlayerIdAndItemId(playerId, dungeon.getKey())
-                .orElseThrow(InventoryItemNotFoundException::new);
+        List<DungeonKey> dungeonKeyList = dungeon.getDungeonKeyList();
 
-        if (item.getQuantity() == 1) {
-            inventoryRepository.delete(item);
-        } else {
-            item.setQuantity(item.getQuantity() - 1);
+        for (DungeonKey dungeonKey : dungeonKeyList) {
+            Inventory item = inventoryRepository.findByPlayerIdAndItemId(playerId, dungeonKey.getItemId())
+                    .orElseThrow(InventoryItemNotFoundException::new);
+
+            if (item.getQuantity() == dungeonKey.getQuantity()) {
+                inventoryRepository.delete(item);
+            } else {
+                item.setQuantity(item.getQuantity() - dungeonKey.getQuantity());
+                inventoryRepository.save(item);
+            }
         }
 
         List<Monster> monsterList = dungeon.getMonsterList();
