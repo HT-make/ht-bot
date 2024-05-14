@@ -2,11 +2,11 @@ package com.htmake.htbot.discord.commands.dungeon;
 
 import com.htmake.htbot.discord.commands.dungeon.event.bossDungeon.BossDungeonEntryButtonEvent;
 import com.htmake.htbot.discord.commands.dungeon.event.bossDungeon.BossDungeonEntrySelectEvent;
-import com.htmake.htbot.discord.commands.dungeon.event.bossDungeon.BossDungeonMainSelectEvent;
+import com.htmake.htbot.discord.commands.dungeon.event.bossDungeon.BossDungeonMainButtonEvent;
 import com.htmake.htbot.discord.commands.dungeon.event.dungeon.DungeonSlashEvent;
 import com.htmake.htbot.discord.commands.dungeon.event.fieldDungeon.FieldDungeonCloseButtonEvent;
 import com.htmake.htbot.discord.commands.dungeon.event.fieldDungeon.FieldDungeonEntrySelectEvent;
-import com.htmake.htbot.discord.commands.dungeon.event.fieldDungeon.FieldDungeonMainSelectEvent;
+import com.htmake.htbot.discord.commands.dungeon.event.fieldDungeon.FieldDungeonMainButtonEvent;
 import com.htmake.htbot.discord.commands.dungeon.event.fieldDungeon.NextStageEntryButtonEvent;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.discord.util.MessageUtil;
@@ -24,12 +24,12 @@ public class DungeonCommand extends ListenerAdapter {
 
     private final DungeonSlashEvent dungeonSlashEvent;
 
-    private final FieldDungeonMainSelectEvent fieldDungeonMainSelectEvent;
+    private final FieldDungeonMainButtonEvent fieldDungeonMainButtonEvent;
     private final FieldDungeonEntrySelectEvent fieldDungeonEntrySelectEvent;
     private final NextStageEntryButtonEvent nextStageEntryButtonEvent;
     private final FieldDungeonCloseButtonEvent fieldDungeonCloseButtonEvent;
 
-    private final BossDungeonMainSelectEvent bossDungeonMainSelectEvent;
+    private final BossDungeonMainButtonEvent bossDungeonMainButtonEvent;
     private final BossDungeonEntrySelectEvent bossDungeonEntrySelectEvent;
     private final BossDungeonEntryButtonEvent bossDungeonEntryButtonEvent;
 
@@ -39,12 +39,12 @@ public class DungeonCommand extends ListenerAdapter {
     public DungeonCommand() {
         this.dungeonSlashEvent = new DungeonSlashEvent();
 
-        this.fieldDungeonMainSelectEvent = new FieldDungeonMainSelectEvent();
+        this.fieldDungeonMainButtonEvent = new FieldDungeonMainButtonEvent();
         this.fieldDungeonEntrySelectEvent = new FieldDungeonEntrySelectEvent();
         this.nextStageEntryButtonEvent = new NextStageEntryButtonEvent();
         this.fieldDungeonCloseButtonEvent = new FieldDungeonCloseButtonEvent();
 
-        this.bossDungeonMainSelectEvent = new BossDungeonMainSelectEvent();
+        this.bossDungeonMainButtonEvent = new BossDungeonMainButtonEvent();
         this.bossDungeonEntrySelectEvent = new BossDungeonEntrySelectEvent();
         this.bossDungeonEntryButtonEvent = new BossDungeonEntryButtonEvent();
 
@@ -81,12 +81,6 @@ public class DungeonCommand extends ListenerAdapter {
             }
 
             switch (componentList.get(1)) {
-                case "enter" -> {
-                    switch (componentList.get(2)) {
-                        case "field" -> fieldDungeonMainSelectEvent.execute(event);
-                        case "boss" -> bossDungeonMainSelectEvent.execute(event);
-                    }
-                }
                 case "field" -> fieldDungeonEntrySelectEvent.execute(event, componentList.get(2));
                 case "boss" -> bossDungeonEntrySelectEvent.execute(event, componentList.get(2));
             }
@@ -106,6 +100,7 @@ public class DungeonCommand extends ListenerAdapter {
             switch (componentList.get(1)) {
                 case "field" -> {
                     switch (componentList.get(2)) {
+                        case "main" -> fieldDungeonMainButtonEvent.execute(event);
                         case "next" -> nextStageEntryButtonEvent.execute(event);
                         case "close" ->  {
                             messageUtil.remove(event.getUser().getId());
@@ -113,7 +108,12 @@ public class DungeonCommand extends ListenerAdapter {
                         }
                     }
                 }
-                case "boss" -> bossDungeonEntryButtonEvent.execute(event, componentList.get(2));
+                case "boss" -> {
+                    switch (componentList.get(2)) {
+                        case "main" -> bossDungeonMainButtonEvent.execute(event);
+                        case "entry" -> bossDungeonEntryButtonEvent.execute(event, componentList.get(3));
+                    }
+                }
             }
         }
     }
