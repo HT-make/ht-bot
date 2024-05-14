@@ -3,7 +3,7 @@ package com.htmake.htbot.discord.commands.dungeon.event.bossDungeon;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class BossDungeonMainSelectEvent {
+public class BossDungeonMainButtonEvent {
 
-    public void execute(StringSelectInteractionEvent event) {
+    public void execute(ButtonInteractionEvent event) {
         MessageEmbed embed = buildEmbed(event.getUser());
         StringSelectMenu menu = buildMenu();
 
