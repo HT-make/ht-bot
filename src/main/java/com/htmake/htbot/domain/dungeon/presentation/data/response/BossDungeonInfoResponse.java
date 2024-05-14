@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -13,7 +15,7 @@ public class BossDungeonInfoResponse {
 
     private String name;
 
-    private String dungeonKey;
+    private List<DungeonKeyResponse> dungeonKeyList;
 
-    private int playerKeyQuantity;
+    private List<String> monsterNameList;
 }
