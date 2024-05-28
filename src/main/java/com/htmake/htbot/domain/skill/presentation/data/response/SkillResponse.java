@@ -9,17 +9,13 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AvailableSkillResponse {
+public class SkillResponse {
 
-    private Long id;
+    private String id;
 
     private String name;
 
-    private int value;
-
-    private int mana;
-
-    private String skillType;
+    private String description;
 
     private String isRegistered;
 }

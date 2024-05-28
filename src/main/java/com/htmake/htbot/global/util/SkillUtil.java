@@ -1,19 +1,17 @@
 package com.htmake.htbot.global.util;
 
 import com.htmake.htbot.domain.skill.entity.Skill;
-import com.htmake.htbot.domain.skill.presentation.data.response.AvailableSkillResponse;
+import com.htmake.htbot.domain.skill.presentation.data.response.SkillResponse;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SkillUtil {
 
-    public AvailableSkillResponse buildAvailableSkillResponse(Skill skill, boolean isRegistered) {
-        return AvailableSkillResponse.builder()
+    public SkillResponse buildSkillResponse(Skill skill, boolean isRegistered) {
+        return SkillResponse.builder()
                 .id(skill.getId())
                 .name(skill.getName())
-                .value(skill.getValue())
-                .mana(skill.getMana())
-                .skillType(skill.getSkillType().name())
+                .description(skill.getDescription())
                 .isRegistered(String.valueOf(isRegistered))
                 .build();
     }
