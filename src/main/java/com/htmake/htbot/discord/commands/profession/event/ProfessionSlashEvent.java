@@ -31,7 +31,7 @@ public class ProfessionSlashEvent {
                 .setColor(Color.GREEN)
                 .setAuthor(user.getName(), null, profileUrl)
                 .setTitle("전직")
-                .addField(":star: 전직", "전직직", true)
+                .addField(":star: 전직", "상위 직업으로 전직할 수 있습니다.ㅕㅔ", true)
                 .build();
     }
 }
