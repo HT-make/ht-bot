@@ -2,7 +2,7 @@ package com.htmake.htbot.discord.commands.skill.event;
 
 import com.htmake.htbot.discord.commands.skill.util.SkillEventUtil;
 import com.htmake.htbot.discord.util.ErrorUtil;
-import com.htmake.htbot.domain.skill.presentation.data.response.AvailableSkillResponse;
+import com.htmake.htbot.domain.skill.presentation.data.response.SkillResponse;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
@@ -17,13 +17,13 @@ import org.json.JSONArray;
 import java.awt.*;
 import java.util.List;
 
-public class AvailableSkillSlashEvent {
+public class SkillListSlashEvent {
 
     private final HttpClient httpClient;
     private final SkillEventUtil skillEventUtil;
     private final ErrorUtil errorUtil;
 
-    public AvailableSkillSlashEvent() {
+    public SkillListSlashEvent() {
         this.httpClient = new HttpClientImpl();
         this.skillEventUtil = new SkillEventUtil();
         this.errorUtil = new ErrorUtil();
@@ -47,12 +47,12 @@ public class AvailableSkillSlashEvent {
     }
 
     private void requestSuccess(SlashCommandInteractionEvent event, JSONArray skillArray) {
-        List<AvailableSkillResponse> skillList = skillEventUtil.toSkillList(skillArray);
+        List<SkillResponse> skillList = skillEventUtil.toSkillList(skillArray);
         MessageEmbed embed = buildEmbed(skillList, event.getUser());
         event.replyEmbeds(embed).queue();
     }
 
-    private MessageEmbed buildEmbed(List<AvailableSkillResponse> skillList, User user) {
+    private MessageEmbed buildEmbed(List<SkillResponse> skillList, User user) {
         String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
 
         EmbedBuilder embedBuilder = new EmbedBuilder()
@@ -61,14 +61,14 @@ public class AvailableSkillSlashEvent {
                 .setTitle(":bookmark: 스킬 목록")
                 .setDescription("보유중인 스킬 목록을 보여줍니다.");
 
-        for (AvailableSkillResponse skill : skillList) {
+        for (SkillResponse skill : skillList) {
             String title = skill.getName();
 
             if (skill.getIsRegistered().equals("true")) {
                 title += "(등록됨)";
             }
 
-            embedBuilder.addField(title, skillEventUtil.format(skill), false);
+            embedBuilder.addField(title, skill.getDescription(), false);
         }
 
         return embedBuilder.build();
