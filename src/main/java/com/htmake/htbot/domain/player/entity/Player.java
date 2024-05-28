@@ -4,6 +4,7 @@ import com.htmake.htbot.domain.inventory.entity.Inventory;
 import com.htmake.htbot.domain.player.enums.Job;
 import com.htmake.htbot.domain.quest.entity.Quest;
 import com.htmake.htbot.domain.skill.entity.PlayerSkill;
+import com.htmake.htbot.domain.skill.entity.RegisteredSkill;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -43,7 +44,10 @@ public class Player {
     private List<Inventory> inventoryList;
 
     @OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
-    private List<PlayerSkill> playerSkills;
+    private List<PlayerSkill> playerSkillList;
+
+    @OneToMany(mappedBy = "player", cascade = CascadeType.ALL)
+    private List<RegisteredSkill> registeredSkillList;
 
     @OneToOne(mappedBy = "player", cascade = CascadeType.ALL)
     private Quest quest;
