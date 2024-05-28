@@ -81,7 +81,9 @@ public class GlobalCommand extends ListenerAdapter {
 
                 Commands.slash("도감", "도감을 확인합니다.").addOptions(selectCategory().setRequired(true), insertName().setRequired(true)),
 
-                Commands.slash("장비-장착", "장비를 장착합니다.").addOptions(insertEquipmentName().setRequired(true))
+                Commands.slash("장비-장착", "장비를 장착합니다.").addOptions(insertEquipmentName().setRequired(true)),
+
+                Commands.slash("전직", "상위 직업으로 전직합니다.")
         );
 
         event.getJDA().updateCommands().addCommands(commandData).queue();
