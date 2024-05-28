@@ -5,21 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AvailableSkillResponse {
+public class SkillListResponse {
 
-    private Long id;
-
-    private String name;
-
-    private int value;
-
-    private int mana;
-
-    private String skillType;
-
-    private String isRegistered;
+    private List<SkillResponse> skillResponseList;
 }

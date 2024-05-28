@@ -40,7 +40,7 @@ public class RegisterSkillSelectEvent {
 
     private HttpResponse<JsonNode> request(String playerId, Pair<String, String> value) {
         Map<String, Object> requestData = new HashMap<>();
-        requestData.put("id", Long.valueOf(value.getFirst()));
+        requestData.put("id", value.getFirst());
         requestData.put("number", Integer.valueOf(value.getSecond()));
 
         String endPoint = "/skill/{player_id}";

@@ -1,6 +1,6 @@
 package com.htmake.htbot.discord.commands.skill;
 
-import com.htmake.htbot.discord.commands.skill.event.AvailableSkillSlashEvent;
+import com.htmake.htbot.discord.commands.skill.event.SkillListSlashEvent;
 import com.htmake.htbot.discord.commands.skill.event.RegisterSkillButtonEvent;
 import com.htmake.htbot.discord.commands.skill.event.RegisterSkillSelectEvent;
 import com.htmake.htbot.discord.commands.skill.event.RegisterSkillSlashEvent;
@@ -19,7 +19,7 @@ import java.util.List;
 @Component
 public class SkillCommand extends ListenerAdapter {
 
-    private final AvailableSkillSlashEvent availableSkillSlashEvent;
+    private final SkillListSlashEvent skillListSlashEvent;
 
     private final RegisterSkillSlashEvent registerSkillSlashEvent;
     private final RegisterSkillButtonEvent registerSkillButtonEvent;
@@ -29,7 +29,7 @@ public class SkillCommand extends ListenerAdapter {
     private final MessageUtil messageUtil;
 
     public SkillCommand() {
-        this.availableSkillSlashEvent = new AvailableSkillSlashEvent();
+        this.skillListSlashEvent = new SkillListSlashEvent();
 
         this.registerSkillSlashEvent = new RegisterSkillSlashEvent();
         this.registerSkillButtonEvent = new RegisterSkillButtonEvent();
@@ -49,7 +49,7 @@ public class SkillCommand extends ListenerAdapter {
                 return;
             }
 
-            availableSkillSlashEvent.execute(event);
+            skillListSlashEvent.execute(event);
         } else if (command.equals("스킬-등록")) {
             if (messageUtil.validCheck(event.getUser().getId())) {
                 errorUtil.sendError(event, "작업 실패", "현재 다른 작업을 진행중입니다.");

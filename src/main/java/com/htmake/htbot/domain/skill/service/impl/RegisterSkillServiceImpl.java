@@ -3,11 +3,11 @@ package com.htmake.htbot.domain.skill.service.impl;
 import com.htmake.htbot.domain.player.entity.Player;
 import com.htmake.htbot.domain.player.exception.NotFoundPlayerException;
 import com.htmake.htbot.domain.player.repository.PlayerRepository;
-import com.htmake.htbot.domain.skill.entity.PlayerSkill;
+import com.htmake.htbot.domain.skill.entity.RegisteredSkill;
 import com.htmake.htbot.domain.skill.entity.Skill;
 import com.htmake.htbot.domain.skill.exception.SkillNotFoundException;
 import com.htmake.htbot.domain.skill.presentation.data.request.RegisterSkillRequest;
-import com.htmake.htbot.domain.skill.repository.PlayerSkillRepository;
+import com.htmake.htbot.domain.skill.repository.RegisteredSkillRepository;
 import com.htmake.htbot.domain.skill.repository.SkillRepository;
 import com.htmake.htbot.domain.skill.service.RegisterSkillService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class RegisterSkillServiceImpl implements RegisterSkillService {
 
     private final PlayerRepository playerRepository;
     private final SkillRepository skillRepository;
-    private final PlayerSkillRepository playerSkillRepository;
+    private final RegisteredSkillRepository registeredSkillRepository;
 
     @Override
     public void execute(String playerId, RegisterSkillRequest request) {
@@ -33,19 +33,20 @@ public class RegisterSkillServiceImpl implements RegisterSkillService {
 
         int number = request.getNumber();
 
-        PlayerSkill existsPlayerSkill = playerSkillRepository.findByNumberAndPlayer(number, player);
+        RegisteredSkill RegisteredSkill = registeredSkillRepository.findByNumberAndPlayer(number, player)
+                .orElse(null);
 
-        if (existsPlayerSkill != null) {
-            existsPlayerSkill.setSkill(skill);
-            playerSkillRepository.save(existsPlayerSkill);
+        if (RegisteredSkill != null) {
+            RegisteredSkill.setSkill(skill);
+            registeredSkillRepository.save(RegisteredSkill);
         } else {
-            PlayerSkill playerSkill = PlayerSkill.builder()
+            RegisteredSkill newRegisterSkill = RegisteredSkill.builder()
                     .number(number)
                     .player(player)
                     .skill(skill)
                     .build();
 
-            playerSkillRepository.save(playerSkill);
+            registeredSkillRepository.save(newRegisterSkill);
         }
     }
 }

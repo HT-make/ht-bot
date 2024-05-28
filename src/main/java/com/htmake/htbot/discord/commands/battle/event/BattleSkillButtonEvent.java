@@ -8,13 +8,13 @@ import com.htmake.htbot.discord.commands.battle.data.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.PlayerSkillStatus;
 import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.util.BattleUtil;
+import com.htmake.htbot.discord.skillAction.BasicSkill;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
+import kotlin.Pair;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import org.apache.commons.math3.random.MersenneTwister;
-import org.apache.commons.math3.random.RandomGenerator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -135,38 +135,33 @@ public class BattleSkillButtonEvent {
         battleUtil.updateSituation(playerId, message);
         battleUtil.editEmbed(event, playerStatus, monsterStatus, "start");
 
-        int skillDamage = skillDamage(playerStatus, monsterStatus, usedSkill.getValue());
-        monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - skillDamage));
+        BasicSkill basicSkill = usedSkill.getBasicSkill();
+        List<Pair<String, String>> resultList = basicSkill.execute(playerStatus, monsterStatus);
 
-        message = skillDamage + "의 데미지를 입혔다.";
-        battleUtil.updateSituation(playerId, message);
-        battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
+        for (Pair<String, String> result : resultList) {
+            switch (result.getSecond()) {
+                case "ATTACK" -> {
+                    message = result.getFirst() + "의 데미지를 입혔다.";
+                }
+                case "HEAL" -> {
+                    message = result.getFirst() + "의 체력을 회복했다.";
+                }
+                case "BUFF" -> {
+                    message = result.getFirst() + " 효과를 얻었다.";
+                }
+                case "DEBUFF" -> {
+                    message = result.getFirst() + " 효과를 입혔다.";
+                }
+            }
+
+            battleUtil.updateSituation(playerId, message);
+            battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
+        }
 
         if (monsterStatus.getHealth() == 0) {
             monsterKillAction.execute(event, playerStatus, monsterStatus);
         } else {
             monsterAttackAction.execute(event, playerStatus, monsterStatus);
         }
-    }
-
-    private int skillDamage(PlayerStatus playerStatus, MonsterStatus monsterStatus, int value) {
-        RandomGenerator random = new MersenneTwister();
-        int randomNum = random.nextInt(100);
-
-        double skillValueMultiple = (double) value / 100;
-
-        int damage = (int) (playerStatus.getDamage() * skillValueMultiple);
-        int criticalChance = playerStatus.getCriticalChance();
-        int criticalDamage = playerStatus.getCriticalDamage();
-
-        int monsterDefence = monsterStatus.getDefence();
-
-        if (randomNum < criticalChance) {
-            double criticalDamageMultiple = (double) criticalDamage / 100;
-            damage = (int) (damage * criticalDamageMultiple);
-        }
-
-        damage -= monsterDefence;
-        return damage;
     }
 }

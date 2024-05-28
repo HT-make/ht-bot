@@ -9,6 +9,4 @@ import java.util.List;
 public interface PlayerSkillRepository extends JpaRepository<PlayerSkill, Long> {
 
     List<PlayerSkill> findByPlayer(Player player);
-
-    PlayerSkill findByNumberAndPlayer(int number, Player player);
 }
