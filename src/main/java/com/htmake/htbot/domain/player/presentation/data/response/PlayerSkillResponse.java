@@ -11,13 +11,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PlayerSkillResponse {
 
+    private String id;
+
     private int number;
 
     private String name;
 
-    private int value;
-
     private int mana;
-
-    private String skillType;
 }

@@ -7,7 +7,7 @@ import com.htmake.htbot.domain.player.presentation.data.response.PlayerSkillResp
 import com.htmake.htbot.domain.player.repository.PlayerRepository;
 import com.htmake.htbot.domain.player.repository.StatusRepository;
 import com.htmake.htbot.domain.player.service.PlayerBattleService;
-import com.htmake.htbot.domain.skill.entity.PlayerSkill;
+import com.htmake.htbot.domain.skill.entity.RegisteredSkill;
 import com.htmake.htbot.domain.skill.entity.Skill;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,6 @@ import java.util.List;
 public class PlayerBattleServiceImpl implements PlayerBattleService {
 
     private final PlayerRepository playerRepository;
-
     private final StatusRepository statusRepository;
 
     @Override
@@ -35,17 +34,16 @@ public class PlayerBattleServiceImpl implements PlayerBattleService {
 
         List<PlayerSkillResponse> responseList = new ArrayList<>();
 
-        List<PlayerSkill> playerSkillList = player.getPlayerSkills();
+        List<RegisteredSkill> registeredSkillList = player.getRegisteredSkillList();
 
-        for (PlayerSkill playerSkill : playerSkillList) {
-            Skill skill = playerSkill.getSkill();
+        for (RegisteredSkill registeredSkill : registeredSkillList) {
+            Skill skill = registeredSkill.getSkill();
 
             PlayerSkillResponse response = PlayerSkillResponse.builder()
-                    .number(playerSkill.getNumber())
+                    .id(skill.getId())
+                    .number(registeredSkill.getNumber())
                     .name(skill.getName())
-                    .value(skill.getValue())
                     .mana(skill.getMana())
-                    .skillType(skill.getSkillType().toString())
                     .build();
 
             responseList.add(response);

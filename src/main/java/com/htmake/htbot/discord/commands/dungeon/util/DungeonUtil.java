@@ -5,6 +5,8 @@ import com.htmake.htbot.discord.commands.dungeon.cache.DungeonTypeCache;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonMonster;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonPlayer;
 import com.htmake.htbot.discord.commands.dungeon.enums.DungeonType;
+import com.htmake.htbot.discord.skillAction.BasicSkill;
+import com.htmake.htbot.discord.skillAction.factory.SkillFactory;
 import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
 import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
@@ -116,15 +118,18 @@ public class DungeonUtil {
 
         Map<Integer, PlayerSkillStatus> playerSkillMap = new HashMap<>();
 
+        Map<String, BasicSkill> basicSkillMap = SkillFactory.skillMap;
+
         for (int i = 0;i < playerSkillArray.length(); i++) {
             JSONObject playerSkillObject = playerSkillArray.getJSONObject(i);
 
+            String id = playerSkillObject.getString("id");
             Integer number = playerSkillObject.getInt("number");
+
             PlayerSkillStatus playerSkillStatus = PlayerSkillStatus.builder()
                     .name(playerSkillObject.getString("name"))
-                    .value(playerSkillObject.getInt("value"))
                     .mana(playerSkillObject.getInt("mana"))
-                    .skillType(playerSkillObject.getString("skillType"))
+                    .basicSkill(basicSkillMap.get(id))
                     .build();
 
             playerSkillMap.put(number, playerSkillStatus);
