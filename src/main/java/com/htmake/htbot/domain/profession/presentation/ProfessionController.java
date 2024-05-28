@@ -20,19 +20,19 @@ public class ProfessionController {
     private final PlayerJobInfoService playerJobInfoService;
 
     @GetMapping("/promotion/{player_id}/{job_name}")
-    public ResponseEntity<JobPromotionInfoResponse> quest(@PathVariable("player_id") String playerId, @PathVariable("job_name") String jobName) {
+    public ResponseEntity<JobPromotionInfoResponse> getJobInfo(@PathVariable("player_id") String playerId, @PathVariable("job_name") String jobName) {
         JobPromotionInfoResponse response = jobPromotionInfoService.execute(playerId, jobName);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/job/{player_id}")
-    public ResponseEntity<JobPromotionInfoListResponse> job(@PathVariable("player_id") String playerId) {
+    public ResponseEntity<JobPromotionInfoListResponse> checkPlayerJob(@PathVariable("player_id") String playerId) {
         JobPromotionInfoListResponse response = playerJobInfoService.execute(playerId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PatchMapping("/promotion/{player_id}/{job_name}")
-    public ResponseEntity<Void> questProgress(@PathVariable("player_id") String playerId,
+    public ResponseEntity<Void> promotionPlayerJob(@PathVariable("player_id") String playerId,
                                               @PathVariable("job_name") String jobName) {
         jobPromotionCompleteService.execute(playerId, jobName);
         return new ResponseEntity<>(HttpStatus.OK);
