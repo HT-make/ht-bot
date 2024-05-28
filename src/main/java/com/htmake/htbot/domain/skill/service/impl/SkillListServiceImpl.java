@@ -4,12 +4,13 @@ import com.htmake.htbot.domain.player.entity.Player;
 import com.htmake.htbot.domain.player.exception.NotFoundPlayerException;
 import com.htmake.htbot.domain.player.repository.PlayerRepository;
 import com.htmake.htbot.domain.skill.entity.PlayerSkill;
+import com.htmake.htbot.domain.skill.entity.RegisteredSkill;
 import com.htmake.htbot.domain.skill.entity.Skill;
-import com.htmake.htbot.domain.skill.presentation.data.response.AvailableSkillListResponse;
-import com.htmake.htbot.domain.skill.presentation.data.response.AvailableSkillResponse;
+import com.htmake.htbot.domain.skill.presentation.data.response.SkillListResponse;
+import com.htmake.htbot.domain.skill.presentation.data.response.SkillResponse;
 import com.htmake.htbot.domain.skill.repository.PlayerSkillRepository;
-import com.htmake.htbot.domain.skill.repository.SkillRepository;
-import com.htmake.htbot.domain.skill.service.AvailableSkillListService;
+import com.htmake.htbot.domain.skill.repository.RegisteredSkillRepository;
+import com.htmake.htbot.domain.skill.service.SkillListService;
 import com.htmake.htbot.global.util.SkillUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,32 +22,34 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class AvailableSkillListServiceImpl implements AvailableSkillListService {
+public class SkillListServiceImpl implements SkillListService {
 
-    private final SkillRepository skillRepository;
     private final PlayerRepository playerRepository;
     private final PlayerSkillRepository playerSkillRepository;
+    private final RegisteredSkillRepository registeredSkillRepository;
     private final SkillUtil skillUtil;
 
     @Override
-    public AvailableSkillListResponse execute(String playerId) {
+    public SkillListResponse execute(String playerId) {
         Player player = playerRepository.findById(playerId)
                 .orElseThrow(NotFoundPlayerException::new);
 
-        List<Skill> skillList = skillRepository.findByJob(player.getJob());
         List<PlayerSkill> playerSkillList = playerSkillRepository.findByPlayer(player);
+        List<RegisteredSkill> registeredSkillList = registeredSkillRepository.findByPlayer(player);
 
-        List<AvailableSkillResponse> responseList = new ArrayList<>();
+        List<SkillResponse> responseList = new ArrayList<>();
 
-        for (Skill skill : skillList) {
-            boolean isRegistered = playerSkillList.stream()
-                    .anyMatch(playerSkill -> skill.equals(playerSkill.getSkill()));
+        for (PlayerSkill playerSkill : playerSkillList) {
+            Skill skill = playerSkill.getSkill();
 
-            AvailableSkillResponse response = skillUtil.buildAvailableSkillResponse(skill, isRegistered);
+            boolean isRegistered = registeredSkillList.stream()
+                    .anyMatch(registeredSkill -> skill.equals(registeredSkill.getSkill()));
+
+            SkillResponse response = skillUtil.buildSkillResponse(skill, isRegistered);
             responseList.add(response);
         }
 
-        return AvailableSkillListResponse.builder()
+        return SkillListResponse.builder()
                 .skillResponseList(responseList)
                 .build();
     }

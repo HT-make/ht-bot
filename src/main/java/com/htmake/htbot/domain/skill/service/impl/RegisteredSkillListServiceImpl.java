@@ -3,10 +3,10 @@ package com.htmake.htbot.domain.skill.service.impl;
 import com.htmake.htbot.domain.player.entity.Player;
 import com.htmake.htbot.domain.player.exception.NotFoundPlayerException;
 import com.htmake.htbot.domain.player.repository.PlayerRepository;
-import com.htmake.htbot.domain.skill.entity.PlayerSkill;
+import com.htmake.htbot.domain.skill.entity.RegisteredSkill;
 import com.htmake.htbot.domain.skill.presentation.data.response.RegisteredSkillListResponse;
 import com.htmake.htbot.domain.skill.presentation.data.response.RegisteredSkillResponse;
-import com.htmake.htbot.domain.skill.repository.PlayerSkillRepository;
+import com.htmake.htbot.domain.skill.repository.RegisteredSkillRepository;
 import com.htmake.htbot.domain.skill.service.RegisteredSkillListService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,21 +21,21 @@ import java.util.List;
 public class RegisteredSkillListServiceImpl implements RegisteredSkillListService {
 
     private final PlayerRepository playerRepository;
-    private final PlayerSkillRepository playerSkillRepository;
+    private final RegisteredSkillRepository registeredSkillRepository;
 
     @Override
     public RegisteredSkillListResponse execute(String playerId) {
         Player player = playerRepository.findById(playerId)
                 .orElseThrow(NotFoundPlayerException::new);
 
-        List<PlayerSkill> playerSkillList = playerSkillRepository.findByPlayer(player);
+        List<RegisteredSkill> registeredSkillList = registeredSkillRepository.findByPlayer(player);
 
         List<RegisteredSkillResponse> responseList = new ArrayList<>();
 
-        for (PlayerSkill playerSkill : playerSkillList) {
+        for (RegisteredSkill registeredSkill : registeredSkillList) {
             RegisteredSkillResponse response = RegisteredSkillResponse.builder()
-                    .number(playerSkill.getNumber())
-                    .name(playerSkill.getSkill().getName())
+                    .number(registeredSkill.getNumber())
+                    .name(registeredSkill.getSkill().getName())
                     .build();
 
             responseList.add(response);
