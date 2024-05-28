@@ -33,12 +33,9 @@ public class ItemSellSlashEvent {
     }
 
     public void execute(SlashCommandInteractionEvent event) {
-        OptionMapping categoryOption = event.getOption("카테고리");
-        OptionMapping nameOption = event.getOption("이름");
-        OptionMapping quantityOption = event.getOption("수량");
-        String category = categoryOption.getAsString();
-        String name = nameOption.getAsString();
-        int quantity = quantityOption.getAsInt();
+        String category = event.getOption("카테고리").getAsString();
+        String name = event.getOption("이름").getAsString();
+        int quantity = event.getOption("수량").getAsInt();
 
         HttpResponse<JsonNode> response = request(event.getUser(), category, name, quantity);
 

@@ -32,10 +32,6 @@ public class ItemSellServiceImpl implements ItemSellService {
         String itemName = request.getName();
         int quantity = request.getQuantity();
 
-        System.out.println("############"+request.getCategory());
-        System.out.println("############"+request.getName());
-        System.out.println("############"+request.getQuantity());
-
         Player player = playerRepository.findById(playerId)
                 .orElseThrow(NotFoundPlayerException::new);
 
