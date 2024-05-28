@@ -73,6 +73,7 @@ public class GlobalCommand extends ListenerAdapter {
                 Commands.slash("상점", "상점에 입장합니다."),
                 Commands.slash("랜덤-상점", "랜덤 상점에 입장합니다."),
                 Commands.slash("랜덤-상점-구매", "랜덤 상점에서 장비를 구입합니다.").addOptions(insertEquipmentName().setRequired(true)),
+                Commands.slash("상점-판매", "아이템을 판매합니다.").addOptions(selectCategory().setRequired(true), insertName().setRequired(true), insertQuantity().setRequired(true).setRequiredRange(1, 99)),
 
                 Commands.slash("스킬-목록", "사용 가능한 스킬을 확인합니다."),
                 Commands.slash("스킬-등록", "스킬을 등록합니다."),
@@ -106,5 +107,9 @@ public class GlobalCommand extends ListenerAdapter {
 
     private OptionData insertName() {
         return new OptionData(OptionType.STRING, "이름", "원하시는 옵션의 이름을 입력해 주세요!");
+    }
+
+    private OptionData insertQuantity() {
+        return new OptionData(OptionType.INTEGER, "수량", "원하시는 수량을 입력해 주세요!");
     }
 }

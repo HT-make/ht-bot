@@ -1,5 +1,6 @@
 package com.htmake.htbot.discord.commands.shop;
 
+import com.htmake.htbot.discord.commands.shop.event.ItemSellSlashEvent;
 import com.htmake.htbot.discord.commands.shop.event.RandomShopEvent;
 import com.htmake.htbot.discord.commands.shop.event.RandomShopPurchaseEvent;
 import com.htmake.htbot.discord.util.ErrorUtil;
@@ -20,6 +21,8 @@ public class ShopCommand extends ListenerAdapter {
 
     private final RandomShopPurchaseEvent randomShopPurchaseEvent;
 
+    private final ItemSellSlashEvent itemSellSlashEvent;
+
     private final ErrorUtil errorUtil;
     private final MessageUtil messageUtil;
 
@@ -27,6 +30,8 @@ public class ShopCommand extends ListenerAdapter {
         this.randomShopEvent = new RandomShopEvent();
 
         this.randomShopPurchaseEvent = new RandomShopPurchaseEvent();
+
+        this.itemSellSlashEvent = new ItemSellSlashEvent();
 
         this.errorUtil = new ErrorUtil();
         this.messageUtil = new MessageUtil();
@@ -50,6 +55,13 @@ public class ShopCommand extends ListenerAdapter {
             }
 
             randomShopPurchaseEvent.execute(event);
+        } else if (command.equals("상점-판매")){
+            if (messageUtil.validCheck(event.getUser().getId())) {
+                errorUtil.sendError(event, "작업 실패", "현재 다른 작업을 진행중입니다.");
+                return;
+            }
+
+            itemSellSlashEvent.execute(event);
         }
     }
 }
