@@ -2,7 +2,7 @@ package com.htmake.htbot.discord.commands.skill.event;
 
 import com.htmake.htbot.discord.commands.skill.util.SkillEventUtil;
 import com.htmake.htbot.discord.util.ErrorUtil;
-import com.htmake.htbot.domain.skill.presentation.data.response.AvailableSkillResponse;
+import com.htmake.htbot.domain.skill.presentation.data.response.SkillResponse;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
@@ -49,7 +49,7 @@ public class RegisterSkillButtonEvent {
     }
 
     private void requestSuccess(ButtonInteractionEvent event, JSONArray skillArray, String number) {
-        List<AvailableSkillResponse> skillList = skillEventUtil.toSkillList(skillArray);
+        List<SkillResponse> skillList = skillEventUtil.toSkillList(skillArray);
         MessageEmbed embed = buildEmbed(skillList, event.getMessage().getEmbeds().get(0));
         StringSelectMenu menu = buildMenu(skillList, number);
 
@@ -58,31 +58,31 @@ public class RegisterSkillButtonEvent {
                 .queue();
     }
 
-    private MessageEmbed buildEmbed(List<AvailableSkillResponse> skillList, MessageEmbed embed) {
+    private MessageEmbed buildEmbed(List<SkillResponse> skillList, MessageEmbed embed) {
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setColor(Color.GREEN)
                 .setAuthor(embed.getAuthor().getName(), null, embed.getAuthor().getIconUrl())
                 .setTitle(":bookmark: 스킬 등록")
                 .setDescription("등록할 스킬을 선택해 주세요.");
 
-        for (AvailableSkillResponse skill : skillList) {
-            embedBuilder.addField(skill.getName(), skillEventUtil.format(skill), false);
+        for (SkillResponse skill : skillList) {
+            embedBuilder.addField(skill.getName(), skill.getDescription(), false);
         }
 
         return embedBuilder.build();
     }
 
-    private StringSelectMenu buildMenu(List<AvailableSkillResponse> skillList, String number) {
+    private StringSelectMenu buildMenu(List<SkillResponse> skillList, String number) {
         return StringSelectMenu.create("skillMenu")
                 .addOptions(buildOptionList(skillList, number))
                 .build();
     }
 
-    private List<SelectOption> buildOptionList(List<AvailableSkillResponse> skillList, String number) {
+    private List<SelectOption> buildOptionList(List<SkillResponse> skillList, String number) {
         List<SelectOption> optionList = new ArrayList<>();
 
-        for (AvailableSkillResponse skill : skillList) {
-            String value = String.format("skill-register-%d-%s", skill.getId(), number);
+        for (SkillResponse skill : skillList) {
+            String value = String.format("skill-register-%s-%s", skill.getId(), number);
             SelectOption option = SelectOption.of(skill.getName(), value);
             optionList.add(option);
         }

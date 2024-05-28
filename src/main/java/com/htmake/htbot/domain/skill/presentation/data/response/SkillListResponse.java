@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AvailableSkillListResponse {
+public class SkillListResponse {
 
-    private List<AvailableSkillResponse> skillResponseList;
+    private List<SkillResponse> skillResponseList;
 }
