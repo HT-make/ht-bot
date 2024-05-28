@@ -18,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.htmake.htbot.domain.player.enums.Job.*;
+
 
 @Service
 @Transactional
@@ -77,10 +79,14 @@ public class PlayerJoinServiceImpl implements PlayerJoinService {
     }
 
     private String getWeaponId(Job job) {
-        return switch (job) {
-            case WARRIOR -> "21001";
-            case ARCHER -> "22001";
-            case WIZARD -> "23001";
-        };
+        String weaponId = null;
+        if (job == WARRIOR) {
+            weaponId = "21001";
+        } else if (job == ARCHER) {
+            weaponId = "22001";
+        } else if (job == WIZARD) {
+            weaponId = "23001";
+        }
+        return weaponId;
     }
 }
