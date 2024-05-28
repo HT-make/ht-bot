@@ -65,4 +65,12 @@ public class Player {
     public void setGold(int gold) {
         this.gold = gold;
     }
+
+    public void setJob(Job job) {
+        this.job = job;
+    }
+
+    public void setGem(int gem) {
+        this.gem = gem;
+    }
 }

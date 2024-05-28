@@ -7,6 +7,7 @@ import com.htmake.htbot.discord.commands.equipment.EquipmentCommand;
 import com.htmake.htbot.discord.commands.inventory.InventoryCommand;
 import com.htmake.htbot.discord.commands.player.PlayerCommand;
 import com.htmake.htbot.discord.commands.global.GlobalCommand;
+import com.htmake.htbot.discord.commands.profession.ProfessionCommand;
 import com.htmake.htbot.discord.commands.quest.QuestCommand;
 import com.htmake.htbot.discord.commands.shop.ShopCommand;
 import com.htmake.htbot.discord.commands.skill.SkillCommand;
@@ -57,7 +58,8 @@ public class HtBot {
                 new SkillCommand(),
                 new QuestCommand(),
                 new DictionaryCommand(),
-                new EquipmentCommand()
+                new EquipmentCommand(),
+                new ProfessionCommand()
         );
     }
 }
