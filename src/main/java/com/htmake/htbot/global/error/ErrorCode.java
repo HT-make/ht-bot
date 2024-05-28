@@ -40,7 +40,10 @@ public enum ErrorCode {
     DUNGEON_NOT_FOUND("해당 던전을 찾을 수 없습니다.", 404),
 
     //MISC
-    MISC_NOT_FOUND("해당 기타 아이템을 찾을 수 없습니다.", 404);
+    MISC_NOT_FOUND("해당 기타 아이템을 찾을 수 없습니다.", 404),
+
+    //JOB
+    NOT_FOUND_JOB("해당 직업을 찾을 수 없습니다.", 404);
 
     private final String message;
     private final int status;
