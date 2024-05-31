@@ -4,10 +4,10 @@ import com.htmake.htbot.discord.commands.battle.action.MonsterAttackAction;
 import com.htmake.htbot.discord.commands.battle.action.MonsterKillAction;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
-import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
-import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
-import com.htmake.htbot.discord.commands.battle.data.MonsterStatus;
-import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
+import com.htmake.htbot.discord.commands.battle.cache.MonsterDataCache;
+import com.htmake.htbot.discord.commands.battle.cache.PlayerDataCache;
+import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
+import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.util.BattleUtil;
 import kotlin.Pair;
 import net.dv8tion.jda.api.entities.User;
@@ -22,8 +22,8 @@ public class PlayerAttackButtonEvent {
     private final MonsterKillAction monsterKillAction;
     private final MonsterAttackAction monsterAttackAction;
 
-    private final PlayerStatusCache playerStatusCache;
-    private final MonsterStatusCache monsterStatusCache;
+    private final PlayerDataCache playerDataCache;
+    private final MonsterDataCache monsterDataCache;
 
     public PlayerAttackButtonEvent() {
         this.errorUtil = new ErrorUtil();
@@ -31,20 +31,20 @@ public class PlayerAttackButtonEvent {
         this.monsterKillAction = new MonsterKillAction();
         this.monsterAttackAction = new MonsterAttackAction();
 
-        this.playerStatusCache = CacheFactory.playerStatusCache;
-        this.monsterStatusCache = CacheFactory.monsterStatusCache;
+        this.playerDataCache = CacheFactory.playerDataCache;
+        this.monsterDataCache = CacheFactory.monsterDataCache;
     }
 
     public void execute(ButtonInteractionEvent event) {
         String playerId = event.getUser().getId();
 
-        if (!playerStatusCache.containsKey(playerId) || !monsterStatusCache.containsKey(playerId)) {
+        if (!playerDataCache.containsKey(playerId) || !monsterDataCache.containsKey(playerId)) {
             errorUtil.sendError(event.getHook(), "전투", "정보를 불러오지 못했습니다.");
             return;
         }
 
-        PlayerStatus playerStatus = playerStatusCache.get(playerId);
-        MonsterStatus monsterStatus = monsterStatusCache.get(playerId);
+        PlayerStatus playerStatus = playerDataCache.get(playerId).getPlayerStatus();
+        MonsterStatus monsterStatus = monsterDataCache.get(playerId).getMonsterStatus();
 
         playerTurn(event, playerStatus, monsterStatus);
 
