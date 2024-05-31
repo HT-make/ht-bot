@@ -14,6 +14,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.apache.commons.math3.random.MersenneTwister;
@@ -70,11 +71,13 @@ public class FieldDungeonEntrySelectEvent {
         Map<Integer, List<DungeonMonster>> monsterListByLevel = toMonsterListByLevel(dungeonMonsterArray);
         Map<Integer, DungeonMonster> monsterByStage = toMonsterByStage(monsterListByLevel);
 
+        User user = event.getUser();
+
         String dungeonName = dungeonObject.getString("name");
         DungeonMonster dungeonMonster = monsterByStage.get(1);
-        DungeonPlayer dungeonPlayer = dungeonUtil.toDungeonPlayer(playerObject);
+        DungeonPlayer dungeonPlayer = dungeonUtil.toDungeonPlayer(user.getName(), playerObject);
 
-        String playerId = event.getUser().getId();
+        String playerId = user.getId();
 
         saveFieldDungeonStatus(playerId, dungeonName, monsterByStage, dungeonPlayer);
 
