@@ -2,13 +2,16 @@ package com.htmake.htbot.discord.commands.battle.event;
 
 import com.htmake.htbot.discord.commands.battle.action.MonsterAttackAction;
 import com.htmake.htbot.discord.commands.battle.action.MonsterKillAction;
-import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
-import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
-import com.htmake.htbot.discord.commands.battle.data.MonsterStatus;
+import com.htmake.htbot.discord.commands.battle.cache.MonsterDataCache;
+import com.htmake.htbot.discord.commands.battle.cache.PlayerDataCache;
+import com.htmake.htbot.discord.commands.battle.data.MonsterData;
+import com.htmake.htbot.discord.commands.battle.data.PlayerData;
+import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.PlayerSkillStatus;
-import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
+import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.util.BattleUtil;
 import com.htmake.htbot.discord.skillAction.BasicSkill;
+import com.htmake.htbot.discord.skillAction.type.SkillType;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
 import kotlin.Pair;
@@ -28,8 +31,8 @@ public class BattleSkillButtonEvent {
     private final MonsterAttackAction monsterAttackAction;
     private final MonsterKillAction monsterKillAction;
 
-    private final PlayerStatusCache playerStatusCache;
-    private final MonsterStatusCache monsterStatusCache;
+    private final PlayerDataCache playerDataCache;
+    private final MonsterDataCache monsterDataCache;
 
     public BattleSkillButtonEvent() {
         this.errorUtil = new ErrorUtil();
@@ -37,8 +40,8 @@ public class BattleSkillButtonEvent {
         this.monsterAttackAction = new MonsterAttackAction();
         this.monsterKillAction = new MonsterKillAction();
 
-        this.playerStatusCache = CacheFactory.playerStatusCache;
-        this.monsterStatusCache = CacheFactory.monsterStatusCache;
+        this.playerDataCache = CacheFactory.playerDataCache;
+        this.monsterDataCache = CacheFactory.monsterDataCache;
     }
 
     public void execute(ButtonInteractionEvent event, String option) {
@@ -54,12 +57,12 @@ public class BattleSkillButtonEvent {
     private void openSkill(ButtonInteractionEvent event) {
         String playerId = event.getUser().getId();
 
-        if (!playerStatusCache.containsKey(playerId)) {
+        if (!playerDataCache.containsKey(playerId)) {
             errorUtil.sendError(event.getHook(), "전투", "스킬을 불러오지 못했습니다.");
             return;
         }
 
-        PlayerStatus playerStatus = playerStatusCache.get(playerId);
+        PlayerStatus playerStatus = playerDataCache.get(playerId).getPlayerStatus();
         Map<Integer, PlayerSkillStatus> playerSkill = playerStatus.getPlayerSkill();
 
         List<String> skillNameList = new ArrayList<>();
@@ -108,13 +111,16 @@ public class BattleSkillButtonEvent {
     private void useSkill(ButtonInteractionEvent event, int number) {
         String playerId = event.getUser().getId();
 
-        if (!playerStatusCache.containsKey(playerId) || !monsterStatusCache.containsKey(playerId)) {
+        if (!playerDataCache.containsKey(playerId) || !monsterDataCache.containsKey(playerId)) {
             errorUtil.sendError(event.getHook(), "전투", "정보를 불러오지 못했습니다.");
             return;
         }
 
-        PlayerStatus playerStatus = playerStatusCache.get(playerId);
-        MonsterStatus monsterStatus = monsterStatusCache.get(playerId);
+        PlayerData playerData = playerDataCache.get(playerId);
+        PlayerStatus playerStatus = playerData.getPlayerStatus();
+
+        MonsterData monsterData = monsterDataCache.get(playerId);
+        MonsterStatus monsterStatus = monsterData.getMonsterStatus();
 
         Map<Integer, PlayerSkillStatus> playerSkill = playerStatus.getPlayerSkill();
         PlayerSkillStatus usedSkill = playerSkill.get(number);
@@ -136,20 +142,20 @@ public class BattleSkillButtonEvent {
         battleUtil.editEmbed(event, playerStatus, monsterStatus, "start");
 
         BasicSkill basicSkill = usedSkill.getBasicSkill();
-        List<Pair<String, String>> resultList = basicSkill.execute(playerStatus, monsterStatus);
+        List<Pair<String, SkillType>> resultList = basicSkill.execute(playerData, monsterData);
 
-        for (Pair<String, String> result : resultList) {
+        for (Pair<String, SkillType> result : resultList) {
             switch (result.getSecond()) {
-                case "ATTACK" -> {
+                case ATTACK -> {
                     message = result.getFirst() + "의 데미지를 입혔다.";
                 }
-                case "HEAL" -> {
+                case HEAL -> {
                     message = result.getFirst() + "의 체력을 회복했다.";
                 }
-                case "BUFF" -> {
+                case BUFF -> {
                     message = result.getFirst() + " 효과를 얻었다.";
                 }
-                case "DEBUFF" -> {
+                case DEBUFF -> {
                     message = result.getFirst() + " 효과를 입혔다.";
                 }
             }
