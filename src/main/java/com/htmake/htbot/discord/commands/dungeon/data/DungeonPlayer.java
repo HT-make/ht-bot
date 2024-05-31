@@ -14,6 +14,8 @@ public class DungeonPlayer {
 
     private int level;
 
+    private String name;
+
     private int damage;
 
     private int health;

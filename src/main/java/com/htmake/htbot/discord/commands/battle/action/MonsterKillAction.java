@@ -1,7 +1,7 @@
 package com.htmake.htbot.discord.commands.battle.action;
 
-import com.htmake.htbot.discord.commands.battle.data.MonsterStatus;
-import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
+import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
+import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.util.BattleUtil;
 import com.htmake.htbot.discord.commands.dungeon.cache.DungeonTypeCache;
 import com.htmake.htbot.discord.commands.dungeon.enums.DungeonType;

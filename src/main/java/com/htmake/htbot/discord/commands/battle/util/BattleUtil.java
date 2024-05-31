@@ -1,14 +1,15 @@
 package com.htmake.htbot.discord.commands.battle.util;
 
+import com.htmake.htbot.discord.commands.battle.data.condition.Condition;
 import com.htmake.htbot.discord.commands.dungeon.data.GetItem;
 import com.htmake.htbot.discord.util.MessageUtil;
 import com.htmake.htbot.discord.util.ObjectMapperUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
-import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
-import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
+import com.htmake.htbot.discord.commands.battle.cache.MonsterDataCache;
+import com.htmake.htbot.discord.commands.battle.cache.PlayerDataCache;
 import com.htmake.htbot.discord.commands.battle.cache.SituationCache;
-import com.htmake.htbot.discord.commands.battle.data.MonsterStatus;
-import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
+import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
+import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.data.Situation;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
@@ -21,10 +22,8 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class BattleUtil {
 
@@ -32,8 +31,8 @@ public class BattleUtil {
     private final HttpClient httpClient;
     private final ObjectMapperUtil objectMapperUtil;
 
-    private final PlayerStatusCache playerStatusCache;
-    private final MonsterStatusCache monsterStatusCache;
+    private final PlayerDataCache playerDataCache;
+    private final MonsterDataCache monsterDataCache;
     private final SituationCache situationCache;
 
     public BattleUtil() {
@@ -41,8 +40,8 @@ public class BattleUtil {
         this.httpClient = new HttpClientImpl();
         this.objectMapperUtil = new ObjectMapperUtil();
 
-        this.playerStatusCache = CacheFactory.playerStatusCache;
-        this.monsterStatusCache = CacheFactory.monsterStatusCache;
+        this.playerDataCache = CacheFactory.playerDataCache;
+        this.monsterDataCache = CacheFactory.monsterDataCache;
         this.situationCache = CacheFactory.situationCache;
     }
 
@@ -62,7 +61,43 @@ public class BattleUtil {
     public void editEmbed(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus, String type) {
         MessageEmbed embed = event.getMessage().getEmbeds().get(0);
 
-        Situation situation = situationCache.get(event.getUser().getId());
+        String monsterInfo = "Lv." + monsterStatus.getLevel() + " " + monsterStatus.getName();
+        String playerInfo = "Lv." + playerStatus.getLevel() + " " + playerStatus.getName();
+
+        String situation = situationFormat(event.getUser().getId());
+
+        MessageEmbed newEmbed = new EmbedBuilder()
+                .setColor(Color.GREEN)
+                .setAuthor(embed.getAuthor().getName(), null, embed.getAuthor().getIconUrl())
+                .setTitle(embed.getTitle())
+
+                .addField(monsterInfo, conditionFormat(monsterStatus.getConditionMap()), false)
+                .addField(":crossed_swords: 공격력", "" + monsterStatus.getDamage(), true)
+                .addField(":heart: 체력", "" + monsterStatus.getHealth(), true)
+                .addField(":shield: 방어력", "" + monsterStatus.getDefence(), true)
+
+                .addField(":video_game: 전투 현황", situation, false)
+
+                .addField(":crossed_swords: 공격력", "" + playerStatus.getDamage(), true)
+                .addField(":heart: 체력", "" + playerStatus.getHealth(), true)
+                .addField(":shield: 방어력", "" + playerStatus.getDefence(), true)
+                .addField(":large_blue_diamond: 마나", "" + playerStatus.getMana(), true)
+                .addField(":boom: 치명타 확률", playerStatus.getCriticalChance() + "%", true)
+                .addField(":boom: 치명타 데미지", playerStatus.getCriticalDamage() + "%", true)
+                .addField(playerInfo, conditionFormat(playerStatus.getConditionMap()), false)
+                .build();
+
+        if (type.equals("progress")) {
+            event.getHook().editOriginalEmbeds(newEmbed).queue();
+        } else {
+            event.getHook().editOriginalEmbeds(newEmbed)
+                    .setActionRow(getButtonList(type))
+                    .queue();
+        }
+    }
+
+    private String situationFormat(String id) {
+        Situation situation = situationCache.get(id);
         List<String> messageList = situation.getMessageList();
 
         StringBuilder sb = new StringBuilder();
@@ -77,37 +112,33 @@ public class BattleUtil {
         }
         sb.append("```");
 
-        MessageEmbed newEmbed = new EmbedBuilder()
-                .setColor(Color.GREEN)
-                .setAuthor(embed.getAuthor().getName(), null, embed.getAuthor().getIconUrl())
-                .setTitle(embed.getTitle())
-                .setDescription(embed.getDescription())
+        return sb.toString();
+    }
 
-                .addField(":crossed_swords: 공격력", "" + monsterStatus.getDamage(), true)
-                .addField(":heart: 체력", "" + monsterStatus.getHealth(), true)
-                .addField(":shield: 방어력", "" + monsterStatus.getDefence(), true)
+    private String conditionFormat(Map<String, Condition> conditionMap) {
+        String formattedCondition = "";
 
-                .addField(":video_game: 전투 현황", sb.toString(), false)
-                .addBlankField(false)
-
-                .addField(":crossed_swords: 공격력", "" + playerStatus.getDamage(), true)
-                .addField(":heart: 체력", "" + playerStatus.getHealth(), true)
-                .addField(":shield: 방어력", "" + playerStatus.getDefence(), true)
-
-                .addField(":large_blue_diamond: 마나", "" + playerStatus.getMana(), true)
-                .addField(":boom: 치명타 확률", playerStatus.getCriticalChance() + "%", true)
-                .addField(":boom: 치명타 데미지", playerStatus.getCriticalDamage() + "%", true)
-
-                .setFooter(embed.getFooter().getText())
-                .build();
-
-        if (type.equals("progress")) {
-            event.getHook().editOriginalEmbeds(newEmbed).queue();
-        } else {
-            event.getHook().editOriginalEmbeds(newEmbed)
-                    .setActionRow(getButtonList(type))
-                    .queue();
+        for (Map.Entry<String, Condition> entry : conditionMap.entrySet()) {
+            Condition condition = entry.getValue();
+            formattedCondition += condition.getEmoji() + turnFormat(condition.getTurn()) + " ";
         }
+
+        return formattedCondition;
+    }
+
+    private String turnFormat(int turn) {
+        return switch (turn) {
+            case 1 -> "¹";
+            case 2 -> "²";
+            case 3 -> "³";
+            case 4 -> "⁴";
+            case 5 -> "⁵";
+            case 6 -> "⁶";
+            case 7 -> "⁷";
+            case 8 -> "⁸";
+            case 9 -> "⁹";
+            default -> null;
+        };
     }
 
     private List<Button> getButtonList(String type) {
@@ -132,8 +163,8 @@ public class BattleUtil {
     }
 
     public void removeCurrentBattleCache(String playerId) {
-        playerStatusCache.remove(playerId);
-        monsterStatusCache.remove(playerId);
+        playerDataCache.remove(playerId);
+        monsterDataCache.remove(playerId);
         situationCache.remove(playerId);
     }
 

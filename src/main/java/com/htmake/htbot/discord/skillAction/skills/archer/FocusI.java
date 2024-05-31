@@ -2,16 +2,21 @@ package com.htmake.htbot.discord.skillAction.skills.archer;
 
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
+import com.htmake.htbot.discord.commands.battle.data.condition.extend.Buff;
+import com.htmake.htbot.discord.commands.battle.data.condition.Condition;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerOriginalStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.skillAction.skills.SkillStrategy;
+import com.htmake.htbot.discord.skillAction.type.BuffStatus;
+import com.htmake.htbot.discord.skillAction.type.BuffType;
 import com.htmake.htbot.discord.skillAction.type.SkillType;
 import kotlin.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class Breathing implements SkillStrategy {
+public class FocusI implements SkillStrategy {
 
     @Override
     public List<Pair<String, SkillType>> execute(PlayerData playerData, MonsterData monsterData) {
@@ -20,10 +25,21 @@ public class Breathing implements SkillStrategy {
         PlayerStatus playerStatus = playerData.getPlayerStatus();
         PlayerOriginalStatus playerOriginalStatus = playerData.getPlayerOriginalStatus();
 
-        int healing = (int) (playerStatus.getDamage() * 1.5);
-        playerStatus.setHealth(Math.min(playerOriginalStatus.getHealth(), playerStatus.getHealth() + healing));
+        Map<String, Condition> playerCondition = playerStatus.getConditionMap();
+        Buff buff = new Buff(
+                "hit",
+                "명중I",
+                ":dart:",
+                3,
+                0.15,
+                BuffType.UP,
+                BuffStatus.CRITICAL_CHANCE
+        );
+        playerCondition.put("hit", buff);
 
-        resultList.add(new Pair<>(String.valueOf(healing), SkillType.HEAL));
+        buff.apply(playerStatus, playerOriginalStatus);
+
+        resultList.add(new Pair<>("명중I", SkillType.BUFF));
 
         return resultList;
     }

@@ -2,8 +2,8 @@ package com.htmake.htbot.global.cache;
 
 import com.htmake.htbot.discord.commands.dungeon.cache.DungeonTypeCache;
 import com.htmake.htbot.discord.commands.dungeon.cache.FieldDungeonStatusCache;
-import com.htmake.htbot.discord.commands.battle.cache.MonsterStatusCache;
-import com.htmake.htbot.discord.commands.battle.cache.PlayerStatusCache;
+import com.htmake.htbot.discord.commands.battle.cache.MonsterDataCache;
+import com.htmake.htbot.discord.commands.battle.cache.PlayerDataCache;
 import com.htmake.htbot.discord.commands.battle.cache.SituationCache;
 import com.htmake.htbot.discord.commands.global.cache.MessageCache;
 import com.htmake.htbot.discord.commands.inventory.cache.InventoryCache;
@@ -13,8 +13,8 @@ import org.springframework.stereotype.Component;
 public class CacheFactory {
 
     //battle
-    public static PlayerStatusCache playerStatusCache;
-    public static MonsterStatusCache monsterStatusCache;
+    public static PlayerDataCache playerDataCache;
+    public static MonsterDataCache monsterDataCache;
     public static SituationCache situationCache;
 
     //dungeon
@@ -28,8 +28,8 @@ public class CacheFactory {
     public static MessageCache messageCache;
 
     public CacheFactory() {
-        playerStatusCache = new PlayerStatusCache();
-        monsterStatusCache = new MonsterStatusCache();
+        playerDataCache = new PlayerDataCache();
+        monsterDataCache = new MonsterDataCache();
         situationCache = new SituationCache();
 
         fieldDungeonStatusCache = new FieldDungeonStatusCache();

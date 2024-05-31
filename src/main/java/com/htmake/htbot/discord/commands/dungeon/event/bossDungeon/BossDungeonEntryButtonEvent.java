@@ -11,6 +11,7 @@ import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.apache.commons.math3.random.MersenneTwister;
@@ -66,11 +67,13 @@ public class BossDungeonEntryButtonEvent {
         JSONArray dungeonMonsterArray = dungeonObject.getJSONArray("monsterList");
         List<DungeonMonster> dungeonMonsterList = toDungeonMonsterList(dungeonMonsterArray);
 
+        User user = event.getUser();
+
         String dungeonName = dungeonObject.getString("name");
         DungeonMonster dungeonMonster = getRandomDungeonMonster(dungeonMonsterList);
-        DungeonPlayer dungeonPlayer = dungeonUtil.toDungeonPlayer(playerObject);
+        DungeonPlayer dungeonPlayer = dungeonUtil.toDungeonPlayer(user.getName(), playerObject);
 
-        String playerId = event.getUser().getId();
+        String playerId = user.getId();
 
         dungeonUtil.savePlayerStatus(playerId, dungeonPlayer);
         dungeonUtil.saveMonsterStatus(playerId, dungeonMonster);
