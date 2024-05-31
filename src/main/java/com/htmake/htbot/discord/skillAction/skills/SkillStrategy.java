@@ -1,7 +1,8 @@
 package com.htmake.htbot.discord.skillAction.skills;
 
-import com.htmake.htbot.discord.commands.battle.data.MonsterStatus;
-import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
+import com.htmake.htbot.discord.commands.battle.data.MonsterData;
+import com.htmake.htbot.discord.commands.battle.data.PlayerData;
+import com.htmake.htbot.discord.skillAction.type.SkillType;
 import kotlin.Pair;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public interface SkillStrategy {
 
-    List<Pair<String, String>> execute(PlayerStatus player, MonsterStatus monster);
+    List<Pair<String, SkillType>> execute(PlayerData playerData, MonsterData monsterData);
 
     default int critical(int damage, int criticalDamage, int criticalChance) {
         RandomGenerator random = new MersenneTwister();
