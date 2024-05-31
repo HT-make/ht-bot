@@ -1,21 +1,21 @@
 package com.htmake.htbot.discord.commands.battle.cache;
 
+import com.htmake.htbot.discord.commands.battle.data.PlayerData;
 import com.htmake.htbot.global.cache.CacheManager;
-import com.htmake.htbot.discord.commands.battle.data.PlayerStatus;
 
-public class PlayerStatusCache {
+public class PlayerDataCache {
 
-    private final CacheManager<String, PlayerStatus> cache;
+    private final CacheManager<String, PlayerData> cache;
 
-    public PlayerStatusCache() {
+    public PlayerDataCache() {
         this.cache = new CacheManager<>();
     }
 
-    public void put(String key, PlayerStatus playerStatus) {
-        cache.put(key, playerStatus);
+    public void put(String key, PlayerData playerData) {
+        cache.put(key, playerData);
     }
 
-    public PlayerStatus get(String key) {
+    public PlayerData get(String key) {
         return cache.get(key);
     }
 
