@@ -71,8 +71,6 @@ public class GlobalCommand extends ListenerAdapter {
                 Commands.slash("인벤토리", "인벤토리를 확인합니다."),
 
                 Commands.slash("상점", "상점에 입장합니다."),
-                Commands.slash("랜덤-상점", "랜덤 상점에 입장합니다."),
-                Commands.slash("랜덤-상점-구매", "랜덤 상점에서 장비를 구입합니다.").addOptions(insertEquipmentName().setRequired(true)),
                 Commands.slash("상점-판매", "아이템을 판매합니다.").addOptions(selectCategory().setRequired(true), insertName().setRequired(true), insertQuantity().setRequired(true).setRequiredRange(1, 99)),
 
                 Commands.slash("스킬-목록", "사용 가능한 스킬을 확인합니다."),
