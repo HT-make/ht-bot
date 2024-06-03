@@ -34,9 +34,12 @@ public class RandomShopItemShuffleServiceImpl implements RandomShopItemShuffleSe
 
         List<RandomShop> randomShopList = new ArrayList<>();
 
-        for (int i = 0; i < 3; i++){
-            Weapon randomWeapon = getRandomItem(weaponList);
-            Armor randomArmor = getRandomItem(armorList);
+        List<Weapon> randomWeapons = getRandomItemsWithoutDuplicates(weaponList);
+        List<Armor> randomArmors = getRandomItemsWithoutDuplicates(armorList);
+
+        for (int i = 0; i < 3; i++) {
+            Weapon randomWeapon = randomWeapons.get(i);
+            Armor randomArmor = randomArmors.get(i);
 
             int weaponQuantity = getQuantity(randomWeapon.getLevel());
             int armorQuantity = getQuantity(randomArmor.getLevel());
@@ -62,10 +65,24 @@ public class RandomShopItemShuffleServiceImpl implements RandomShopItemShuffleSe
         randomShopRepository.saveAll(randomShopList);
     }
 
-    private <T> T getRandomItem(List<T> itemList) {
+    private <T> List<T> getRandomItemsWithoutDuplicates(List<T> itemList) {
+        List<T> itemsCopy = new ArrayList<>(itemList);
+        List<T> randomItems = new ArrayList<>();
+
         RandomGenerator random = new MersenneTwister();
-        int randomIndex = random.nextInt(itemList.size());
-        return itemList.get(randomIndex);
+        random.setSeed(System.currentTimeMillis() ^ System.nanoTime());
+
+        while (randomItems.size() < 3 && !itemsCopy.isEmpty()) {
+            int randomIndex = random.nextInt(itemsCopy.size());
+            T selectedItem = itemsCopy.get(randomIndex);
+
+            if (!randomItems.contains(selectedItem)) {
+                randomItems.add(selectedItem);
+            }
+            itemsCopy.remove(randomIndex);
+        }
+
+        return randomItems;
     }
 
     private int getQuantity(int level) {
