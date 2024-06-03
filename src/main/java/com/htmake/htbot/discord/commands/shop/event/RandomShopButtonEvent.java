@@ -10,8 +10,12 @@ import kotlin.Pair;
 import lombok.extern.slf4j.Slf4j;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -20,7 +24,7 @@ import java.util.*;
 import java.util.List;
 
 @Slf4j
-public class RandomShopEvent {
+public class RandomShopButtonEvent {
 
     private final HttpClient httpClient;
     private final ErrorUtil errorUtil;
@@ -30,40 +34,54 @@ public class RandomShopEvent {
             add(":crossed_swords: 무기");
     }};
 
-    public RandomShopEvent() {
+    public RandomShopButtonEvent() {
         this.httpClient = new HttpClientImpl();
         this.errorUtil = new ErrorUtil();
     }
 
-    public void execute(SlashCommandInteractionEvent event) {
-        String endPoint = "/shop/random/list";
-
-        HttpResponse<JsonNode> response = httpClient.sendGetRequest(endPoint);
+    public void execute(ButtonInteractionEvent event) {
+        HttpResponse<JsonNode> response = request();
 
         if (response.getStatus() == 200) {
-            JSONObject randomShopObject = response.getBody().getObject();
-
-            JSONArray randomShopArray = randomShopObject.getJSONArray("itemList");
-
-            List<RandomShop> randomShopList = toRandomShopList(randomShopArray);
-            randomShopList.sort(Comparator.comparing(RandomShop::getId));
-
-            List<Pair<String, List<RandomShop>>> subItemList = subRandomShopList(randomShopList);
-
-            MessageEmbed embed = buildEmbed(subItemList);
-
-            event.replyEmbeds(embed)
-                    .addActionRow(Button.danger("cancel", "닫기"))
-                    .queue();
+            JSONArray randomShopArray = response.getBody().getObject().getJSONArray("itemList");
+            requestSuccess(event, randomShopArray);
         } else {
             String description = response.getBody().getObject().getString("message");
-            errorUtil.sendError(event, "랜덤 상점", description);
+            errorUtil.sendError(event.getHook(), "랜덤 상점", description);
         }
     }
 
-    private MessageEmbed buildEmbed(List<Pair<String, List<RandomShop>>> subItemList) {
+    private HttpResponse<JsonNode> request() {
+        String endPoint = "/shop/random/list";
+        return httpClient.sendGetRequest(endPoint);
+    }
+
+    private void requestSuccess(ButtonInteractionEvent event, JSONArray randomShopArray){
+        List<RandomShop> randomShopList = toRandomShopList(randomShopArray);
+        randomShopList.sort(Comparator.comparing(RandomShop::getId));
+
+        List<Pair<String, List<RandomShop>>> subItemList = subRandomShopList(randomShopList);
+
+        MessageEmbed embed = buildEmbed(subItemList, event.getUser());
+
+        List<ActionRow> actionRowList = new ArrayList<>();
+        StringSelectMenu selectMenu = menuEmbed("구매할 품목을 선택해주세요.", randomShopList);
+        List<Button> buttonList = buttonEmbed();
+
+        actionRowList.add(ActionRow.of(selectMenu));
+        actionRowList.add(ActionRow.of(buttonList));
+
+        event.getHook().editOriginalEmbeds(embed)
+                .setComponents(actionRowList)
+                .queue();
+    }
+
+    private MessageEmbed buildEmbed(List<Pair<String, List<RandomShop>>> subItemList, User user) {
+        String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
+
         EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setColor(Color.GREEN)
+                .setAuthor(user.getName(), null, profileUrl)
                 .setTitle(":game_die: 랜덤 상점")
                 .setDescription("매시간마다 아이템이 랜덤으로 변경됩니다.");
 
@@ -72,6 +90,27 @@ public class RandomShopEvent {
         }
 
         return embedBuilder.build();
+    }
+
+    public List<Button> buttonEmbed() {
+        List<Button> buttonList = new ArrayList<>();
+        Button cancelButton = Button.danger("cancel", "닫기");
+        buttonList.add(cancelButton);
+
+        return buttonList;
+    }
+
+    public static StringSelectMenu menuEmbed(String placeholder, List<RandomShop> randomShopList) {
+        List<SelectOption> options = new ArrayList<>();
+
+        for (RandomShop randomShop : randomShopList) {
+            options.add(SelectOption.of(randomShop.getName(), "shop-purchase-random-" + randomShop.getName()));
+        }
+
+        return StringSelectMenu.create("randomShopMenu")
+                .setPlaceholder(placeholder)
+                .addOptions(options)
+                .build();
     }
 
     private String format(List<RandomShop> itemList) {

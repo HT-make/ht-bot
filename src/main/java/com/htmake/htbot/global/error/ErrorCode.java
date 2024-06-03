@@ -15,6 +15,8 @@ public enum ErrorCode {
     NOT_ENOUGH_QUANTITY("매진된 상품입니다.", 400),
     NOT_FOUND_ITEM("해당 아이템을 찾을 수 없습니다.", 404),
     NOT_FOUND_RANDOM_SHOP("랜덤 상점을 찾을 수 없습니다.", 404),
+    NOT_FOUND_BOSS_SHOP("보스 상점을 찾을 수 없습니다.", 404),
+    NOT_ENOUGH_BOSS_COIN("보스 코인이 부족합니다.", 400),
 
     //SKILL
     SKILL_NOT_FOUND("스킬을 찾을 수 없습니다.", 404),
