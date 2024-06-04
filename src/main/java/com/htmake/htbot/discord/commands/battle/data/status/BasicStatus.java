@@ -1,6 +1,6 @@
 package com.htmake.htbot.discord.commands.battle.data.status;
 
-import com.htmake.htbot.discord.commands.battle.data.condition.Condition;
+import com.htmake.htbot.discord.skillAction.condition.Condition;
 import lombok.Getter;
 import lombok.Setter;
 

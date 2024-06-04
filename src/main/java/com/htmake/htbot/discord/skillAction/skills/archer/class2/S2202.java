@@ -2,8 +2,8 @@ package com.htmake.htbot.discord.skillAction.skills.archer.class2;
 
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
-import com.htmake.htbot.discord.commands.battle.data.condition.Condition;
-import com.htmake.htbot.discord.commands.battle.data.condition.extend.DamageOverTime;
+import com.htmake.htbot.discord.skillAction.condition.Condition;
+import com.htmake.htbot.discord.skillAction.condition.extend.DamageOverTime;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.skillAction.skills.SkillStrategy;

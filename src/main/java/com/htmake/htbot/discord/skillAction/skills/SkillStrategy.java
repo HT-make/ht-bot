@@ -2,8 +2,8 @@ package com.htmake.htbot.discord.skillAction.skills;
 
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
-import com.htmake.htbot.discord.commands.battle.data.condition.Condition;
-import com.htmake.htbot.discord.commands.battle.data.condition.extend.Buff;
+import com.htmake.htbot.discord.skillAction.condition.Condition;
+import com.htmake.htbot.discord.skillAction.condition.extend.Buff;
 import com.htmake.htbot.discord.commands.battle.data.status.BasicStatus;
 import com.htmake.htbot.discord.skillAction.type.SkillType;
 import kotlin.Pair;

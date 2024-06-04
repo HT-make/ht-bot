@@ -1,4 +1,4 @@
-package com.htmake.htbot.discord.commands.battle.data.condition;
+package com.htmake.htbot.discord.skillAction.condition;
 
 import lombok.Getter;
 
