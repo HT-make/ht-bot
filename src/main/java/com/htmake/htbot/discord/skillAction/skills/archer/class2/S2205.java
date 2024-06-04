@@ -1,4 +1,4 @@
-package com.htmake.htbot.discord.skillAction.skills.archer;
+package com.htmake.htbot.discord.skillAction.skills.archer.class2;
 
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class FocusI implements SkillStrategy {
+public class S2205 implements SkillStrategy {
 
     @Override
     public List<Pair<String, SkillType>> execute(PlayerData playerData, MonsterData monsterData) {

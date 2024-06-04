@@ -1,4 +1,4 @@
-package com.htmake.htbot.discord.skillAction.skills.archer;
+package com.htmake.htbot.discord.skillAction.skills.archer.class1;
 
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
@@ -11,7 +11,7 @@ import kotlin.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuickFiring implements SkillStrategy {
+public class S2102 implements SkillStrategy {
 
     @Override
     public List<Pair<String, SkillType>> execute(PlayerData playerData, MonsterData monsterData) {
@@ -20,7 +20,7 @@ public class QuickFiring implements SkillStrategy {
         PlayerStatus playerStatus = playerData.getPlayerStatus();
         MonsterStatus monsterStatus = monsterData.getMonsterStatus();
 
-        int damage = critical((int) (playerStatus.getDamage() * 1.5), playerStatus.getCriticalDamage(), playerStatus.getCriticalChance());
+        int damage = critical((int) (playerStatus.getDamage() * 2.2), playerStatus.getCriticalDamage(), playerStatus.getCriticalChance() - 10);
         int damageReceived = Math.max(0, damage - monsterStatus.getDefence());
         monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - damageReceived));
 
