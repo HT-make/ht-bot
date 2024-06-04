@@ -35,6 +35,9 @@ public class S2205 implements SkillStrategy {
                 BuffType.UP,
                 BuffStatus.CRITICAL_CHANCE
         );
+
+        buffCheck("hit", playerStatus, playerOriginalStatus, playerCondition);
+
         playerCondition.put("hit", buff);
 
         buff.apply(playerStatus, playerOriginalStatus);
