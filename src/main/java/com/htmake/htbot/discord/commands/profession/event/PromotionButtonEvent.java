@@ -1,6 +1,7 @@
 package com.htmake.htbot.discord.commands.profession.event;
 
 import com.htmake.htbot.discord.util.ErrorUtil;
+import com.htmake.htbot.discord.util.FormatUtil;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
@@ -88,12 +89,16 @@ public class PromotionButtonEvent {
         StringBuilder sb = new StringBuilder();
         sb.append("\n**").append(promotionData.getString("nextJobName")).append("**").append("\n\n");
 
-        sb.append("필요 레벨 : ").append("(").append(promotionData.getInt("requiredLevel")).append("/").append(promotionData.getInt("level")).append(")").append("\n");
-        sb.append("필요 골드 : ").append("(").append(promotionData.getInt("requiredGold")).append("/").append(promotionData.getInt("gold")).append(")").append("\n");
-        sb.append("필요 젬 : ").append("(").append(promotionData.getInt("requiredGem")).append("/").append(promotionData.getInt("gem")).append(")").append("\n");
+        sb.append("필요 레벨 : ").append("(").append(FormatUtil.decimalFormat(promotionData.getInt("requiredLevel"))).append("/")
+                .append(FormatUtil.decimalFormat(promotionData.getInt("level"))).append(")").append("\n");
+        sb.append("필요 골드 : ").append("(").append(FormatUtil.decimalFormat(promotionData.getInt("requiredGold"))).append("/")
+                .append(FormatUtil.decimalFormat(promotionData.getInt("gold"))).append(")").append("\n");
+        sb.append("필요 젬 : ").append("(").append(promotionData.getInt("requiredGem")).append("/")
+                .append(promotionData.getInt("gem")).append(")").append("\n");
 
         sb.append("필요 아이템 : ").append(promotionData.getString("itemName")).append("\n");
-        sb.append("필요 아이템 수량 : ").append("(").append(promotionData.getInt("requiredItemQuantity")).append("/").append(promotionData.getInt("itemQuantity")).append(")").append("\n");
+        sb.append("필요 아이템 수량 : ").append("(").append(promotionData.getInt("requiredItemQuantity")).append("/")
+                .append(promotionData.getInt("itemQuantity")).append(")").append("\n");
 
         return sb.toString();
     }

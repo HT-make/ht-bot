@@ -1,6 +1,7 @@
 package com.htmake.htbot.discord.commands.player.event;
 
 import com.htmake.htbot.discord.util.ErrorUtil;
+import com.htmake.htbot.discord.util.FormatUtil;
 import com.htmake.htbot.domain.player.enums.Job;
 import com.htmake.htbot.domain.player.presentation.data.response.PlayerInfoResponse;
 import com.htmake.htbot.global.unirest.HttpClient;
@@ -86,17 +87,17 @@ public class PlayerInfoSlashEvent {
                 .setAuthor(user.getName(), null, profileUrl)
                 .setTitle("유저 정보")
 
-                .addField(":beginner: Lv. " + playerInfo.getLevel(), playerInfo.getCurrentExp() + "/" + playerInfo.getMaxExp(), true)
+                .addField(":beginner: Lv. " + playerInfo.getLevel(), FormatUtil.decimalFormat(playerInfo.getCurrentExp()) + "/" + FormatUtil.decimalFormat(playerInfo.getMaxExp()), true)
                 .addField("직업", job, true)
                 .addBlankField(true)
 
-                .addField(":crossed_swords: 공격력", "" + playerInfo.getDamage(), true)
-                .addField(":heart: 체력", "" + playerInfo.getHealth(), true)
-                .addField(":shield: 방어력", "" + playerInfo.getDefence(), true)
+                .addField(":crossed_swords: 공격력", "" + FormatUtil.decimalFormat(playerInfo.getDamage()), true)
+                .addField(":heart: 체력", "" + FormatUtil.decimalFormat(playerInfo.getHealth()), true)
+                .addField(":shield: 방어력", "" + FormatUtil.decimalFormat(playerInfo.getDefence()), true)
 
-                .addField(":large_blue_diamond: 마나", "" + playerInfo.getMana(), true)
+                .addField(":large_blue_diamond: 마나", "" + FormatUtil.decimalFormat(playerInfo.getMana()), true)
                 .addField(":boom: 치명타 확률", playerInfo.getCriticalChance() + "%", true)
-                .addField(":boom: 치명타 데미지", playerInfo.getCriticalDamage() + "%", true)
+                .addField(":boom: 치명타 데미지", FormatUtil.decimalFormat(playerInfo.getCriticalDamage()) + "%", true)
 
                 .addField("무기", playerInfo.getWeaponName(), true)
                 .addField("갑옷", playerInfo.getArmorName(), true)

@@ -11,6 +11,7 @@ import com.htmake.htbot.discord.commands.dungeon.data.DungeonPlayer;
 import com.htmake.htbot.discord.commands.dungeon.enums.DungeonType;
 import com.htmake.htbot.discord.skillAction.BasicSkill;
 import com.htmake.htbot.discord.skillAction.factory.SkillFactory;
+import com.htmake.htbot.discord.util.FormatUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterDataCache;
 import com.htmake.htbot.discord.commands.battle.cache.PlayerDataCache;
@@ -60,18 +61,18 @@ public class DungeonUtil {
                 .setTitle(dungeonTitle)
 
                 .addField(monsterInfo, "", false)
-                .addField(":crossed_swords: 공격력", "" + dungeonMonster.getDamage(), true)
-                .addField(":heart: 체력", "" + dungeonMonster.getHealth(), true)
-                .addField(":shield: 방어력", "" + dungeonMonster.getDefence(), true)
+                .addField(":crossed_swords: 공격력", "" + FormatUtil.decimalFormat(dungeonMonster.getDamage()), true)
+                .addField(":heart: 체력", "" + FormatUtil.decimalFormat(dungeonMonster.getHealth()), true)
+                .addField(":shield: 방어력", "" + FormatUtil.decimalFormat(dungeonMonster.getDefence()), true)
 
                 .addField(":video_game: 전투 현황", situation.toString(), false)
 
-                .addField(":crossed_swords: 공격력", "" + dungeonPlayer.getDamage(), true)
-                .addField(":heart: 체력", "" + dungeonPlayer.getHealth(), true)
-                .addField(":shield: 방어력", "" + dungeonPlayer.getDefence(), true)
-                .addField(":large_blue_diamond: 마나", "" + dungeonPlayer.getMana(), true)
+                .addField(":crossed_swords: 공격력", "" + FormatUtil.decimalFormat(dungeonPlayer.getDamage()), true)
+                .addField(":heart: 체력", "" + FormatUtil.decimalFormat(dungeonPlayer.getHealth()), true)
+                .addField(":shield: 방어력", "" + FormatUtil.decimalFormat(dungeonPlayer.getDefence()), true)
+                .addField(":large_blue_diamond: 마나", "" + FormatUtil.decimalFormat(dungeonPlayer.getMana()), true)
                 .addField(":boom: 치명타 확률",  dungeonPlayer.getCriticalChance()+ "%", true)
-                .addField(":boom: 치명타 데미지", dungeonPlayer.getCriticalDamage() + "%", true)
+                .addField(":boom: 치명타 데미지", FormatUtil.decimalFormat(dungeonPlayer.getCriticalDamage()) + "%", true)
                 .addField(playerInfo, "", false)
                 .build();
     }

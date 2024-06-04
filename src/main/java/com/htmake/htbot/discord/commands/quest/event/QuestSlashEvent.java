@@ -1,6 +1,7 @@
 package com.htmake.htbot.discord.commands.quest.event;
 
 import com.htmake.htbot.discord.util.ErrorUtil;
+import com.htmake.htbot.discord.util.FormatUtil;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
@@ -85,8 +86,8 @@ public class QuestSlashEvent {
                 .append("아이템: ").append(questData.getString("targetItem")).append(" (")
                 .append(questData.getInt("itemQuantity")).append("/").append(questData.getInt("targetItemQuantity")).append(")\n\n")
                 .append(":purse: 보상\n")
-                .append("골드: ").append(questData.getInt("gold")).append("\n")
-                .append("경험치: ").append(questData.getInt("exp")).append("\n")
+                .append("골드: ").append(FormatUtil.decimalFormat(questData.getInt("gold"))).append("\n")
+                .append("경험치: ").append(FormatUtil.decimalFormat(questData.getInt("exp"))).append("\n")
                 .append("아이템: ").append(questData.getString("rewardItemName")).append(" (")
                 .append(questData.getInt("rewardItemQuantity")).append(")\n");
 

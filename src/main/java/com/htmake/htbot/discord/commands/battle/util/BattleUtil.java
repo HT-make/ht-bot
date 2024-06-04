@@ -2,6 +2,7 @@ package com.htmake.htbot.discord.commands.battle.util;
 
 import com.htmake.htbot.discord.commands.battle.data.condition.Condition;
 import com.htmake.htbot.discord.commands.dungeon.data.GetItem;
+import com.htmake.htbot.discord.util.FormatUtil;
 import com.htmake.htbot.discord.util.MessageUtil;
 import com.htmake.htbot.discord.util.ObjectMapperUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
@@ -72,18 +73,18 @@ public class BattleUtil {
                 .setTitle(embed.getTitle())
 
                 .addField(monsterInfo, conditionFormat(monsterStatus.getConditionMap()), false)
-                .addField(":crossed_swords: 공격력", "" + monsterStatus.getDamage(), true)
-                .addField(":heart: 체력", "" + monsterStatus.getHealth(), true)
-                .addField(":shield: 방어력", "" + monsterStatus.getDefence(), true)
+                .addField(":crossed_swords: 공격력", "" + FormatUtil.decimalFormat(monsterStatus.getDamage()), true)
+                .addField(":heart: 체력", "" + FormatUtil.decimalFormat(monsterStatus.getHealth()), true)
+                .addField(":shield: 방어력", "" + FormatUtil.decimalFormat(monsterStatus.getDefence()), true)
 
                 .addField(":video_game: 전투 현황", situation, false)
 
-                .addField(":crossed_swords: 공격력", "" + playerStatus.getDamage(), true)
-                .addField(":heart: 체력", "" + playerStatus.getHealth(), true)
-                .addField(":shield: 방어력", "" + playerStatus.getDefence(), true)
-                .addField(":large_blue_diamond: 마나", "" + playerStatus.getMana(), true)
+                .addField(":crossed_swords: 공격력", "" + FormatUtil.decimalFormat(playerStatus.getDamage()), true)
+                .addField(":heart: 체력", "" + FormatUtil.decimalFormat(playerStatus.getHealth()), true)
+                .addField(":shield: 방어력", "" + FormatUtil.decimalFormat(playerStatus.getDefence()), true)
+                .addField(":large_blue_diamond: 마나", "" + FormatUtil.decimalFormat(playerStatus.getMana()), true)
                 .addField(":boom: 치명타 확률", playerStatus.getCriticalChance() + "%", true)
-                .addField(":boom: 치명타 데미지", playerStatus.getCriticalDamage() + "%", true)
+                .addField(":boom: 치명타 데미지", FormatUtil.decimalFormat(playerStatus.getCriticalDamage()) + "%", true)
                 .addField(playerInfo, conditionFormat(playerStatus.getConditionMap()), false)
                 .build();
 
