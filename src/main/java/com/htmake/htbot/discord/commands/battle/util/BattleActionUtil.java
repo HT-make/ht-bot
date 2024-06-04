@@ -98,7 +98,7 @@ public class BattleActionUtil {
                 .setTitle(":crossed_swords: 전투 승리!")
                 .setDescription(levelUpMessage)
                 .addField(":sparkles: 획득 경험치", "" + FormatUtil.decimalFormat(monsterLoot.getInt("exp")), true)
-                .addField(":coin: 획득 골드", "" + FormatUtil.decimalFormat((Integer) monsterLoot.get("gold")), true)
+                .addField(":coin: 획득 골드", "" + FormatUtil.decimalFormat(monsterLoot.getInt("gold")), true)
                 .addField(":purse: 획득 아이템", getItemMessage.toString(), false)
                 .build();
     }
