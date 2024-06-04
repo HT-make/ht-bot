@@ -1,6 +1,7 @@
 package com.htmake.htbot.discord.commands.shop.event;
 
 import com.htmake.htbot.discord.util.ErrorUtil;
+import com.htmake.htbot.discord.util.FormatUtil;
 import com.htmake.htbot.domain.shop.entity.RandomShop;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
@@ -20,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 
@@ -117,14 +119,15 @@ public class RandomShopButtonEvent {
         StringBuilder sb = new StringBuilder();
 
         for (RandomShop item : itemList) {
-            String quantity = item.getQuantity() != 0 ? String.valueOf(item.getQuantity()) : "매진";
+            String formattedQuantity = item.getQuantity() != 0 ? FormatUtil.decimalFormat(item.getQuantity()) : "매진";
+            String formattedGold = FormatUtil.decimalFormat(item.getGold());
 
             sb.append("- ")
                     .append(item.getName())
                     .append(" - ")
-                    .append(item.getGold())
+                    .append(formattedGold)
                     .append("G (")
-                    .append(quantity)
+                    .append(formattedQuantity)
                     .append(")\n");
         }
 

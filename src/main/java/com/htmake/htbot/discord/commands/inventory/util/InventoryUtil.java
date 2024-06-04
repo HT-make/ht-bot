@@ -2,6 +2,7 @@ package com.htmake.htbot.discord.commands.inventory.util;
 
 import com.htmake.htbot.discord.commands.inventory.data.Inventory;
 import com.htmake.htbot.discord.commands.inventory.data.InventoryItem;
+import com.htmake.htbot.discord.util.FormatUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
@@ -38,8 +39,8 @@ public class InventoryUtil {
                 .setColor(Color.GREEN)
                 .setAuthor(embed.getAuthor().getName(), null, embed.getAuthor().getIconUrl())
                 .setTitle(embed.getTitle())
-                .addField(":coin: 골드 ", "" + inventory.getGold(), true)
-                .addField(":gem: 젬 ", "" + inventory.getGem(), true)
+                .addField(":coin: 골드 ", "" + FormatUtil.decimalFormat(inventory.getGold()), true)
+                .addField(":gem: 젬 ", "" + FormatUtil.decimalFormat(inventory.getGem()), true)
                 .addBlankField(true)
                 .addBlankField(false);
     }

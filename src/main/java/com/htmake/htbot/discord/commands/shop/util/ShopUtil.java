@@ -1,6 +1,7 @@
 package com.htmake.htbot.discord.commands.shop.util;
 
 import com.htmake.htbot.discord.commands.shop.data.BossShopItem;
+import com.htmake.htbot.discord.util.FormatUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
@@ -15,7 +16,7 @@ public class ShopUtil {
         MessageEmbed embed = new EmbedBuilder()
                 .setColor(Color.GREEN)
                 .setTitle("아이템 구매에 성공했습니다!")
-                .setDescription("보유 잔액: " + gold)
+                .setDescription("보유 잔액: " + FormatUtil.decimalFormat(gold) + "Gold")
                 .build();
 
         event.getHook().editOriginalComponents(Collections.emptyList()).queue();
@@ -29,7 +30,7 @@ public class ShopUtil {
             sb.append("- ")
                     .append(item.getName())
                     .append(" - ")
-                    .append(item.getCoin())
+                    .append(FormatUtil.decimalFormat(item.getCoin()))
                     .append("코인\n");
         }
 

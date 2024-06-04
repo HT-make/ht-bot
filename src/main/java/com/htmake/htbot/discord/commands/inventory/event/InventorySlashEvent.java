@@ -5,6 +5,7 @@ import com.htmake.htbot.discord.commands.inventory.data.InventoryItem;
 import com.htmake.htbot.discord.commands.inventory.data.Inventory;
 import com.htmake.htbot.discord.commands.inventory.util.InventoryUtil;
 import com.htmake.htbot.discord.util.ErrorUtil;
+import com.htmake.htbot.discord.util.FormatUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
@@ -98,8 +99,8 @@ public class InventorySlashEvent {
                 .setColor(Color.GREEN)
                 .setAuthor(user.getName(), null, profileUrl)
                 .setTitle(":backpack: 인벤토리")
-                .addField(":coin: 골드 ", "" + inventory.getGold(), true)
-                .addField(":gem: 젬 ", "" + inventory.getGem(), true)
+                .addField(":coin: 골드 ", "" + FormatUtil.decimalFormat(inventory.getGold()), true)
+                .addField(":gem: 젬 ", "" + FormatUtil.decimalFormat(inventory.getGem()), true)
                 .addBlankField(true)
                 .addBlankField(false);
 

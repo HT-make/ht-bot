@@ -3,6 +3,7 @@ package com.htmake.htbot.discord.commands.battle.event;
 import com.htmake.htbot.discord.commands.battle.action.MonsterAttackAction;
 import com.htmake.htbot.discord.commands.battle.action.MonsterKillAction;
 import com.htmake.htbot.discord.util.ErrorUtil;
+import com.htmake.htbot.discord.util.FormatUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterDataCache;
 import com.htmake.htbot.discord.commands.battle.cache.PlayerDataCache;
@@ -75,7 +76,7 @@ public class PlayerAttackButtonEvent {
 
         monsterStatus.setHealth(Math.max(0, (monsterStatus.getHealth() - damage.getFirst())));
 
-        message = damage.getFirst() + "의 데미지를 입혔다.";
+        message = FormatUtil.decimalFormat(damage.getFirst()) + "의 데미지를 입혔다.";
         battleUtil.updateSituation(playerId, message);
         battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
     }
