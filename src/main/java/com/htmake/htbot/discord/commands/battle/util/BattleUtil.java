@@ -1,6 +1,6 @@
 package com.htmake.htbot.discord.commands.battle.util;
 
-import com.htmake.htbot.discord.commands.battle.data.condition.Condition;
+import com.htmake.htbot.discord.skillAction.condition.Condition;
 import com.htmake.htbot.discord.commands.dungeon.data.GetItem;
 import com.htmake.htbot.discord.util.FormatUtil;
 import com.htmake.htbot.discord.util.MessageUtil;

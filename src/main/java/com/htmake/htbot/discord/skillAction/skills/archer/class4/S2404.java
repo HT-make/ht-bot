@@ -1,30 +1,37 @@
-package com.htmake.htbot.discord.skillAction.skills.archer;
+package com.htmake.htbot.discord.skillAction.skills.archer.class4;
 
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
-import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
+import com.htmake.htbot.discord.skillAction.condition.Condition;
+import com.htmake.htbot.discord.skillAction.condition.extend.Invincible;
 import com.htmake.htbot.discord.skillAction.skills.SkillStrategy;
 import com.htmake.htbot.discord.skillAction.type.SkillType;
 import kotlin.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class QuickFiring implements SkillStrategy {
+public class S2404 implements SkillStrategy {
 
     @Override
     public List<Pair<String, SkillType>> execute(PlayerData playerData, MonsterData monsterData) {
         List<Pair<String, SkillType>> resultList = new ArrayList<>();
 
         PlayerStatus playerStatus = playerData.getPlayerStatus();
-        MonsterStatus monsterStatus = monsterData.getMonsterStatus();
+        Map<String, Condition> playerCondition = playerStatus.getConditionMap();
 
-        int damage = critical((int) (playerStatus.getDamage() * 1.5), playerStatus.getCriticalDamage(), playerStatus.getCriticalChance());
-        int damageReceived = Math.max(0, damage - monsterStatus.getDefence());
-        monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - damageReceived));
+        Invincible invincible = new Invincible(
+                "invincible",
+                "무적",
+                ":star:",
+                1
+        );
 
-        resultList.add(new Pair<>(String.valueOf(damageReceived), SkillType.ATTACK));
+        playerCondition.put("invincible", invincible);
+
+        resultList.add(new Pair<>("무적", SkillType.BUFF));
 
         return resultList;
     }

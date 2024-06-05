@@ -1,6 +1,6 @@
-package com.htmake.htbot.discord.commands.battle.data.condition.extend;
+package com.htmake.htbot.discord.skillAction.condition.extend;
 
-import com.htmake.htbot.discord.commands.battle.data.condition.Condition;
+import com.htmake.htbot.discord.skillAction.condition.Condition;
 import com.htmake.htbot.discord.commands.battle.data.status.BasicStatus;
 import com.htmake.htbot.discord.skillAction.type.BuffStatus;
 import com.htmake.htbot.discord.skillAction.type.BuffType;

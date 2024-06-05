@@ -1,9 +1,9 @@
-package com.htmake.htbot.discord.skillAction.skills.archer;
+package com.htmake.htbot.discord.skillAction.skills.archer.class3;
 
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
-import com.htmake.htbot.discord.commands.battle.data.condition.extend.Buff;
-import com.htmake.htbot.discord.commands.battle.data.condition.Condition;
+import com.htmake.htbot.discord.skillAction.condition.Condition;
+import com.htmake.htbot.discord.skillAction.condition.extend.Buff;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerOriginalStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.skillAction.skills.SkillStrategy;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class FocusI implements SkillStrategy {
+public class S2305 implements SkillStrategy {
 
     @Override
     public List<Pair<String, SkillType>> execute(PlayerData playerData, MonsterData monsterData) {
@@ -28,18 +28,21 @@ public class FocusI implements SkillStrategy {
         Map<String, Condition> playerCondition = playerStatus.getConditionMap();
         Buff buff = new Buff(
                 "hit",
-                "명중I",
+                "명중III",
                 ":dart:",
                 3,
-                0.15,
+                0.4,
                 BuffType.UP,
                 BuffStatus.CRITICAL_CHANCE
         );
+
+        buffCheck("hit", playerStatus, playerOriginalStatus, playerCondition);
+
         playerCondition.put("hit", buff);
 
         buff.apply(playerStatus, playerOriginalStatus);
 
-        resultList.add(new Pair<>("명중I", SkillType.BUFF));
+        resultList.add(new Pair<>("명중III", SkillType.BUFF));
 
         return resultList;
     }
