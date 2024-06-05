@@ -130,13 +130,6 @@ public class BattleSkillButtonEvent {
             return;
         }
 
-        if (playerStatus.getMana() < usedSkill.getMana()) {
-            errorUtil.sendError(event.getHook(), "스킬 사용", "마나가 부족합니다.");
-            return;
-        }
-
-        playerStatus.setMana(playerStatus.getMana() - usedSkill.getMana());
-
         String message = event.getUser().getName() + "의 " + usedSkill.getName() + ".";
         battleUtil.updateSituation(playerId, message);
         battleUtil.editEmbed(event, playerStatus, monsterStatus, "start");
@@ -146,17 +139,13 @@ public class BattleSkillButtonEvent {
 
         for (Pair<String, SkillType> result : resultList) {
             switch (result.getSecond()) {
-                case ATTACK -> {
-                    message = result.getFirst() + "의 데미지를 입혔다.";
-                }
-                case HEAL -> {
-                    message = result.getFirst() + "의 체력을 회복했다.";
-                }
-                case BUFF -> {
-                    message = result.getFirst() + " 효과를 얻었다.";
-                }
-                case DEBUFF -> {
-                    message = result.getFirst() + " 효과를 입혔다.";
+                case ATTACK -> message = result.getFirst() + "의 데미지를 입혔다.";
+                case HEAL -> message = result.getFirst() + "의 체력을 회복했다.";
+                case BUFF -> message = result.getFirst() + " 효과를 얻었다.";
+                case DEBUFF -> message = result.getFirst() + " 효과를 입혔다.";
+                case NOT_ENOUGH_MANA -> {
+                    errorUtil.sendError(event.getHook(), "스킬 사용", "마나가 부족합니다.");
+                    return;
                 }
             }
 
