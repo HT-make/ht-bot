@@ -13,6 +13,7 @@ import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerOriginalStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.util.BattleUtil;
+import com.htmake.htbot.discord.skillAction.condition.extend.DivineBeast;
 import com.htmake.htbot.global.cache.CacheFactory;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -84,6 +85,10 @@ public class ConditionAction {
             int turn = condition.getTurn();
 
             if (turn - 1 > 0) {
+                if (condition instanceof DivineBeast divineBeast) {
+                    divineBeast.heal(status, originalStatus);
+                }
+
                 if (condition.isCheck()) {
                     condition.setTurn(turn - 1);
                 } else {
@@ -93,6 +98,10 @@ public class ConditionAction {
             } else {
                 if (condition instanceof Buff buff) {
                     buff.unapply(status, originalStatus);
+                }
+
+                if (condition instanceof DivineBeast divineBeast) {
+                    divineBeast.unapply(status, originalStatus);
                 }
 
                 conditionMap.remove(entry.getKey());
