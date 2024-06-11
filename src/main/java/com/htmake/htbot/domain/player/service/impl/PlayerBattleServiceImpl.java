@@ -43,7 +43,6 @@ public class PlayerBattleServiceImpl implements PlayerBattleService {
                     .id(skill.getId())
                     .number(registeredSkill.getNumber())
                     .name(skill.getName())
-                    .mana(skill.getMana())
                     .build();
 
             responseList.add(response);

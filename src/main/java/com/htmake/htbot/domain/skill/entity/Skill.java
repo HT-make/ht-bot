@@ -20,9 +20,6 @@ public class Skill {
     @Column(name = "skill_name", unique = true, nullable = false)
     private String name;
 
-    @Column(name = "skill_mana", nullable = false)
-    private int mana;
-
     @Column(name = "skill_description", nullable = false)
     private String description;
 

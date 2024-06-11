@@ -12,6 +12,4 @@ public class PlayerSkillStatus {
     private BasicSkill basicSkill;
 
     private String name;
-
-    private int mana;
 }
