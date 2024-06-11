@@ -5,10 +5,8 @@ import com.htmake.htbot.discord.commands.battle.data.PlayerData;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerOriginalStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
-import com.htmake.htbot.discord.skillAction.condition.extend.Buff;
+import com.htmake.htbot.discord.skillAction.condition.extend.buff.extend.Power;
 import com.htmake.htbot.discord.skillAction.skill.impl.AbstractSkillStrategy;
-import com.htmake.htbot.discord.skillAction.type.BuffStatus;
-import com.htmake.htbot.discord.skillAction.type.BuffType;
 import com.htmake.htbot.discord.skillAction.type.SkillType;
 import kotlin.Pair;
 
@@ -28,20 +26,11 @@ public class S2405 extends AbstractSkillStrategy {
         PlayerOriginalStatus playerOriginalStatus = playerData.getPlayerOriginalStatus();
         Map<String, Condition> playerCondition = playerStatus.getConditionMap();
 
-        Buff buff = new Buff(
-                "power",
-                "힘II",
-                ":crossed_swords:",
-                3,
-                0.5,
-                BuffType.UP,
-                BuffStatus.DAMAGE
-        );
+        Power power = new Power(2);
+        buffCheck(power.getId(), playerStatus, playerOriginalStatus, playerCondition);
+        playerCondition.put(power.getId(), power);
+        power.apply(playerStatus, playerOriginalStatus);
 
-        buffCheck("power", playerStatus, playerOriginalStatus, playerCondition);
-        playerCondition.put("power", buff);
-        buff.apply(playerStatus, playerOriginalStatus);
-
-        resultList.add(new Pair<>("힘II", SkillType.BUFF));
+        resultList.add(new Pair<>(power.getName(), SkillType.BUFF));
     }
 }

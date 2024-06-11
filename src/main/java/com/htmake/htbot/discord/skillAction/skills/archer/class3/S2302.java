@@ -3,9 +3,9 @@ package com.htmake.htbot.discord.skillAction.skills.archer.class3;
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
-import com.htmake.htbot.discord.skillAction.condition.extend.DamageOverTime;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
+import com.htmake.htbot.discord.skillAction.condition.extend.damageOverTime.extend.Bleeding;
 import com.htmake.htbot.discord.skillAction.skill.impl.AbstractSkillStrategy;
 import com.htmake.htbot.discord.skillAction.type.SkillType;
 import kotlin.Pair;
@@ -30,10 +30,11 @@ public class S2302 extends AbstractSkillStrategy {
         int damageReceived = Math.max(0, damage - monsterStatus.getDefence());
         monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - damageReceived));
 
-        DamageOverTime damageOverTime = new DamageOverTime("bleeding", "출혈II", ":blood:", 5, (int) (playerStatus.getDamage() * 0.8));
-        monsterCondition.put("bleeding", damageOverTime);
+        Bleeding bleeding = new Bleeding(2);
+        monsterCondition.put(bleeding.getId(), bleeding);
+        bleeding.setEffectDamage(playerStatus.getDamage());
 
         resultList.add(new Pair<>(String.valueOf(damageReceived), SkillType.ATTACK));
-        resultList.add(new Pair<>("출혈II", SkillType.DEBUFF));
+        resultList.add(new Pair<>(bleeding.getName(), SkillType.DEBUFF));
     }
 }

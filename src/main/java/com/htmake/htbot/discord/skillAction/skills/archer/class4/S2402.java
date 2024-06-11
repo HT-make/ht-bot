@@ -60,9 +60,9 @@ public class S2402 extends AbstractSkillStrategy {
         int value = isBuffed ? 50 : 75;
 
         if (RandomUtil.randomPercentage(value)) {
-            Faint faint = new Faint("faint", "기절I", ":dizzy:", 2, 50);
-            monsterCondition.put("faint", faint);
-            resultList.add(new Pair<>("기절I", SkillType.DEBUFF));
+            Faint faint = new Faint(1);
+            monsterCondition.put(faint.getId(), new Faint(1));
+            resultList.add(new Pair<>(faint.getName(), SkillType.DEBUFF));
         }
     }
 }
