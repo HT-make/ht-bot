@@ -32,6 +32,6 @@ public class DivineBeast extends Condition {
         int maxHealth = originalStatus.getHealth();
         int healing = (int) (maxHealth * 0.04);
 
-        status.setHealth(Math.max(maxHealth, currentHealth + healing));
+        status.setHealth(Math.min(maxHealth, currentHealth + healing));
     }
 }
