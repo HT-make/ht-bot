@@ -6,34 +6,34 @@ import com.htmake.htbot.discord.skillAction.condition.Condition;
 import com.htmake.htbot.discord.skillAction.condition.extend.DamageOverTime;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
-import com.htmake.htbot.discord.skillAction.skills.SkillStrategy;
+import com.htmake.htbot.discord.skillAction.skill.impl.AbstractSkillStrategy;
 import com.htmake.htbot.discord.skillAction.type.SkillType;
 import kotlin.Pair;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class S2304 implements SkillStrategy {
+public class S2304 extends AbstractSkillStrategy {
 
     @Override
-    public List<Pair<String, SkillType>> execute(PlayerData playerData, MonsterData monsterData) {
-        List<Pair<String, SkillType>> resultList = new ArrayList<>();
+    protected int getManaCost() {
+        return 115;
+    }
 
+    @Override
+    protected void applySkill(PlayerData playerData, MonsterData monsterData, List<Pair<String, SkillType>> resultList) {
         PlayerStatus playerStatus = playerData.getPlayerStatus();
         MonsterStatus monsterStatus = monsterData.getMonsterStatus();
+        Map<String, Condition> monsterCondition = monsterStatus.getConditionMap();
 
         int damage = critical((int) (playerStatus.getDamage() * 5.0), playerStatus.getCriticalDamage(), playerStatus.getCriticalChance());
         int damageReceived = Math.max(0, damage - monsterStatus.getDefence());
         monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - damageReceived));
 
-        Map<String, Condition> monsterCondition = monsterStatus.getConditionMap();
         DamageOverTime damageOverTime = new DamageOverTime("fire", "화상II", ":fire:", 3, (int) (playerStatus.getDamage() * 1.5));
         monsterCondition.put("fire", damageOverTime);
 
         resultList.add(new Pair<>(String.valueOf(damageReceived), SkillType.ATTACK));
         resultList.add(new Pair<>("화상II", SkillType.DEBUFF));
-
-        return resultList;
     }
 }

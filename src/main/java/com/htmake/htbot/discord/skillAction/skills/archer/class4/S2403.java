@@ -7,20 +7,22 @@ import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerOrigina
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
 import com.htmake.htbot.discord.skillAction.condition.extend.DivineBeast;
-import com.htmake.htbot.discord.skillAction.skills.SkillStrategy;
+import com.htmake.htbot.discord.skillAction.skill.impl.AbstractSkillStrategy;
 import com.htmake.htbot.discord.skillAction.type.SkillType;
 import kotlin.Pair;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class S2403 implements SkillStrategy {
+public class S2403 extends AbstractSkillStrategy {
 
     @Override
-    public List<Pair<String, SkillType>> execute(PlayerData playerData, MonsterData monsterData) {
-        List<Pair<String, SkillType>> resultList = new ArrayList<>();
+    protected int getManaCost() {
+        return 150;
+    }
 
+    @Override
+    protected void applySkill(PlayerData playerData, MonsterData monsterData, List<Pair<String, SkillType>> resultList) {
         PlayerStatus playerStatus = playerData.getPlayerStatus();
         PlayerOriginalStatus playerOriginalStatus = playerData.getPlayerOriginalStatus();
         Map<String, Condition> playerCondition = playerData.getPlayerStatus().getConditionMap();
@@ -41,7 +43,5 @@ public class S2403 implements SkillStrategy {
 
         resultList.add(new Pair<>(String.valueOf(damageReceived), SkillType.ATTACK));
         resultList.add(new Pair<>("신수", SkillType.BUFF));
-
-        return resultList;
     }
 }

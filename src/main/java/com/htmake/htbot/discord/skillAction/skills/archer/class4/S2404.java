@@ -5,20 +5,22 @@ import com.htmake.htbot.discord.commands.battle.data.PlayerData;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
 import com.htmake.htbot.discord.skillAction.condition.extend.Invincible;
-import com.htmake.htbot.discord.skillAction.skills.SkillStrategy;
+import com.htmake.htbot.discord.skillAction.skill.impl.AbstractSkillStrategy;
 import com.htmake.htbot.discord.skillAction.type.SkillType;
 import kotlin.Pair;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class S2404 implements SkillStrategy {
+public class S2404 extends AbstractSkillStrategy {
 
     @Override
-    public List<Pair<String, SkillType>> execute(PlayerData playerData, MonsterData monsterData) {
-        List<Pair<String, SkillType>> resultList = new ArrayList<>();
+    protected int getManaCost() {
+        return 80;
+    }
 
+    @Override
+    protected void applySkill(PlayerData playerData, MonsterData monsterData, List<Pair<String, SkillType>> resultList) {
         PlayerStatus playerStatus = playerData.getPlayerStatus();
         Map<String, Condition> playerCondition = playerStatus.getConditionMap();
 
@@ -32,7 +34,5 @@ public class S2404 implements SkillStrategy {
         playerCondition.put("invincible", invincible);
 
         resultList.add(new Pair<>("무적", SkillType.BUFF));
-
-        return resultList;
     }
 }
