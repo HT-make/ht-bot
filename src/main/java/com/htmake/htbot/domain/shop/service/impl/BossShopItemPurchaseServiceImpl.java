@@ -10,12 +10,10 @@ import com.htmake.htbot.domain.shop.exception.NotEnoughBossCoinException;
 import com.htmake.htbot.domain.shop.exception.NotFoundItemException;
 import com.htmake.htbot.domain.shop.repository.BossShopRepository;
 import com.htmake.htbot.domain.shop.service.BossShopItemPurchaseService;
+import com.htmake.htbot.global.annotation.TransactionalService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Transactional
+@TransactionalService
 @RequiredArgsConstructor
 public class BossShopItemPurchaseServiceImpl implements BossShopItemPurchaseService {
 

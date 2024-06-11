@@ -10,14 +10,12 @@ import com.htmake.htbot.domain.quest.repository.QuestRepository;
 import com.htmake.htbot.domain.quest.service.PlayerQuestMonsterQuantityService;
 import com.htmake.htbot.domain.quest.entity.MainQuest;
 import com.htmake.htbot.domain.quest.repository.MainQuestRepository;
+import com.htmake.htbot.global.annotation.TransactionalService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
-@Service
-@Transactional
+@TransactionalService
 @RequiredArgsConstructor
 public class PlayerQuestMonsterQuantityServiceImpl implements PlayerQuestMonsterQuantityService {
     private final QuestRepository questRepository;

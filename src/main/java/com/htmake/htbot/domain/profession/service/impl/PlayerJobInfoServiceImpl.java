@@ -8,14 +8,12 @@ import com.htmake.htbot.domain.profession.presentation.data.JobPromotionInfoList
 import com.htmake.htbot.domain.profession.presentation.data.JobPromotionInfoResponse;
 import com.htmake.htbot.domain.profession.repository.ProfessionRepository;
 import com.htmake.htbot.domain.profession.service.PlayerJobInfoService;
+import com.htmake.htbot.global.annotation.ReadOnlyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service
-@Transactional
+@ReadOnlyService
 @RequiredArgsConstructor
 public class PlayerJobInfoServiceImpl implements PlayerJobInfoService {
 

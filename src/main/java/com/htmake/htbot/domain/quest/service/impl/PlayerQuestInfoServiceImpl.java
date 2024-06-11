@@ -9,12 +9,10 @@ import com.htmake.htbot.domain.quest.repository.QuestRepository;
 import com.htmake.htbot.domain.quest.service.PlayerQuestInfoService;
 import com.htmake.htbot.domain.quest.entity.MainQuest;
 import com.htmake.htbot.domain.quest.repository.MainQuestRepository;
+import com.htmake.htbot.global.annotation.ReadOnlyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Transactional
+@ReadOnlyService
 @RequiredArgsConstructor
 public class PlayerQuestInfoServiceImpl implements PlayerQuestInfoService {
     private final QuestRepository questRepository;

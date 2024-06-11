@@ -5,13 +5,11 @@ import com.htmake.htbot.domain.player.presentation.data.request.KillMonsterReque
 import com.htmake.htbot.domain.player.presentation.data.response.LevelUpResponse;
 import com.htmake.htbot.domain.player.repository.PlayerRepository;
 import com.htmake.htbot.domain.player.service.KillMonsterService;
+import com.htmake.htbot.global.annotation.TransactionalService;
 import com.htmake.htbot.global.util.PlayerUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Transactional
+@TransactionalService
 @RequiredArgsConstructor
 public class KillMonsterServiceImpl implements KillMonsterService {
 

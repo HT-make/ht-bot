@@ -7,14 +7,12 @@ import com.htmake.htbot.domain.inventory.presentation.data.request.DropItemReque
 import com.htmake.htbot.domain.inventory.service.InsertDropItemService;
 import com.htmake.htbot.domain.player.entity.Player;
 import com.htmake.htbot.domain.player.repository.PlayerRepository;
+import com.htmake.htbot.global.annotation.TransactionalService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Service
-@Transactional
+@TransactionalService
 @RequiredArgsConstructor
 public class InsertDropItemServiceImpl implements InsertDropItemService {
 

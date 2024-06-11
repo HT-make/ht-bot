@@ -13,13 +13,11 @@ import com.htmake.htbot.domain.quest.entity.MainQuest;
 import com.htmake.htbot.domain.quest.repository.MainQuestRepository;
 import com.htmake.htbot.domain.quest.exception.NotEnoughItemQuantityException;
 import com.htmake.htbot.domain.quest.exception.NotEnoughMonsterQuantityException;
+import com.htmake.htbot.global.annotation.TransactionalService;
 import com.htmake.htbot.global.util.PlayerUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Transactional
+@TransactionalService
 @RequiredArgsConstructor
 public class PlayerQuestProgressServiceImpl implements PlayerQuestProgressService {
 

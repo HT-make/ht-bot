@@ -8,15 +8,13 @@ import com.htmake.htbot.domain.skill.presentation.data.response.RegisteredSkillL
 import com.htmake.htbot.domain.skill.presentation.data.response.RegisteredSkillResponse;
 import com.htmake.htbot.domain.skill.repository.RegisteredSkillRepository;
 import com.htmake.htbot.domain.skill.service.RegisteredSkillListService;
+import com.htmake.htbot.global.annotation.ReadOnlyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
-@Transactional(readOnly = true)
+@ReadOnlyService
 @RequiredArgsConstructor
 public class RegisteredSkillListServiceImpl implements RegisteredSkillListService {
 

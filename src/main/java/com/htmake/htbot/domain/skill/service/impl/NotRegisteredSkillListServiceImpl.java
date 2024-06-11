@@ -11,16 +11,14 @@ import com.htmake.htbot.domain.skill.presentation.data.response.SkillResponse;
 import com.htmake.htbot.domain.skill.repository.PlayerSkillRepository;
 import com.htmake.htbot.domain.skill.repository.RegisteredSkillRepository;
 import com.htmake.htbot.domain.skill.service.NotRegisteredSkillListService;
+import com.htmake.htbot.global.annotation.ReadOnlyService;
 import com.htmake.htbot.global.util.SkillUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
-@Transactional(readOnly = true)
+@ReadOnlyService
 @RequiredArgsConstructor
 public class NotRegisteredSkillListServiceImpl implements NotRegisteredSkillListService {
 

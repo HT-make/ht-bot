@@ -6,15 +6,13 @@ import com.htmake.htbot.domain.shop.presentation.data.response.RandomShopItemLis
 import com.htmake.htbot.domain.shop.presentation.data.response.RandomShopItemResponse;
 import com.htmake.htbot.domain.shop.repository.RandomShopRepository;
 import com.htmake.htbot.domain.shop.service.RandomShopItemService;
+import com.htmake.htbot.global.annotation.ReadOnlyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
-@Transactional(readOnly = true)
+@ReadOnlyService
 @RequiredArgsConstructor
 public class RandomShopItemServiceImpl implements RandomShopItemService {
 

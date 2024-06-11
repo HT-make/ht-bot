@@ -10,12 +10,10 @@ import com.htmake.htbot.domain.skill.presentation.data.request.RegisterSkillRequ
 import com.htmake.htbot.domain.skill.repository.RegisteredSkillRepository;
 import com.htmake.htbot.domain.skill.repository.SkillRepository;
 import com.htmake.htbot.domain.skill.service.RegisterSkillService;
+import com.htmake.htbot.global.annotation.TransactionalService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Transactional
+@TransactionalService
 @RequiredArgsConstructor
 public class RegisterSkillServiceImpl implements RegisterSkillService {
 
