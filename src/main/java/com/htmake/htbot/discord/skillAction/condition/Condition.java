@@ -5,17 +5,17 @@ import lombok.Getter;
 @Getter
 public abstract class Condition {
 
-    private final String id;
+    protected String id;
 
-    private final String name;
+    protected String name;
 
-    private final String emoji;
+    protected String emoji;
 
-    private int turn;
+    protected int turn;
 
-    private boolean check;
+    protected boolean check;
 
-    public Condition(String id, String name, String emoji, int turn) {
+    protected void initialize(String id, String name, String emoji, int turn) {
         this.id = id;
         this.name = name;
         this.emoji = emoji;

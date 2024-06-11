@@ -5,8 +5,8 @@ import com.htmake.htbot.discord.skillAction.condition.Condition;
 
 public class DivineBeast extends Condition {
 
-    public DivineBeast(String id, String name, String emoji, int turn) {
-        super(id, name, emoji, turn);
+    public DivineBeast() {
+        initialize("divine_beast", "신수", ":deer:", 5);
     }
 
     public void apply(BasicStatus status, BasicStatus originalStatus) {
