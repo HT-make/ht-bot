@@ -2,7 +2,7 @@ package com.htmake.htbot.discord.skillAction;
 
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
-import com.htmake.htbot.discord.skillAction.skills.SkillStrategy;
+import com.htmake.htbot.discord.skillAction.skill.SkillStrategy;
 import com.htmake.htbot.discord.skillAction.type.SkillType;
 import kotlin.Pair;
 import lombok.Getter;

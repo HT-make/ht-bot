@@ -1,4 +1,4 @@
-package com.htmake.htbot.discord.skillAction.skills;
+package com.htmake.htbot.discord.skillAction.skill;
 
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
