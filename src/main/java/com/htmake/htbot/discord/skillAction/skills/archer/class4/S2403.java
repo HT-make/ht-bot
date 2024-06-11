@@ -37,11 +37,11 @@ public class S2403 extends AbstractSkillStrategy {
             existsDivineBeast.unapply(playerStatus, playerOriginalStatus);
         }
 
-        DivineBeast divineBeast = new DivineBeast("divine_beast", "신수", ":deer:", 5);
+        DivineBeast divineBeast = new DivineBeast();
         divineBeast.apply(playerStatus, playerOriginalStatus);
-        playerCondition.put("divine_beast", divineBeast);
+        playerCondition.put(divineBeast.getId(), divineBeast);
 
         resultList.add(new Pair<>(String.valueOf(damageReceived), SkillType.ATTACK));
-        resultList.add(new Pair<>("신수", SkillType.BUFF));
+        resultList.add(new Pair<>(divineBeast.getName(), SkillType.BUFF));
     }
 }

@@ -24,15 +24,9 @@ public class S2404 extends AbstractSkillStrategy {
         PlayerStatus playerStatus = playerData.getPlayerStatus();
         Map<String, Condition> playerCondition = playerStatus.getConditionMap();
 
-        Invincible invincible = new Invincible(
-                "invincible",
-                "무적",
-                ":star:",
-                1
-        );
+        Invincible invincible = new Invincible();
+        playerCondition.put(invincible.getId(), invincible);
 
-        playerCondition.put("invincible", invincible);
-
-        resultList.add(new Pair<>("무적", SkillType.BUFF));
+        resultList.add(new Pair<>(invincible.getName(), SkillType.BUFF));
     }
 }
