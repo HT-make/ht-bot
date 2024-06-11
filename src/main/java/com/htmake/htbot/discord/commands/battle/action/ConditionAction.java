@@ -5,8 +5,8 @@ import com.htmake.htbot.discord.commands.battle.cache.PlayerDataCache;
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
-import com.htmake.htbot.discord.skillAction.condition.extend.Buff;
-import com.htmake.htbot.discord.skillAction.condition.extend.DamageOverTime;
+import com.htmake.htbot.discord.skillAction.condition.extend.buff.Buff;
+import com.htmake.htbot.discord.skillAction.condition.extend.damageOverTime.DamageOverTime;
 import com.htmake.htbot.discord.commands.battle.data.status.BasicStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterOriginalStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
@@ -18,6 +18,7 @@ import com.htmake.htbot.global.cache.CacheFactory;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 
+import java.util.Iterator;
 import java.util.Map;
 
 public class ConditionAction {
@@ -66,35 +67,37 @@ public class ConditionAction {
 
             if (condition instanceof DamageOverTime damageOverTime) {
                 if (isMonster) {
-                    damageOverTime.execute(monsterStatus);
+                    damageOverTime.applyDamage(monsterStatus);
                     if (monsterStatus.getHealth() == 0) monsterKillAction.execute(event, playerStatus, monsterStatus);
                 } else {
-                    damageOverTime.execute(playerStatus);
+                    damageOverTime.applyDamage(playerStatus);
                     if (playerStatus.getHealth() == 0) playerKillAction.execute(event, playerStatus, monsterStatus);
                 }
 
-                updateSituation(userId, isMonster ? monsterStatus.getName() : event.getUser().getName(), damageOverTime.getName(), damageOverTime.getDamage());
+                updateSituation(userId, isMonster ? monsterStatus.getName() : event.getUser().getName(), damageOverTime.getName(), damageOverTime.getEffectDamage());
                 battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
             }
         }
     }
 
     private void updateCondition(BasicStatus status, BasicStatus originalStatus, Map<String, Condition> conditionMap) {
-        for (Map.Entry<String, Condition> entry : conditionMap.entrySet()) {
+        Iterator<Map.Entry<String, Condition>> iterator = conditionMap.entrySet().iterator();
+
+        while (iterator.hasNext()) {
+            Map.Entry<String, Condition> entry = iterator.next();
             Condition condition = entry.getValue();
             int turn = condition.getTurn();
 
-            if (turn - 1 > 0) {
+            if (condition.isCheck()) {
+                condition.setTurn(--turn);
+            } else {
+                condition.setCheck(true);
+            }
+
+            if (turn > 0) {
                 if (condition instanceof DivineBeast divineBeast) {
                     divineBeast.heal(status, originalStatus);
                 }
-
-                if (condition.isCheck()) {
-                    condition.setTurn(turn - 1);
-                } else {
-                    condition.setCheck(true);
-                }
-                conditionMap.put(entry.getKey(), condition);
             } else {
                 if (condition instanceof Buff buff) {
                     buff.unapply(status, originalStatus);
@@ -104,7 +107,7 @@ public class ConditionAction {
                     divineBeast.unapply(status, originalStatus);
                 }
 
-                conditionMap.remove(entry.getKey());
+                iterator.remove();
             }
         }
     }
