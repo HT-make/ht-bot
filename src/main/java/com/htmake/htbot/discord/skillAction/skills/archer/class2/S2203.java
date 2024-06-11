@@ -7,22 +7,24 @@ import com.htmake.htbot.discord.skillAction.condition.extend.Buff;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterOriginalStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
-import com.htmake.htbot.discord.skillAction.skills.SkillStrategy;
+import com.htmake.htbot.discord.skillAction.skill.impl.AbstractSkillStrategy;
 import com.htmake.htbot.discord.skillAction.type.BuffStatus;
 import com.htmake.htbot.discord.skillAction.type.BuffType;
 import com.htmake.htbot.discord.skillAction.type.SkillType;
 import kotlin.Pair;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class S2203 implements SkillStrategy {
+public class S2203 extends AbstractSkillStrategy {
 
     @Override
-    public List<Pair<String, SkillType>> execute(PlayerData playerData, MonsterData monsterData) {
-        List<Pair<String, SkillType>> resultList = new ArrayList<>();
+    protected int getManaCost() {
+        return 40;
+    }
 
+    @Override
+    protected void applySkill(PlayerData playerData, MonsterData monsterData, List<Pair<String, SkillType>> resultList) {
         PlayerStatus playerStatus = playerData.getPlayerStatus();
         MonsterStatus monsterStatus = monsterData.getMonsterStatus();
         MonsterOriginalStatus monsterOriginalStatus = monsterData.getMonsterOriginalStatus();
@@ -50,7 +52,5 @@ public class S2203 implements SkillStrategy {
 
         resultList.add(new Pair<>(String.valueOf(damageReceived), SkillType.ATTACK));
         resultList.add(new Pair<>("실명I", SkillType.DEBUFF));
-
-        return resultList;
     }
 }

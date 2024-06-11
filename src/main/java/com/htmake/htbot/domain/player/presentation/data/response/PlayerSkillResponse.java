@@ -16,6 +16,4 @@ public class PlayerSkillResponse {
     private int number;
 
     private String name;
-
-    private int mana;
 }

@@ -166,7 +166,6 @@ public class DungeonUtil {
 
             PlayerSkillStatus playerSkillStatus = PlayerSkillStatus.builder()
                     .name(playerSkillObject.getString("name"))
-                    .mana(playerSkillObject.getInt("mana"))
                     .basicSkill(basicSkillMap.get(id))
                     .build();
 
