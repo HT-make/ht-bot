@@ -19,12 +19,10 @@ import com.htmake.htbot.domain.player.repository.EquipmentRepository;
 import com.htmake.htbot.domain.player.repository.PlayerRepository;
 import com.htmake.htbot.domain.player.repository.StatusRepository;
 import com.htmake.htbot.domain.player.service.EquipmentEquipService;
+import com.htmake.htbot.global.annotation.TransactionalService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Transactional
+@TransactionalService
 @RequiredArgsConstructor
 public class EquipmentEquipServiceImpl implements EquipmentEquipService {
 

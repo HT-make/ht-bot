@@ -6,15 +6,13 @@ import com.htmake.htbot.domain.shop.presentation.data.response.BossShopItemListR
 import com.htmake.htbot.domain.shop.presentation.data.response.BossShopItemResponse;
 import com.htmake.htbot.domain.shop.repository.BossShopRepository;
 import com.htmake.htbot.domain.shop.service.BossShopItemService;
+import com.htmake.htbot.global.annotation.ReadOnlyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
-@Transactional
+@ReadOnlyService
 @RequiredArgsConstructor
 public class BossShopItemServiceImpl implements BossShopItemService {
 

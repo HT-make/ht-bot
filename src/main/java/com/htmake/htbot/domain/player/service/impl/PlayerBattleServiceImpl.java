@@ -9,15 +9,13 @@ import com.htmake.htbot.domain.player.repository.StatusRepository;
 import com.htmake.htbot.domain.player.service.PlayerBattleService;
 import com.htmake.htbot.domain.skill.entity.RegisteredSkill;
 import com.htmake.htbot.domain.skill.entity.Skill;
+import com.htmake.htbot.global.annotation.ReadOnlyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
-@Transactional(readOnly = true)
+@ReadOnlyService
 @RequiredArgsConstructor
 public class PlayerBattleServiceImpl implements PlayerBattleService {
 

@@ -15,12 +15,10 @@ import com.htmake.htbot.domain.profession.presentation.data.JobPromotionInfoResp
 import com.htmake.htbot.domain.profession.repository.ProfessionRepository;
 import com.htmake.htbot.domain.profession.service.JobPromotionInfoService;
 import com.htmake.htbot.domain.shop.exception.NotFoundItemException;
+import com.htmake.htbot.global.annotation.ReadOnlyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Transactional
+@ReadOnlyService
 @RequiredArgsConstructor
 public class JobPromotionInfoServiceImpl implements JobPromotionInfoService {
 

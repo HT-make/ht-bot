@@ -6,12 +6,10 @@ import com.htmake.htbot.domain.inventory.repository.InventoryRepository;
 import com.htmake.htbot.domain.inventory.service.InventoryInsertItemService;
 import com.htmake.htbot.domain.player.entity.Player;
 import com.htmake.htbot.domain.player.repository.PlayerRepository;
+import com.htmake.htbot.global.annotation.TransactionalService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Transactional
+@TransactionalService
 @RequiredArgsConstructor
 public class InventoryInsertItemServiceImpl implements InventoryInsertItemService {
     private final InventoryRepository inventoryRepository;

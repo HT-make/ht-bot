@@ -12,15 +12,13 @@ import com.htmake.htbot.domain.profession.repository.ProfessionRepository;
 import com.htmake.htbot.domain.profession.service.JobPromotionCompleteService;
 import com.htmake.htbot.domain.shop.exception.NotEnoughQuantityException;
 import com.htmake.htbot.domain.shop.exception.NotFoundItemException;
+import com.htmake.htbot.global.annotation.TransactionalService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
-@Service
-@Transactional
+@TransactionalService
 @RequiredArgsConstructor
 public class JobPromotionCompleteServiceImpl implements JobPromotionCompleteService {
 

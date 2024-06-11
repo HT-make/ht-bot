@@ -7,15 +7,13 @@ import com.htmake.htbot.domain.dungeon.presentation.data.response.MonsterRespons
 import com.htmake.htbot.domain.dungeon.repository.DungeonRepository;
 import com.htmake.htbot.domain.dungeon.service.FieldDungeonEntryService;
 import com.htmake.htbot.domain.monster.entity.Monster;
+import com.htmake.htbot.global.annotation.ReadOnlyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
-@Transactional(readOnly = true)
+@ReadOnlyService
 @RequiredArgsConstructor
 public class FieldDungeonEntryServiceImpl implements FieldDungeonEntryService {
 

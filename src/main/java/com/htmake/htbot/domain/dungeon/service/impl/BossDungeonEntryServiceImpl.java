@@ -11,15 +11,13 @@ import com.htmake.htbot.domain.inventory.entity.Inventory;
 import com.htmake.htbot.domain.inventory.exception.InventoryItemNotFoundException;
 import com.htmake.htbot.domain.inventory.repository.InventoryRepository;
 import com.htmake.htbot.domain.monster.entity.Monster;
+import com.htmake.htbot.global.annotation.TransactionalService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
-@Transactional
+@TransactionalService
 @RequiredArgsConstructor
 public class BossDungeonEntryServiceImpl implements BossDungeonEntryService {
 

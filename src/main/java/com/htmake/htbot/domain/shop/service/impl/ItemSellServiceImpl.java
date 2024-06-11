@@ -12,12 +12,10 @@ import com.htmake.htbot.domain.player.repository.PlayerRepository;
 import com.htmake.htbot.domain.quest.exception.NotEnoughItemQuantityException;
 import com.htmake.htbot.domain.shop.presentation.data.request.ItemSellRequest;
 import com.htmake.htbot.domain.shop.service.ItemSellService;
+import com.htmake.htbot.global.annotation.TransactionalService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Transactional
+@TransactionalService
 @RequiredArgsConstructor
 public class ItemSellServiceImpl implements ItemSellService {
 

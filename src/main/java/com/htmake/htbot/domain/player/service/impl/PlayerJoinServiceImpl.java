@@ -14,15 +14,13 @@ import com.htmake.htbot.domain.player.repository.PlayerRepository;
 import com.htmake.htbot.domain.player.service.PlayerJoinService;
 import com.htmake.htbot.domain.player.entity.Status;
 import com.htmake.htbot.domain.player.repository.StatusRepository;
+import com.htmake.htbot.global.annotation.TransactionalService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import static com.htmake.htbot.domain.player.enums.Job.*;
 
 
-@Service
-@Transactional
+@TransactionalService
 @RequiredArgsConstructor
 public class PlayerJoinServiceImpl implements PlayerJoinService {
 

@@ -5,14 +5,12 @@ import com.htmake.htbot.domain.monster.presentation.data.response.DropItemRespon
 import com.htmake.htbot.domain.monster.presentation.data.response.MonsterLootResponse;
 import com.htmake.htbot.domain.monster.repository.MonsterRepository;
 import com.htmake.htbot.domain.monster.service.MonsterLootService;
+import com.htmake.htbot.global.annotation.ReadOnlyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Collectors;
 
-@Service
-@Transactional(readOnly = true)
+@ReadOnlyService
 @RequiredArgsConstructor
 public class MonsterLootServiceImpl implements MonsterLootService {
 

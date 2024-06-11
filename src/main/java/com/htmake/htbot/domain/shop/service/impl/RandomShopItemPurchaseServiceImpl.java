@@ -13,12 +13,10 @@ import com.htmake.htbot.domain.shop.presentation.data.request.RandomShopPurchase
 import com.htmake.htbot.domain.shop.presentation.data.response.SuccessPurchaseResponse;
 import com.htmake.htbot.domain.shop.repository.RandomShopRepository;
 import com.htmake.htbot.domain.shop.service.RandomShopItemPurchaseService;
+import com.htmake.htbot.global.annotation.TransactionalService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-@Service
-@Transactional
+@TransactionalService
 @RequiredArgsConstructor
 public class RandomShopItemPurchaseServiceImpl implements RandomShopItemPurchaseService {
 

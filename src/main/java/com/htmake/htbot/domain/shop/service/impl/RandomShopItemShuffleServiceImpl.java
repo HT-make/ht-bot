@@ -7,17 +7,15 @@ import com.htmake.htbot.domain.equipment.repository.WeaponRepository;
 import com.htmake.htbot.domain.shop.entity.RandomShop;
 import com.htmake.htbot.domain.shop.repository.RandomShopRepository;
 import com.htmake.htbot.domain.shop.service.RandomShopItemShuffleService;
+import com.htmake.htbot.global.annotation.TransactionalService;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
-@Transactional
+@TransactionalService
 @RequiredArgsConstructor
 public class RandomShopItemShuffleServiceImpl implements RandomShopItemShuffleService {
 

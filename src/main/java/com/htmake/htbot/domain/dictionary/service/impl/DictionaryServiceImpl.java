@@ -10,15 +10,13 @@ import com.htmake.htbot.domain.equipment.repository.ArmorRepository;
 import com.htmake.htbot.domain.equipment.repository.WeaponRepository;
 import com.htmake.htbot.domain.misc.entity.Misc;
 import com.htmake.htbot.domain.misc.repository.MiscRepository;
+import com.htmake.htbot.global.annotation.ReadOnlyService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 
-@Service
-@Transactional
+@ReadOnlyService
 @RequiredArgsConstructor
 public class DictionaryServiceImpl implements DictionaryService {
 
