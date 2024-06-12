@@ -33,7 +33,7 @@ public class BossShopPurchaseSelectEvent {
             event.getHook().editOriginalEmbeds(embed).queue();
         } else {
             String description = response.getBody().getObject().getString("message");
-            errorUtil.sendError(event.getHook(), "랜덤 상점", description);
+            errorUtil.sendError(event.getHook(), "보스 상점", description);
         }
     }
 
