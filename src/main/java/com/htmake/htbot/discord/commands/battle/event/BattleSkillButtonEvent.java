@@ -130,26 +130,28 @@ public class BattleSkillButtonEvent {
             return;
         }
 
-        String message = event.getUser().getName() + "의 " + usedSkill.getName() + ".";
-        battleUtil.updateSituation(playerId, message);
-        battleUtil.editEmbed(event, playerStatus, monsterStatus, "start");
-
         BasicSkill basicSkill = usedSkill.getBasicSkill();
         List<Pair<String, SkillType>> resultList = basicSkill.execute(playerData, monsterData);
 
+        String secondMessage = "";
+
         for (Pair<String, SkillType> result : resultList) {
             switch (result.getSecond()) {
-                case ATTACK -> message = result.getFirst() + "의 데미지를 입혔다.";
-                case HEAL -> message = result.getFirst() + "의 체력을 회복했다.";
-                case BUFF -> message = result.getFirst() + " 효과를 얻었다.";
-                case DEBUFF -> message = result.getFirst() + " 효과를 입혔다.";
+                case ATTACK -> secondMessage = result.getFirst() + "의 데미지를 입혔다.";
+                case HEAL -> secondMessage = result.getFirst() + "의 체력을 회복했다.";
+                case BUFF -> secondMessage = result.getFirst() + " 효과를 얻었다.";
+                case DEBUFF -> secondMessage = result.getFirst() + " 효과를 입혔다.";
                 case NOT_ENOUGH_MANA -> {
                     errorUtil.sendError(event.getHook(), "스킬 사용", "마나가 부족합니다.");
                     return;
                 }
             }
 
-            battleUtil.updateSituation(playerId, message);
+            String firstMessage = event.getUser().getName() + "의 " + usedSkill.getName() + ".";
+            battleUtil.updateSituation(playerId, firstMessage);
+            battleUtil.editEmbed(event, playerStatus, monsterStatus, "start");
+
+            battleUtil.updateSituation(playerId, secondMessage);
             battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
         }
 

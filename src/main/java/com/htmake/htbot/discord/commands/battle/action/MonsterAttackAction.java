@@ -3,9 +3,13 @@ package com.htmake.htbot.discord.commands.battle.action;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.util.BattleUtil;
+import com.htmake.htbot.discord.skillAction.condition.Condition;
+import com.htmake.htbot.discord.skillAction.condition.extend.Faint;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
+
+import java.util.Map;
 
 public class MonsterAttackAction {
 
@@ -23,6 +27,11 @@ public class MonsterAttackAction {
 
     public void execute(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
         String playerId = event.getUser().getId();
+
+        if (conditionAction(event, playerStatus, monsterStatus)) {
+            conditionAction.execute(event);
+            return;
+        }
 
         int damage;
 
@@ -43,6 +52,24 @@ public class MonsterAttackAction {
         } else {
             conditionAction.execute(event);
         }
+    }
+
+    private boolean conditionAction(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
+        Map<String, Condition> monsterCondition = monsterStatus.getConditionMap();
+
+        if (monsterCondition.containsKey("faint")) {
+            Faint faint = (Faint) monsterCondition.get("faint");
+
+            if (faint.applyEffect()) {
+                String message = monsterStatus.getName() + "이/가 기절했다.";
+                battleUtil.updateSituation(event.getUser().getId(), message);
+                battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private boolean skillChance() {
