@@ -1,9 +1,6 @@
 package com.htmake.htbot.discord.commands.skill;
 
-import com.htmake.htbot.discord.commands.skill.event.SkillListSlashEvent;
-import com.htmake.htbot.discord.commands.skill.event.RegisterSkillButtonEvent;
-import com.htmake.htbot.discord.commands.skill.event.RegisterSkillSelectEvent;
-import com.htmake.htbot.discord.commands.skill.event.RegisterSkillSlashEvent;
+import com.htmake.htbot.discord.commands.skill.event.*;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.discord.util.MessageUtil;
 import kotlin.Pair;
@@ -20,9 +17,11 @@ import java.util.List;
 public class SkillCommand extends ListenerAdapter {
 
     private final SkillListSlashEvent skillListSlashEvent;
+    private final SkillListButtonEvent skillListButtonEvent;
 
     private final RegisterSkillSlashEvent registerSkillSlashEvent;
     private final RegisterSkillButtonEvent registerSkillButtonEvent;
+    private final RegisterSkillPageButtonEvent registerSkillPageButtonEvent;
     private final RegisterSkillSelectEvent registerSkillSelectEvent;
 
     private final ErrorUtil errorUtil;
@@ -30,9 +29,11 @@ public class SkillCommand extends ListenerAdapter {
 
     public SkillCommand() {
         this.skillListSlashEvent = new SkillListSlashEvent();
+        this.skillListButtonEvent = new SkillListButtonEvent();
 
         this.registerSkillSlashEvent = new RegisterSkillSlashEvent();
         this.registerSkillButtonEvent = new RegisterSkillButtonEvent();
+        this.registerSkillPageButtonEvent = new RegisterSkillPageButtonEvent();
         this.registerSkillSelectEvent = new RegisterSkillSelectEvent();
 
         this.errorUtil = new ErrorUtil();
@@ -72,6 +73,17 @@ public class SkillCommand extends ListenerAdapter {
 
             if (componentList.get(1).equals("register")) {
                 registerSkillButtonEvent.execute(event, componentList.get(2));
+            }
+
+            if (componentList.get(1).equals("list")) {
+                int page = Integer.parseInt(componentList.get(2));
+                skillListButtonEvent.execute(event, page);
+            }
+
+            if (componentList.get(1).equals("enroll")) {
+                int page = Integer.parseInt(componentList.get(2));
+                String number = componentList.get(3);
+                registerSkillPageButtonEvent.execute(event, page, number);
             }
         }
     }

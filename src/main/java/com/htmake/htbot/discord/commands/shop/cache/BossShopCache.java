@@ -1,7 +1,6 @@
 package com.htmake.htbot.discord.commands.shop.cache;
 
 import com.htmake.htbot.discord.commands.shop.data.BossShopItem;
-import com.htmake.htbot.domain.shop.entity.BossShop;
 import com.htmake.htbot.global.cache.CacheManager;
 
 import java.util.List;

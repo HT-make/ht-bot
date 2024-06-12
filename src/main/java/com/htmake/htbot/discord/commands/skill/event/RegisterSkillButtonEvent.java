@@ -1,8 +1,10 @@
 package com.htmake.htbot.discord.commands.skill.event;
 
+import com.htmake.htbot.discord.commands.skill.cache.SkillCache;
 import com.htmake.htbot.discord.commands.skill.util.SkillEventUtil;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.domain.skill.presentation.data.response.SkillResponse;
+import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
@@ -11,7 +13,8 @@ import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
-import net.dv8tion.jda.api.interactions.components.selections.SelectOption;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 import org.json.JSONArray;
 
@@ -25,10 +28,14 @@ public class RegisterSkillButtonEvent {
     private final SkillEventUtil skillEventUtil;
     private final ErrorUtil errorUtil;
 
+    private final SkillCache skillCache;
+
     public RegisterSkillButtonEvent() {
         this.httpClient = new HttpClientImpl();
         this.skillEventUtil = new SkillEventUtil();
         this.errorUtil = new ErrorUtil();
+
+        this.skillCache = CacheFactory.skillCache;
     }
 
     public void execute(ButtonInteractionEvent event, String number) {
@@ -50,11 +57,33 @@ public class RegisterSkillButtonEvent {
 
     private void requestSuccess(ButtonInteractionEvent event, JSONArray skillArray, String number) {
         List<SkillResponse> skillList = skillEventUtil.toSkillList(skillArray);
-        MessageEmbed embed = buildEmbed(skillList, event.getMessage().getEmbeds().get(0));
-        StringSelectMenu menu = buildMenu(skillList, number);
+        skillEventUtil.saveSkillListCache(skillList, event.getUser());
+
+        List<ActionRow> actionRowList = new ArrayList<>();
+
+        List<Button> buttonList = skillEventUtil.skillButtonEmbed(1, number, "skill-enroll");
+        actionRowList.add(ActionRow.of(buttonList));
+
+        List<SkillResponse> firstSkillList = skillCache.get(event.getUser().getId()).getFirstSkillList();
+
+        MessageEmbed embed;
+        if (firstSkillList.isEmpty()) {
+            embed = new EmbedBuilder()
+                    .setColor(Color.GREEN)
+                    .setAuthor(event.getUser().getName(), null, event.getUser().getAvatarUrl())
+                    .setTitle("스킬 등록")
+                    .setDescription("등록할 수 있는 스킬이 없습니다.")
+                    .build();
+
+        } else {
+            embed = buildEmbed(firstSkillList, event.getMessage().getEmbeds().get(0));
+            StringSelectMenu menu = buildMenu(firstSkillList, number);
+            actionRowList.add(ActionRow.of(menu));
+
+        }
 
         event.getHook().editOriginalEmbeds(embed)
-                .setActionRow(menu)
+                .setComponents(actionRowList)
                 .queue();
     }
 
@@ -74,19 +103,7 @@ public class RegisterSkillButtonEvent {
 
     private StringSelectMenu buildMenu(List<SkillResponse> skillList, String number) {
         return StringSelectMenu.create("skillMenu")
-                .addOptions(buildOptionList(skillList, number))
+                .addOptions(skillEventUtil.buildOptionList(skillList, number))
                 .build();
-    }
-
-    private List<SelectOption> buildOptionList(List<SkillResponse> skillList, String number) {
-        List<SelectOption> optionList = new ArrayList<>();
-
-        for (SkillResponse skill : skillList) {
-            String value = String.format("skill-register-%s-%s", skill.getId(), number);
-            SelectOption option = SelectOption.of(skill.getName(), value);
-            optionList.add(option);
-        }
-
-        return optionList;
     }
 }

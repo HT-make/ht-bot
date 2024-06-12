@@ -1,20 +1,21 @@
 package com.htmake.htbot.discord.commands.skill.event;
 
+import com.htmake.htbot.discord.commands.skill.cache.SkillCache;
+import com.htmake.htbot.discord.commands.skill.data.SkillList;
 import com.htmake.htbot.discord.commands.skill.util.SkillEventUtil;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.domain.skill.presentation.data.response.SkillResponse;
+import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import org.json.JSONArray;
 
-import java.awt.*;
 import java.util.List;
 
 public class SkillListSlashEvent {
@@ -23,10 +24,14 @@ public class SkillListSlashEvent {
     private final SkillEventUtil skillEventUtil;
     private final ErrorUtil errorUtil;
 
+    private final SkillCache skillCache;
+
     public SkillListSlashEvent() {
         this.httpClient = new HttpClientImpl();
         this.skillEventUtil = new SkillEventUtil();
         this.errorUtil = new ErrorUtil();
+
+        this.skillCache = CacheFactory.skillCache;
     }
 
     public void execute(SlashCommandInteractionEvent event) {
@@ -48,29 +53,13 @@ public class SkillListSlashEvent {
 
     private void requestSuccess(SlashCommandInteractionEvent event, JSONArray skillArray) {
         List<SkillResponse> skillList = skillEventUtil.toSkillList(skillArray);
-        MessageEmbed embed = buildEmbed(skillList, event.getUser());
-        event.replyEmbeds(embed).queue();
-    }
+        skillEventUtil.saveSkillListCache(skillList, event.getUser());
 
-    private MessageEmbed buildEmbed(List<SkillResponse> skillList, User user) {
-        String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
+        SkillList skillLists = skillCache.get(event.getUser().getId());
+        MessageEmbed embed = skillEventUtil.skillListBuildEmbed(skillLists.getFirstSkillList(), event.getUser());
 
-        EmbedBuilder embedBuilder = new EmbedBuilder()
-                .setColor(Color.GREEN)
-                .setAuthor(user.getName(), null, profileUrl)
-                .setTitle(":bookmark: 스킬 목록")
-                .setDescription("보유중인 스킬 목록을 보여줍니다.");
+        List<Button> buttonList = skillEventUtil.skillButtonEmbed(1, "", "skill-list");
 
-        for (SkillResponse skill : skillList) {
-            String title = skill.getName();
-
-            if (skill.getIsRegistered().equals("true")) {
-                title += "(등록됨)";
-            }
-
-            embedBuilder.addField(title, skill.getDescription(), false);
-        }
-
-        return embedBuilder.build();
+        event.replyEmbeds(embed).addActionRow(buttonList).queue();
     }
 }

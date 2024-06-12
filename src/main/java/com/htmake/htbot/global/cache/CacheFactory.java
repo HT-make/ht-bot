@@ -8,6 +8,7 @@ import com.htmake.htbot.discord.commands.battle.cache.SituationCache;
 import com.htmake.htbot.discord.commands.global.cache.MessageCache;
 import com.htmake.htbot.discord.commands.inventory.cache.InventoryCache;
 import com.htmake.htbot.discord.commands.shop.cache.BossShopCache;
+import com.htmake.htbot.discord.commands.skill.cache.SkillCache;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -28,6 +29,9 @@ public class CacheFactory {
     //shop
     public static BossShopCache bossShopCache;
 
+    //skill
+    public static SkillCache skillCache;
+
     //global
     public static MessageCache messageCache;
 
@@ -42,6 +46,8 @@ public class CacheFactory {
         inventoryCache = new InventoryCache();
 
         bossShopCache = new BossShopCache();
+
+        skillCache = new SkillCache();
 
         messageCache = new MessageCache();
     }
