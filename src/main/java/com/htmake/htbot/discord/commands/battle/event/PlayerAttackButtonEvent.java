@@ -2,6 +2,8 @@ package com.htmake.htbot.discord.commands.battle.event;
 
 import com.htmake.htbot.discord.commands.battle.action.MonsterAttackAction;
 import com.htmake.htbot.discord.commands.battle.action.MonsterKillAction;
+import com.htmake.htbot.discord.skillAction.condition.Condition;
+import com.htmake.htbot.discord.skillAction.condition.extend.Faint;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.discord.util.FormatUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
@@ -15,6 +17,8 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import org.apache.commons.math3.random.MersenneTwister;
 import org.apache.commons.math3.random.RandomGenerator;
+
+import java.util.Map;
 
 public class PlayerAttackButtonEvent {
 
@@ -47,6 +51,11 @@ public class PlayerAttackButtonEvent {
         PlayerStatus playerStatus = playerDataCache.get(playerId).getPlayerStatus();
         MonsterStatus monsterStatus = monsterDataCache.get(playerId).getMonsterStatus();
 
+        if (conditionAction(event, playerStatus, monsterStatus)) {
+            monsterAttackAction.execute(event, playerStatus, monsterStatus);
+            return;
+        }
+
         playerTurn(event, playerStatus, monsterStatus);
 
         if (monsterStatus.getHealth() == 0) {
@@ -54,6 +63,24 @@ public class PlayerAttackButtonEvent {
         } else {
             monsterAttackAction.execute(event, playerStatus, monsterStatus);
         }
+    }
+
+    private boolean conditionAction(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
+        Map<String, Condition> playerCondition = playerStatus.getConditionMap();
+
+        if (playerCondition.containsKey("faint")) {
+            Faint faint = (Faint) playerCondition.get("faint");
+
+            if (faint.applyEffect()) {
+                String message = event.getUser().getName() + "이/가 기절했다.";
+                battleUtil.updateSituation(event.getUser().getId(), message);
+                battleUtil.editEmbed(event, playerStatus, monsterStatus, "start");
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void playerTurn(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
