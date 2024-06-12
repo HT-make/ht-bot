@@ -84,7 +84,7 @@ public class PlayerAttackButtonEvent {
     }
 
     private void playerTurn(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
-        Pair<Integer, Boolean> damage = playerAttackDamage(playerStatus, monsterStatus);
+        Pair<Integer, Boolean> attack = playerAttackDamage(playerStatus, monsterStatus);
 
         User user = event.getUser();
         String playerId = user.getId();
@@ -92,7 +92,7 @@ public class PlayerAttackButtonEvent {
 
         String message = name + "의 ";
 
-        if (damage.getSecond()) {
+        if (attack.getSecond()) {
             message += "치명타 공격!";
         } else {
             message += "공격.";
@@ -101,9 +101,18 @@ public class PlayerAttackButtonEvent {
         battleUtil.updateSituation(playerId, message);
         battleUtil.editEmbed(event, playerStatus, monsterStatus, "start");
 
-        monsterStatus.setHealth(Math.max(0, (monsterStatus.getHealth() - damage.getFirst())));
+        int damage = attack.getFirst();
 
-        message = FormatUtil.decimalFormat(damage.getFirst()) + "의 데미지를 입혔다.";
+        Map<String, Condition> monsterCondition = monsterStatus.getConditionMap();
+
+        if (monsterCondition.containsKey("invincible")) {
+            damage = 0;
+            monsterCondition.remove("invincible");
+        }
+
+        monsterStatus.setHealth(Math.max(0, (monsterStatus.getHealth() - damage)));
+
+        message = FormatUtil.decimalFormat(damage) + "의 데미지를 입혔다.";
         battleUtil.updateSituation(playerId, message);
         battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
     }
