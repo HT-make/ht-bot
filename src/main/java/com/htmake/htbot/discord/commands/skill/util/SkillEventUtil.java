@@ -63,6 +63,7 @@ public class SkillEventUtil {
 
         return embedBuilder.build();
     }
+
     public void saveSkillListCache (List<SkillResponse> skillList, User user) {
         List<SkillResponse> firstSkillList = new ArrayList<>();
         List<SkillResponse> secondSkillList = new ArrayList<>();
