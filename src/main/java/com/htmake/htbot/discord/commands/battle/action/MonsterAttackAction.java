@@ -41,6 +41,13 @@ public class MonsterAttackAction {
             damage = normalAttack(event, playerStatus, monsterStatus);
         }
 
+        Map<String, Condition> playerCondition = playerStatus.getConditionMap();
+
+        if (playerCondition.containsKey("invincible")) {
+            damage = 0;
+            playerCondition.remove("invincible");
+        }
+
         playerStatus.setHealth(Math.max(0, playerStatus.getHealth() - damage));
 
         String message = damage + "의 데미지를 입혔다.";
