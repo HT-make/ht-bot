@@ -2,7 +2,6 @@ package com.htmake.htbot.discord.skillAction.skill;
 
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
-import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
 import com.htmake.htbot.discord.skillAction.condition.extend.buff.Buff;
 import com.htmake.htbot.discord.commands.battle.data.status.BasicStatus;
@@ -17,6 +16,8 @@ import java.util.Map;
 public interface SkillStrategy {
 
     List<Pair<String, SkillType>> execute(PlayerData playerData, MonsterData monsterData);
+
+    boolean manaCheck(PlayerData playerData);
 
     default int critical(int damage, int criticalDamage, int criticalChance) {
         RandomGenerator random = new MersenneTwister();
@@ -35,18 +36,5 @@ public interface SkillStrategy {
             Buff existsBuff = (Buff) conditionMap.get(id);
             existsBuff.unapply(status, originalStatus);
         }
-    }
-
-    default boolean manaCheck(PlayerStatus playerStatus, int manaCost, List<Pair<String, SkillType>> resultList) {
-        int mana = playerStatus.getMana();
-
-        if (mana < manaCost) {
-            resultList.add(new Pair<>("Not enough mana", SkillType.NOT_ENOUGH_MANA));
-            return true;
-        }
-
-        playerStatus.setMana(mana - manaCost);
-
-        return false;
     }
 }

@@ -19,15 +19,21 @@ public abstract class AbstractSkillStrategy implements SkillStrategy {
     @Override
     public List<Pair<String, SkillType>> execute(PlayerData playerData, MonsterData monsterData) {
         List<Pair<String, SkillType>> resultList = new ArrayList<>();
+        applySkill(playerData, monsterData, resultList);
+        return resultList;
+    }
 
+    @Override
+    public boolean manaCheck(PlayerData playerData) {
         PlayerStatus playerStatus = playerData.getPlayerStatus();
+        int mana = playerStatus.getMana();
 
-        if (manaCheck(playerStatus, getManaCost(), resultList)) {
-            return resultList;
+        if (mana < getManaCost()) {
+            return false;
         }
 
-        applySkill(playerData, monsterData, resultList);
+        playerStatus.setMana(mana - getManaCost());
 
-        return resultList;
+        return true;
     }
 }

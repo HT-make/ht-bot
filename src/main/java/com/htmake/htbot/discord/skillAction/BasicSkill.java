@@ -21,4 +21,8 @@ public class BasicSkill {
     public List<Pair<String, SkillType>> execute(PlayerData playerData, MonsterData monsterData) {
         return strategy.execute(playerData, monsterData);
     }
+
+    public boolean manaCheck(PlayerData playerData) {
+        return strategy.manaCheck(playerData);
+    }
 }
