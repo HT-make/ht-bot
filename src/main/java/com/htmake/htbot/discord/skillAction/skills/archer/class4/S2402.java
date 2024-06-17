@@ -33,16 +33,25 @@ public class S2402 extends AbstractSkillStrategy {
     @Override
     public List<Pair<String, SkillType>> execute(PlayerData playerData, MonsterData monsterData) {
         List<Pair<String, SkillType>> resultList = new ArrayList<>();
+        setBuffedState(playerData);
+        applySkill(playerData, monsterData, resultList);
+        return resultList;
+    }
+
+    @Override
+    public boolean manaCheck(PlayerData playerData) {
+        PlayerStatus playerStatus = playerData.getPlayerStatus();
+        int mana = playerStatus.getMana();
 
         setBuffedState(playerData);
 
-        if (manaCheck(playerData.getPlayerStatus(), getManaCost(), resultList)) {
-            return resultList;
+        if (mana < getManaCost()) {
+            return false;
         }
 
-        applySkill(playerData, monsterData, resultList);
+        playerStatus.setMana(mana - getManaCost());
 
-        return resultList;
+        return true;
     }
 
     @Override
