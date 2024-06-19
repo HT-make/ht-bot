@@ -5,6 +5,10 @@ import com.htmake.htbot.discord.skillAction.skills.archer.class1.*;
 import com.htmake.htbot.discord.skillAction.skills.archer.class2.*;
 import com.htmake.htbot.discord.skillAction.skills.archer.class3.*;
 import com.htmake.htbot.discord.skillAction.skills.archer.class4.*;
+import com.htmake.htbot.discord.skillAction.skills.warrior.class1.*;
+import com.htmake.htbot.discord.skillAction.skills.warrior.class2.*;
+import com.htmake.htbot.discord.skillAction.skills.warrior.class3.*;
+import com.htmake.htbot.discord.skillAction.skills.warrior.class4.*;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -18,13 +22,39 @@ public class SkillFactory {
     public SkillFactory() {
         skillMap = new HashMap<>();
 
+        //WARRIOR-Class1
+        skillMap.put("S1101", new BasicSkill(new S1101()));
+        skillMap.put("S1102", new BasicSkill(new S1102()));
+        skillMap.put("S1103", new BasicSkill(new S1103()));
+        skillMap.put("S1104", new BasicSkill(new S1104()));
+        skillMap.put("S1105", new BasicSkill(new S1105()));
+        //WARRIOR-Class2
+        skillMap.put("S1201", new BasicSkill(new S1201()));
+        skillMap.put("S1202", new BasicSkill(new S1202()));
+        skillMap.put("S1203", new BasicSkill(new S1203()));
+        skillMap.put("S1204", new BasicSkill(new S1204()));
+        skillMap.put("S1205", new BasicSkill(new S1205()));
+        skillMap.put("S1206", new BasicSkill(new S1206()));
+        //WARRIOR-Class3
+        skillMap.put("S1301", new BasicSkill(new S1301()));
+        skillMap.put("S1302", new BasicSkill(new S1302()));
+        skillMap.put("S1303", new BasicSkill(new S1303()));
+        skillMap.put("S1304", new BasicSkill(new S1304()));
+        skillMap.put("S1305", new BasicSkill(new S1305()));
+        //WARRIOR-Class4
+        skillMap.put("S1401", new BasicSkill(new S1401()));
+        skillMap.put("S1402", new BasicSkill(new S1402()));
+        skillMap.put("S1403", new BasicSkill(new S1403()));
+        skillMap.put("S1404", new BasicSkill(new S1404()));
+        skillMap.put("S1405", new BasicSkill(new S1405()));
+
         //ARCHER-Class1
         skillMap.put("S2101", new BasicSkill(new S2101()));
         skillMap.put("S2102", new BasicSkill(new S2102()));
         skillMap.put("S2103", new BasicSkill(new S2103()));
         skillMap.put("S2104", new BasicSkill(new S2104()));
-        skillMap.put("S2201", new BasicSkill(new S2201()));
         //ARCHER-Class2
+        skillMap.put("S2201", new BasicSkill(new S2201()));
         skillMap.put("S2202", new BasicSkill(new S2202()));
         skillMap.put("S2203", new BasicSkill(new S2203()));
         skillMap.put("S2204", new BasicSkill(new S2204()));

@@ -1,4 +1,4 @@
-package com.htmake.htbot.discord.skillAction.skills.archer.class1;
+package com.htmake.htbot.discord.skillAction.skills.warrior.class1;
 
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
@@ -10,7 +10,7 @@ import kotlin.Pair;
 
 import java.util.List;
 
-public class S2101 extends AbstractSkillStrategy {
+public class S1102 extends AbstractSkillStrategy {
 
     @Override
     protected int getManaCost() {
