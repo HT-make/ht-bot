@@ -26,6 +26,6 @@ public class S2101 extends AbstractSkillStrategy {
         int damageReceived = Math.max(0, damage - monsterStatus.getDefence());
         monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - damageReceived));
 
-        resultList.add(new Pair<>(String.valueOf(damage), SkillType.ATTACK));
+        resultList.add(new Pair<>(String.valueOf(damageReceived), SkillType.ATTACK));
     }
 }
