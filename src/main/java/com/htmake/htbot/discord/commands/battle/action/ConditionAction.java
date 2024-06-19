@@ -5,6 +5,9 @@ import com.htmake.htbot.discord.commands.battle.cache.PlayerDataCache;
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
+import com.htmake.htbot.discord.skillAction.condition.extend.AngelsProtection;
+import com.htmake.htbot.discord.skillAction.condition.extend.Light;
+import com.htmake.htbot.discord.skillAction.condition.extend.SwordGod;
 import com.htmake.htbot.discord.skillAction.condition.extend.buff.Buff;
 import com.htmake.htbot.discord.skillAction.condition.extend.damageOverTime.DamageOverTime;
 import com.htmake.htbot.discord.commands.battle.data.status.BasicStatus;
@@ -91,12 +94,18 @@ public class ConditionAction {
             if (condition.isCheck()) {
                 condition.setTurn(--turn);
             } else {
-                condition.setCheck(true);
+                if (!(condition instanceof Light) && !(condition instanceof AngelsProtection)) {
+                    condition.setCheck(true);
+                }
             }
 
             if (turn > 0) {
                 if (condition instanceof DivineBeast divineBeast) {
                     divineBeast.heal(status, originalStatus);
+                }
+
+                if (condition instanceof SwordGod swordGod) {
+                    swordGod.updateBuff(status, originalStatus);
                 }
             } else {
                 if (condition instanceof Buff buff) {
@@ -105,6 +114,10 @@ public class ConditionAction {
 
                 if (condition instanceof DivineBeast divineBeast) {
                     divineBeast.unapply(status, originalStatus);
+                }
+
+                if (condition instanceof SwordGod swordGod) {
+                    swordGod.unapply(status, originalStatus);
                 }
 
                 iterator.remove();
