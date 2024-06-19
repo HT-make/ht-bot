@@ -61,9 +61,6 @@ public class RegisterSkillButtonEvent {
 
         List<ActionRow> actionRowList = new ArrayList<>();
 
-        List<Button> buttonList = skillEventUtil.skillButtonEmbed(1, number, "skill-enroll");
-        actionRowList.add(ActionRow.of(buttonList));
-
         List<SkillResponse> firstSkillList = skillCache.get(event.getUser().getId()).getFirstSkillList();
 
         MessageEmbed embed;
@@ -81,6 +78,9 @@ public class RegisterSkillButtonEvent {
             actionRowList.add(ActionRow.of(menu));
 
         }
+
+        List<Button> buttonList = skillEventUtil.skillButtonEmbed(1, number, "skill-enroll");
+        actionRowList.add(ActionRow.of(buttonList));
 
         event.getHook().editOriginalEmbeds(embed)
                 .setComponents(actionRowList)
