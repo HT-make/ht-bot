@@ -22,7 +22,7 @@ public class S2101 extends AbstractSkillStrategy {
         PlayerStatus playerStatus = playerData.getPlayerStatus();
         MonsterStatus monsterStatus = monsterData.getMonsterStatus();
 
-        int damage = critical((int) (playerStatus.getDamage() * 1.5), playerStatus.getCriticalDamage(), playerStatus.getCriticalChance());
+        int damage = critical((int) (playerStatus.getDamage() * 1.5), playerStatus.getCriticalDamage(), playerStatus.getCriticalChance(), playerStatus.getJob());
         int damageReceived = Math.max(0, damage - monsterStatus.getDefence());
         monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - damageReceived));
 
