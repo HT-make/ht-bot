@@ -137,6 +137,11 @@ public class BattleSkillButtonEvent {
             return;
         }
 
+        if (battleUtil.conditionCheck(event, playerStatus, monsterStatus)) {
+            monsterAttackAction.execute(event, playerStatus, monsterStatus);
+            return;
+        }
+
         String message = event.getUser().getName() + "의 " + usedSkill.getName() + ".";
         battleUtil.updateSituation(playerId, message);
         battleUtil.editEmbed(event, playerStatus, monsterStatus, "start");
