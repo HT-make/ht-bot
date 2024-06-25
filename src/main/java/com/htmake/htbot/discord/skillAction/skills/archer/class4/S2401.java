@@ -59,7 +59,7 @@ public class S2401 extends AbstractSkillStrategy {
 
         double skillValue = isBuffed ? 4.5 : 3.0;
 
-        int damage = critical((int) (playerStatus.getDamage() * skillValue), playerStatus.getCriticalDamage(), playerStatus.getCriticalChance());
+        int damage = critical((int) (playerStatus.getDamage() * skillValue), playerStatus.getCriticalDamage(), playerStatus.getCriticalChance(), playerStatus.getJob());
         int damageReceived = Math.max(0, damage - monsterStatus.getDefence());
         monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - damageReceived));
 

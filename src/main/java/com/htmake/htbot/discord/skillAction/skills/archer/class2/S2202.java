@@ -26,7 +26,7 @@ public class S2202 extends AbstractSkillStrategy {
         MonsterStatus monsterStatus = monsterData.getMonsterStatus();
         Map<String, Condition> monsterCondition = monsterStatus.getConditionMap();
 
-        int damage = critical((int) (playerStatus.getDamage() * 3.2), playerStatus.getCriticalDamage(), playerStatus.getCriticalChance());
+        int damage = critical((int) (playerStatus.getDamage() * 3.2), playerStatus.getCriticalDamage(), playerStatus.getCriticalChance(), playerStatus.getJob());
         int damageReceived = Math.max(0, damage - monsterStatus.getDefence());
         monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - damageReceived));
 

@@ -1,6 +1,7 @@
 package com.htmake.htbot.discord.commands.dungeon.data;
 
 import com.htmake.htbot.discord.commands.battle.data.PlayerSkillStatus;
+import com.htmake.htbot.domain.player.enums.Job;
 import lombok.*;
 
 import java.util.Map;
@@ -27,6 +28,8 @@ public class DungeonPlayer {
     private int criticalChance;
 
     private int criticalDamage;
+
+    private Job job;
 
     private Map<Integer, PlayerSkillStatus> playerSkill;
 }

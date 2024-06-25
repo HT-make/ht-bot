@@ -1,5 +1,6 @@
 package com.htmake.htbot.domain.player.presentation.data.response;
 
+import com.htmake.htbot.domain.player.enums.Job;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +27,8 @@ public class PlayerBattleResponse {
     private int criticalChance;
 
     private int criticalDamage;
+
+    private Job job;
 
     private List<PlayerSkillResponse> skillList;
 }

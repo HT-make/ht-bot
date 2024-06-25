@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MonsterData {
 
-    MonsterStatus monsterStatus;
+    private MonsterStatus monsterStatus;
 
-    MonsterOriginalStatus monsterOriginalStatus;
+    private MonsterOriginalStatus monsterOriginalStatus;
 }

@@ -12,6 +12,7 @@ import com.htmake.htbot.discord.commands.dungeon.enums.DungeonType;
 import com.htmake.htbot.discord.skillAction.BasicSkill;
 import com.htmake.htbot.discord.skillAction.factory.SkillFactory;
 import com.htmake.htbot.discord.util.FormatUtil;
+import com.htmake.htbot.domain.player.enums.Job;
 import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterDataCache;
 import com.htmake.htbot.discord.commands.battle.cache.PlayerDataCache;
@@ -119,6 +120,7 @@ public class DungeonUtil {
                 dungeonPlayer.getCriticalChance(),
                 dungeonPlayer.getCriticalDamage(),
                 dungeonPlayer.getMana(),
+                dungeonPlayer.getJob(),
                 dungeonPlayer.getPlayerSkill()
         );
 
@@ -181,6 +183,7 @@ public class DungeonUtil {
                 .mana(playerObject.getInt("mana"))
                 .criticalChance(playerObject.getInt("criticalChance"))
                 .criticalDamage(playerObject.getInt("criticalDamage"))
+                .job(Job.valueOf(playerObject.getString("job")))
                 .playerSkill(playerSkillMap)
                 .build();
     }

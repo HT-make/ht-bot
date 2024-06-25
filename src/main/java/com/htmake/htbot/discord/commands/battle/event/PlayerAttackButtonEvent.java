@@ -2,10 +2,14 @@ package com.htmake.htbot.discord.commands.battle.event;
 
 import com.htmake.htbot.discord.commands.battle.action.MonsterAttackAction;
 import com.htmake.htbot.discord.commands.battle.action.MonsterKillAction;
+import com.htmake.htbot.discord.commands.battle.data.PlayerData;
+import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerOriginalStatus;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
-import com.htmake.htbot.discord.skillAction.condition.extend.Faint;
+import com.htmake.htbot.discord.skillAction.condition.extend.Light;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.discord.util.FormatUtil;
+import com.htmake.htbot.discord.util.RandomUtil;
+import com.htmake.htbot.domain.player.enums.Job;
 import com.htmake.htbot.global.cache.CacheFactory;
 import com.htmake.htbot.discord.commands.battle.cache.MonsterDataCache;
 import com.htmake.htbot.discord.commands.battle.cache.PlayerDataCache;
@@ -48,15 +52,17 @@ public class PlayerAttackButtonEvent {
             return;
         }
 
-        PlayerStatus playerStatus = playerDataCache.get(playerId).getPlayerStatus();
+        PlayerData playerData = playerDataCache.get(playerId);
+        PlayerStatus playerStatus = playerData.getPlayerStatus();
+        PlayerOriginalStatus playerOriginalStatus = playerData.getPlayerOriginalStatus();
         MonsterStatus monsterStatus = monsterDataCache.get(playerId).getMonsterStatus();
 
-        if (conditionAction(event, playerStatus, monsterStatus)) {
+        if (battleUtil.conditionCheck(event, playerStatus, monsterStatus)) {
             monsterAttackAction.execute(event, playerStatus, monsterStatus);
             return;
         }
 
-        playerTurn(event, playerStatus, monsterStatus);
+        playerTurn(event, playerStatus, playerOriginalStatus, monsterStatus);
 
         if (monsterStatus.getHealth() == 0) {
             monsterKillAction.execute(event, playerStatus, monsterStatus);
@@ -65,25 +71,7 @@ public class PlayerAttackButtonEvent {
         }
     }
 
-    private boolean conditionAction(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
-        Map<String, Condition> playerCondition = playerStatus.getConditionMap();
-
-        if (playerCondition.containsKey("faint")) {
-            Faint faint = (Faint) playerCondition.get("faint");
-
-            if (faint.applyEffect()) {
-                String message = event.getUser().getName() + "이/가 기절했다.";
-                battleUtil.updateSituation(event.getUser().getId(), message);
-                battleUtil.editEmbed(event, playerStatus, monsterStatus, "start");
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private void playerTurn(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
+    private void playerTurn(ButtonInteractionEvent event, PlayerStatus playerStatus, PlayerOriginalStatus playerOriginalStatus, MonsterStatus monsterStatus) {
         Pair<Integer, Boolean> attack = playerAttackDamage(playerStatus, monsterStatus);
 
         User user = event.getUser();
@@ -115,6 +103,42 @@ public class PlayerAttackButtonEvent {
         message = FormatUtil.decimalFormat(damage) + "의 데미지를 입혔다.";
         battleUtil.updateSituation(playerId, message);
         battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
+
+
+        applyJobSpecificEffects(event, playerStatus, playerOriginalStatus, monsterStatus, playerId);
+    }
+
+    private void applyJobSpecificEffects(ButtonInteractionEvent event, PlayerStatus playerStatus, PlayerOriginalStatus playerOriginalStatus, MonsterStatus monsterStatus, String playerId) {
+        Job job = playerStatus.getJob();
+        Map<String, Condition> playerCondition = playerStatus.getConditionMap();
+
+        if (job.equals(Job.SWORD_MASTER) && RandomUtil.randomPercentage(70)) {
+            double value = playerCondition.containsKey("sword_god") ? 3.0 : 1.4;
+            int damage = (int) (playerStatus.getDamage() * value) - monsterStatus.getDefence();
+            monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - damage));
+
+            String message = FormatUtil.decimalFormat(damage) + "의 데미지를 입혔다.";
+            battleUtil.updateSituation(playerId, message);
+            battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
+        }
+
+        if (job.equals(Job.HOLY_KNIGHT) && RandomUtil.randomPercentage(100)) {
+            Light light = playerCondition.containsKey("light") ? (Light) playerCondition.get("light") : new Light();
+
+            if (light.getTurn() < 5) {
+                playerCondition.put("light", light);
+                light.apply(playerStatus, playerOriginalStatus);
+            }
+
+            int originalHealth = playerOriginalStatus.getHealth();
+            int healing = (int) (originalHealth * 0.03);
+            playerStatus.setHealth(Math.min(originalHealth, playerStatus.getHealth() + healing));
+
+            if (playerCondition.containsKey("angels_protection")) {
+                int damage = (playerStatus.getDamage() * 3) - monsterStatus.getDefence();
+                monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - damage));
+            }
+        }
     }
 
     private Pair<Integer, Boolean> playerAttackDamage(PlayerStatus playerStatus, MonsterStatus monsterStatus) {

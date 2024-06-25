@@ -2,6 +2,7 @@ package com.htmake.htbot.discord.commands.battle.util;
 
 import com.htmake.htbot.discord.skillAction.condition.Condition;
 import com.htmake.htbot.discord.commands.dungeon.data.GetItem;
+import com.htmake.htbot.discord.skillAction.condition.extend.Faint;
 import com.htmake.htbot.discord.util.FormatUtil;
 import com.htmake.htbot.discord.util.MessageUtil;
 import com.htmake.htbot.discord.util.ObjectMapperUtil;
@@ -138,7 +139,7 @@ public class BattleUtil {
             case 7 -> "⁷";
             case 8 -> "⁸";
             case 9 -> "⁹";
-            default -> null;
+            default -> "";
         };
     }
 
@@ -188,5 +189,23 @@ public class BattleUtil {
         String requestBody = objectMapperUtil.mapper(requestData);
 
         return httpClient.sendPostRequest(endPoint, routeParam, requestBody);
+    }
+
+    public boolean conditionCheck(ButtonInteractionEvent event, PlayerStatus playerStatus, MonsterStatus monsterStatus) {
+        Map<String, Condition> playerCondition = playerStatus.getConditionMap();
+
+        if (playerCondition.containsKey("faint")) {
+            Faint faint = (Faint) playerCondition.get("faint");
+
+            if (faint.applyEffect()) {
+                String message = event.getUser().getName() + "이/가 기절했다.";
+                updateSituation(event.getUser().getId(), message);
+                editEmbed(event, playerStatus, monsterStatus, "start");
+
+                return true;
+            }
+        }
+
+        return false;
     }
 }

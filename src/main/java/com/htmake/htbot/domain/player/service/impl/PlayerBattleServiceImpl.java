@@ -54,6 +54,7 @@ public class PlayerBattleServiceImpl implements PlayerBattleService {
                 .mana(status.getMana())
                 .criticalChance(status.getCriticalChance())
                 .criticalDamage(status.getCriticalDamage())
+                .job(player.getJob())
                 .skillList(responseList)
                 .build();
     }

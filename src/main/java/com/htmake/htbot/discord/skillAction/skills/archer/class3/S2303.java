@@ -22,7 +22,7 @@ public class S2303 extends AbstractSkillStrategy {
         PlayerStatus playerStatus = playerData.getPlayerStatus();
         MonsterStatus monsterStatus = monsterData.getMonsterStatus();
 
-        int damage = critical((int) (playerStatus.getDamage() * 6.0), playerStatus.getCriticalDamage(), playerStatus.getCriticalChance());
+        int damage = critical((int) (playerStatus.getDamage() * 6.0), playerStatus.getCriticalDamage(), playerStatus.getCriticalChance(), playerStatus.getJob());
         int damageReceived = Math.max(0, damage - (int) (monsterStatus.getDefence() * 0.7));
         monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - damageReceived));
 

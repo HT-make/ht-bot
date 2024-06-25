@@ -3,12 +3,9 @@ package com.htmake.htbot.discord.skillAction.skill;
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
-import com.htmake.htbot.discord.skillAction.condition.extend.buff.Buff;
 import com.htmake.htbot.discord.commands.battle.data.status.BasicStatus;
 import com.htmake.htbot.discord.skillAction.type.SkillType;
 import kotlin.Pair;
-import org.apache.commons.math3.random.MersenneTwister;
-import org.apache.commons.math3.random.RandomGenerator;
 
 import java.util.List;
 import java.util.Map;
@@ -19,22 +16,7 @@ public interface SkillStrategy {
 
     boolean manaCheck(PlayerData playerData);
 
-    default int critical(int damage, int criticalDamage, int criticalChance) {
-        RandomGenerator random = new MersenneTwister();
-        int chance = random.nextInt(100);
+    int critical(int damage, int criticalDamage, int criticalChance);
 
-        if (chance < criticalChance) {
-            double criticalDamageMultiple = (double) criticalDamage / 100;
-            damage = (int) (damage * criticalDamageMultiple);
-        }
-
-        return damage;
-    }
-
-    default void buffCheck(String id, BasicStatus status, BasicStatus originalStatus, Map<String, Condition> conditionMap) {
-        if (conditionMap.containsKey(id)) {
-            Buff existsBuff = (Buff) conditionMap.get(id);
-            existsBuff.unapply(status, originalStatus);
-        }
-    }
+    void buffCheck(String id, BasicStatus status, BasicStatus originalStatus, Map<String, Condition> conditionMap);
 }
