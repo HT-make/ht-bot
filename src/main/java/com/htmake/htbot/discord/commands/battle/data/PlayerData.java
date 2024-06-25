@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PlayerData {
 
-    PlayerStatus playerStatus;
+    private PlayerStatus playerStatus;
 
-    PlayerOriginalStatus playerOriginalStatus;
+    private PlayerOriginalStatus playerOriginalStatus;
 }
