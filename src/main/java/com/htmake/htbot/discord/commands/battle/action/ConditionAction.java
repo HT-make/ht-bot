@@ -5,9 +5,7 @@ import com.htmake.htbot.discord.commands.battle.cache.PlayerDataCache;
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
-import com.htmake.htbot.discord.skillAction.condition.extend.AngelsProtection;
-import com.htmake.htbot.discord.skillAction.condition.extend.Light;
-import com.htmake.htbot.discord.skillAction.condition.extend.SwordGod;
+import com.htmake.htbot.discord.skillAction.condition.extend.*;
 import com.htmake.htbot.discord.skillAction.condition.extend.buff.Buff;
 import com.htmake.htbot.discord.skillAction.condition.extend.damageOverTime.DamageOverTime;
 import com.htmake.htbot.discord.commands.battle.data.status.BasicStatus;
@@ -16,7 +14,6 @@ import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerOriginalStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.util.BattleUtil;
-import com.htmake.htbot.discord.skillAction.condition.extend.DivineBeast;
 import com.htmake.htbot.global.cache.CacheFactory;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -118,6 +115,10 @@ public class ConditionAction {
 
                 if (condition instanceof SwordGod swordGod) {
                     swordGod.unapply(status, originalStatus);
+                }
+
+                if (condition instanceof Dark dark) {
+                    dark.unapply(status, originalStatus);
                 }
 
                 iterator.remove();
