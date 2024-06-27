@@ -18,12 +18,21 @@ import java.util.Map;
 
 public abstract class AbstractSkillStrategy implements SkillStrategy {
 
+    protected boolean passiveOn;
+
     protected abstract int getManaCost();
 
     protected abstract void applySkill(PlayerData playerData, MonsterData monsterData, List<Pair<String, SkillType>> resultList);
 
     @Override
+    public void setPassiveOn(Job job) {
+        passiveOn = false;
+    }
+
+    @Override
     public List<Pair<String, SkillType>> execute(PlayerData playerData, MonsterData monsterData) {
+        setPassiveOn(playerData.getPlayerStatus().getJob());
+
         List<Pair<String, SkillType>> resultList = new ArrayList<>();
         applySkill(playerData, monsterData, resultList);
         return resultList;
@@ -31,6 +40,8 @@ public abstract class AbstractSkillStrategy implements SkillStrategy {
 
     @Override
     public boolean manaCheck(PlayerData playerData) {
+        setPassiveOn(playerData.getPlayerStatus().getJob());
+
         PlayerStatus playerStatus = playerData.getPlayerStatus();
         int mana = playerStatus.getMana();
 

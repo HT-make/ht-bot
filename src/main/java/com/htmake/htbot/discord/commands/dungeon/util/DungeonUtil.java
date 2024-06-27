@@ -155,9 +155,7 @@ public class DungeonUtil {
 
     public DungeonPlayer toDungeonPlayer(String playerName, JSONObject playerObject) {
         JSONArray playerSkillArray = playerObject.getJSONArray("skillList");
-
         Map<Integer, PlayerSkillStatus> playerSkillMap = new HashMap<>();
-
         Map<String, BasicSkill> basicSkillMap = SkillFactory.skillMap;
 
         for (int i = 0;i < playerSkillArray.length(); i++) {
@@ -174,16 +172,20 @@ public class DungeonUtil {
             playerSkillMap.put(number, playerSkillStatus);
         }
 
+        Job job = Job.valueOf(playerObject.getString("job"));
+        int mana = playerObject.getInt("mana");
+        int passiveHealth = (job.equals(Job.BLACK_WIZARD) ? mana * 10 : 0);
+
         return DungeonPlayer.builder()
                 .level(playerObject.getInt("level"))
                 .name(playerName)
                 .damage(playerObject.getInt("damage"))
-                .health(playerObject.getInt("health"))
+                .health(playerObject.getInt("health") + passiveHealth)
                 .defence(playerObject.getInt("defence"))
-                .mana(playerObject.getInt("mana"))
+                .mana(mana)
                 .criticalChance(playerObject.getInt("criticalChance"))
                 .criticalDamage(playerObject.getInt("criticalDamage"))
-                .job(Job.valueOf(playerObject.getString("job")))
+                .job(job)
                 .playerSkill(playerSkillMap)
                 .build();
     }
