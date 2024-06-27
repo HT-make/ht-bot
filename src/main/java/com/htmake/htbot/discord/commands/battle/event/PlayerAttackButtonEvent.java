@@ -2,9 +2,12 @@ package com.htmake.htbot.discord.commands.battle.event;
 
 import com.htmake.htbot.discord.commands.battle.action.MonsterAttackAction;
 import com.htmake.htbot.discord.commands.battle.action.MonsterKillAction;
+import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
+import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterOriginalStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerOriginalStatus;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
+import com.htmake.htbot.discord.skillAction.condition.extend.Dark;
 import com.htmake.htbot.discord.skillAction.condition.extend.Light;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.discord.util.FormatUtil;
@@ -55,14 +58,16 @@ public class PlayerAttackButtonEvent {
         PlayerData playerData = playerDataCache.get(playerId);
         PlayerStatus playerStatus = playerData.getPlayerStatus();
         PlayerOriginalStatus playerOriginalStatus = playerData.getPlayerOriginalStatus();
-        MonsterStatus monsterStatus = monsterDataCache.get(playerId).getMonsterStatus();
+        MonsterData monsterData = monsterDataCache.get(playerId);
+        MonsterStatus monsterStatus = monsterData.getMonsterStatus();
+        MonsterOriginalStatus monsterOriginalStatus = monsterData.getMonsterOriginalStatus();
 
         if (battleUtil.conditionCheck(event, playerStatus, monsterStatus)) {
             monsterAttackAction.execute(event, playerStatus, monsterStatus);
             return;
         }
 
-        playerTurn(event, playerStatus, playerOriginalStatus, monsterStatus);
+        playerTurn(event, playerStatus, playerOriginalStatus, monsterStatus, monsterOriginalStatus);
 
         if (monsterStatus.getHealth() == 0) {
             monsterKillAction.execute(event, playerStatus, monsterStatus);
@@ -71,7 +76,13 @@ public class PlayerAttackButtonEvent {
         }
     }
 
-    private void playerTurn(ButtonInteractionEvent event, PlayerStatus playerStatus, PlayerOriginalStatus playerOriginalStatus, MonsterStatus monsterStatus) {
+    private void playerTurn(
+            ButtonInteractionEvent event,
+            PlayerStatus playerStatus,
+            PlayerOriginalStatus playerOriginalStatus,
+            MonsterStatus monsterStatus,
+            MonsterOriginalStatus monsterOriginalStatus
+    ) {
         Pair<Integer, Boolean> attack = playerAttackDamage(playerStatus, monsterStatus);
 
         User user = event.getUser();
@@ -93,6 +104,10 @@ public class PlayerAttackButtonEvent {
 
         Map<String, Condition> monsterCondition = monsterStatus.getConditionMap();
 
+        if (playerStatus.getJob().equals(Job.GREAT_WIZARD)) {
+            damage += playerStatus.getMana();
+        }
+
         if (monsterCondition.containsKey("invincible")) {
             damage = 0;
             monsterCondition.remove("invincible");
@@ -105,12 +120,20 @@ public class PlayerAttackButtonEvent {
         battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
 
 
-        applyJobSpecificEffects(event, playerStatus, playerOriginalStatus, monsterStatus, playerId);
+        applyJobSpecificEffects(event, playerStatus, playerOriginalStatus, monsterStatus, monsterOriginalStatus, playerId);
     }
 
-    private void applyJobSpecificEffects(ButtonInteractionEvent event, PlayerStatus playerStatus, PlayerOriginalStatus playerOriginalStatus, MonsterStatus monsterStatus, String playerId) {
+    private void applyJobSpecificEffects(
+            ButtonInteractionEvent event,
+            PlayerStatus playerStatus,
+            PlayerOriginalStatus playerOriginalStatus,
+            MonsterStatus monsterStatus,
+            MonsterOriginalStatus monsterOriginalStatus,
+            String playerId
+    ) {
         Job job = playerStatus.getJob();
         Map<String, Condition> playerCondition = playerStatus.getConditionMap();
+        Map<String, Condition> monsterCondition = monsterStatus.getConditionMap();
 
         if (job.equals(Job.SWORD_MASTER) && RandomUtil.randomPercentage(70)) {
             double value = playerCondition.containsKey("sword_god") ? 3.0 : 1.4;
@@ -122,7 +145,7 @@ public class PlayerAttackButtonEvent {
             battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
         }
 
-        if (job.equals(Job.HOLY_KNIGHT) && RandomUtil.randomPercentage(100)) {
+        if (job.equals(Job.HOLY_KNIGHT) && RandomUtil.randomPercentage(60)) {
             Light light = playerCondition.containsKey("light") ? (Light) playerCondition.get("light") : new Light();
 
             if (light.getTurn() < 5) {
@@ -137,6 +160,35 @@ public class PlayerAttackButtonEvent {
             if (playerCondition.containsKey("angels_protection")) {
                 int damage = (playerStatus.getDamage() * 3) - monsterStatus.getDefence();
                 monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - damage));
+            }
+        }
+
+        if (job.equals(Job.WIZARD) || job.getLowerJob().contains(Job.WIZARD)) {
+            int manaRecovery = (playerCondition.containsKey("realize") ? 50 : 10);
+            playerStatus.setMana(playerStatus.getMana() + manaRecovery);
+        }
+
+        if (job.equals(Job.BLACK_WIZARD) && RandomUtil.randomPercentage(20)) {
+            String message = "어둠 효과를 입혔다.";
+            battleUtil.updateSituation(playerId, message);
+            battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
+
+            if (monsterCondition.containsKey("dark")) {
+                Dark dark = (Dark) monsterCondition.get("dark");
+
+                int damage = (playerStatus.getDamage() * 5) - monsterStatus.getDefence();
+                monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - damage));
+
+                dark.unapply(monsterStatus, monsterOriginalStatus);
+                monsterCondition.remove(dark.getId());
+
+                message = FormatUtil.decimalFormat(damage) + "의 데미지를 입혔다.";
+                battleUtil.updateSituation(playerId, message);
+                battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
+            } else {
+                Dark dark = new Dark();
+                dark.apply(monsterStatus, monsterOriginalStatus);
+                monsterCondition.put(dark.getId(), dark);
             }
         }
     }
