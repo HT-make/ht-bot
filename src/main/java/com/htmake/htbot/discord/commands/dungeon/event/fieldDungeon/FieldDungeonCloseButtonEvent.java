@@ -36,15 +36,19 @@ public class FieldDungeonCloseButtonEvent {
         FieldDungeonStatus fieldDungeonStatus = fieldDungeonStatusCache.get(playerId);
         List<GetItem> getItemList = fieldDungeonStatus.getGetItemList();
 
-        if (!getItemList.isEmpty())  {
-            HttpResponse<JsonNode> response = battleUtil.insertGetItemList(getItemList, playerId);
+        if (getItemList == null) {
+            requestSuccess(event);
+            fieldDungeonStatusCache.remove(playerId);
+            return;
+        }
 
-            if (response.getStatus() == 200) {
-                requestSuccess(event);
-                fieldDungeonStatusCache.remove(playerId);
-            } else {
-                errorUtil.sendError(event.getHook(), "던전 퇴장", "던전 퇴장에 실패하였습니다.");
-            }
+        HttpResponse<JsonNode> response = battleUtil.insertGetItemList(getItemList, playerId);
+
+        if (response.getStatus() == 200) {
+            requestSuccess(event);
+            fieldDungeonStatusCache.remove(playerId);
+        } else {
+            errorUtil.sendError(event.getHook(), "던전 퇴장", "던전 퇴장에 실패하였습니다.");
         }
     }
 
