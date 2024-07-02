@@ -1,6 +1,7 @@
 package com.htmake.htbot.domain.player.presentation;
 
 import com.htmake.htbot.domain.player.presentation.data.request.EquipmentEquipRequest;
+import com.htmake.htbot.domain.player.presentation.data.request.KillBossMonsterRequest;
 import com.htmake.htbot.domain.player.presentation.data.request.KillMonsterRequest;
 import com.htmake.htbot.domain.player.presentation.data.request.PlayerJoinRequest;
 import com.htmake.htbot.domain.player.presentation.data.response.*;
@@ -21,6 +22,7 @@ public class PlayerController {
     private final PlayerInfoService playerInfoService;
     private final PlayerBattleService playerBattleService;
     private final KillMonsterService killMonsterService;
+    private final KillBossMonsterService killBossMonsterService;
     private final EquipmentEquipService equipmentEquipService;
 
     @PostMapping("/join")
@@ -53,6 +55,15 @@ public class PlayerController {
             @RequestBody KillMonsterRequest request
     ) {
         LevelUpResponse response = killMonsterService.execute(playerId, request);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping("/battle/boss/win/{player_id}")
+    public ResponseEntity<LevelUpResponse> battleWithBossWin(
+            @PathVariable("player_id") String playerId,
+            @RequestBody KillBossMonsterRequest request
+    ) {
+        LevelUpResponse response = killBossMonsterService.execute(playerId, request);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

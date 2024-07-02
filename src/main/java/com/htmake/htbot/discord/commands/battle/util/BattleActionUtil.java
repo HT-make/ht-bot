@@ -28,8 +28,8 @@ public class BattleActionUtil {
         this.objectMapperUtil = new ObjectMapperUtil();
     }
 
-    public JSONObject getMonsterLoot(String monsterId) {
-        String endPoint = "/monster/loot/{monster_id}";
+    public JSONObject getMonsterLoot(String monsterId, boolean isBoss) {
+        String endPoint = isBoss ? "/monster/boss/loot/{monster_id}" : "/monster/loot/{monster_id}";
         Pair<String, String> routeParam = new Pair<>("monster_id", monsterId);
 
         HttpResponse<JsonNode> response = httpClient.sendGetRequest(endPoint, routeParam);
@@ -41,12 +41,16 @@ public class BattleActionUtil {
         return null;
     }
 
-    public HttpResponse<JsonNode> request(String playerId, JSONObject monsterLoot) {
+    public HttpResponse<JsonNode> request(String playerId, JSONObject monsterLoot, boolean isBoss) {
         Map<String, Object> requestData = new HashMap<>();
         requestData.put("exp", monsterLoot.getInt("exp"));
         requestData.put("gold", monsterLoot.getInt("gold"));
+        if (isBoss) {
+            requestData.put("gem", monsterLoot.getInt("gem"));
+            requestData.put("bossCoin", monsterLoot.getInt("bossCoin"));
+        }
 
-        String endPoint = "/player/battle/win/{player_id}";
+        String endPoint = isBoss ? "/player/battle/boss/win/{player_id}" : "/player/battle/win/{player_id}";
         Pair<String, String> routeParam = new Pair<>("player_id", playerId);
         String jsonBody = objectMapperUtil.mapper(requestData);
 
@@ -77,29 +81,39 @@ public class BattleActionUtil {
         return getItemList;
     }
 
-    public MessageEmbed buildEmbed(JSONObject monsterLoot, List<GetItem> getItemList, boolean levelUp, User user) {
+    public MessageEmbed buildEmbed(JSONObject monsterLoot, List<GetItem> getItemList, boolean levelUp, User user, boolean isBoss) {
         String levelUpMessage = (levelUp ? ":up: 레벨업!!" : "");
 
         StringBuilder getItemMessage = new StringBuilder();
+
+        if (isBoss) {
+            getItemMessage.append("보스코인 (").append(FormatUtil.decimalFormat(monsterLoot.getInt("bossCoin"))).append(")\n");
+        }
 
         if (getItemList.size() > 0) {
             for (GetItem getItem : getItemList) {
                 getItemMessage.append(getItem.getName()).append("\n");
             }
-        } else {
+        } else if (!isBoss) {
             getItemMessage.append("획득한 아이템이 없습니다.");
         }
 
         String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
 
-        return new EmbedBuilder()
+        EmbedBuilder embedBuilder = new EmbedBuilder()
                 .setColor(Color.GREEN)
                 .setAuthor(user.getName(), null, profileUrl)
                 .setTitle(":crossed_swords: 전투 승리!")
                 .setDescription(levelUpMessage)
                 .addField(":sparkles: 획득 경험치", "" + FormatUtil.decimalFormat(monsterLoot.getInt("exp")), true)
-                .addField(":coin: 획득 골드", "" + FormatUtil.decimalFormat(monsterLoot.getInt("gold")), true)
-                .addField(":purse: 획득 아이템", getItemMessage.toString(), false)
-                .build();
+                .addField(":coin: 획득 골드", "" + FormatUtil.decimalFormat(monsterLoot.getInt("gold")), true);
+
+        if (isBoss) {
+            embedBuilder.addField(":gem: 획득 젬", "" + FormatUtil.decimalFormat(monsterLoot.getInt("gem")), true);
+        }
+
+        embedBuilder.addField(":purse: 획득 아이템", getItemMessage.toString(), false);
+
+        return embedBuilder.build();
     }
 }

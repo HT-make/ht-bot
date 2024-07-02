@@ -33,14 +33,14 @@ public class FieldBattleResultAction {
     }
 
     public void execute(ButtonInteractionEvent event, String monsterId) {
-        JSONObject monsterLoot = battleActionUtil.getMonsterLoot(monsterId);
+        JSONObject monsterLoot = battleActionUtil.getMonsterLoot(monsterId, false);
 
         if (monsterLoot == null) {
             errorUtil.sendError(event.getHook(), "전투", "보상을 획득하지 못했습니다.");
             return;
         }
 
-        HttpResponse<JsonNode> response = battleActionUtil.request(event.getUser().getId(), monsterLoot);
+        HttpResponse<JsonNode> response = battleActionUtil.request(event.getUser().getId(), monsterLoot, false);
 
         if (response.getStatus() == 200) {
             boolean levelUp = response.getBody().getObject().getBoolean("levelUp");
@@ -55,7 +55,7 @@ public class FieldBattleResultAction {
         FieldDungeonStatus fieldDungeonStatus = fieldDungeonStatusCache.get(playerId);
 
         List<GetItem> getItemList = getNewGetItemList(playerId, monsterLoot, fieldDungeonStatus);
-        MessageEmbed embed = battleActionUtil.buildEmbed(monsterLoot, getItemList, levelUp, event.getUser());
+        MessageEmbed embed = battleActionUtil.buildEmbed(monsterLoot, getItemList, levelUp, event.getUser(), false);
 
         List<Button> buttonList = new ArrayList<>();
         int stage = fieldDungeonStatus.getStage();

@@ -39,6 +39,12 @@ public class Monster {
     @Column(name = "monster_gold", nullable = false)
     private int gold;
 
+    @Column(name = "boss_gem", nullable = false)
+    private int gem;
+
+    @Column(name = "boss_coin", nullable = false)
+    private int bossCoin;
+
     @OneToMany(mappedBy = "monster", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DropItem> dropItems;
 
