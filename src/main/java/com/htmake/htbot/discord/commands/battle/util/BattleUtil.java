@@ -150,12 +150,10 @@ public class BattleUtil {
             case "start" -> {
                 buttonList.add(Button.success("battle-attack", "공격").asDisabled());
                 buttonList.add(Button.primary("battle-skill-open", "스킬").asDisabled());
-                buttonList.add(Button.primary("battle-potion-open", "포션").asDisabled());
             }
             case "end" -> {
                 buttonList.add(Button.success("battle-attack", "공격"));
                 buttonList.add(Button.primary("battle-skill-open", "스킬"));
-                buttonList.add(Button.primary("battle-potion-open", "포션"));
             }
         }
 

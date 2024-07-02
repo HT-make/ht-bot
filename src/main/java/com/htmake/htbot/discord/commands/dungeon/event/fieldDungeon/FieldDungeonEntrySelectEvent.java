@@ -94,7 +94,6 @@ public class FieldDungeonEntrySelectEvent {
                 .setActionRow(
                         Button.success("battle-attack", "공격"),
                         Button.primary("battle-skill-open", "스킬"),
-                        Button.primary("battle-potion-open", "포션"),
                         Button.danger("battle-retreat", "후퇴")
                 )
                 .queue();
