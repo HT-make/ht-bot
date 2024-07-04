@@ -18,9 +18,12 @@ import org.springframework.web.bind.annotation.*;
 public class PlayerController {
 
     private final PlayerJoinService playerJoinService;
+    private final PlayerInitialService playerInitialService;
+
     private final PlayerJoinCheckService playerJoinCheckService;
     private final PlayerInfoService playerInfoService;
     private final PlayerBattleService playerBattleService;
+
     private final KillMonsterService killMonsterService;
     private final KillBossMonsterService killBossMonsterService;
     private final EquipmentEquipService equipmentEquipService;
@@ -28,6 +31,12 @@ public class PlayerController {
     @PostMapping("/join")
     public ResponseEntity<Void> join(@RequestBody @Valid PlayerJoinRequest request) {
         playerJoinService.execute(request);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/initial/{player_id}")
+    public ResponseEntity<Void> initial(@PathVariable("player_id") String playerId) {
+        playerInitialService.execute(playerId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 

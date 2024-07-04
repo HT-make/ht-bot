@@ -12,7 +12,9 @@ import com.htmake.htbot.domain.profession.repository.ProfessionRepository;
 import com.htmake.htbot.domain.profession.service.JobPromotionCompleteService;
 import com.htmake.htbot.domain.shop.exception.NotEnoughQuantityException;
 import com.htmake.htbot.domain.shop.exception.NotFoundItemException;
+import com.htmake.htbot.domain.skill.repository.PlayerSkillRepository;
 import com.htmake.htbot.global.annotation.TransactionalService;
+import com.htmake.htbot.global.util.SkillUtil;
 import lombok.RequiredArgsConstructor;
 
 import java.net.URLDecoder;
@@ -26,9 +28,13 @@ public class JobPromotionCompleteServiceImpl implements JobPromotionCompleteServ
     private final PlayerRepository playerRepository;
     private final InventoryRepository inventoryRepository;
 
+    private final PlayerSkillRepository playerSkillRepository;
+    private final SkillUtil skillUtil;
+
     @Override
     public void execute(String playerId, String jobName) {
         String decodedJob = URLDecoder.decode(jobName, StandardCharsets.UTF_8);
+        Job job = Job.valueOf(decodedJob);
 
         Player player = playerRepository.findById(playerId)
                 .orElseThrow(NotFoundPlayerException::new);
@@ -60,8 +66,9 @@ public class JobPromotionCompleteServiceImpl implements JobPromotionCompleteServ
 
         player.setGold(player.getGold() - profession.getGold());
         player.setGem(player.getGem() - profession.getGem());
-        player.setJob(Job.valueOf(decodedJob));
+        player.setJob(job);
 
         playerRepository.save(player);
+        playerSkillRepository.saveAll(skillUtil.buildPlayerSkillList(player, job));
     }
 }
