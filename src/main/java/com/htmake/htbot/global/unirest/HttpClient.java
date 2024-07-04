@@ -12,6 +12,8 @@ public interface HttpClient {
 
     HttpResponse<JsonNode> sendPostRequest(String endPoint, String requestBody);
 
+    HttpResponse<JsonNode> sendPostRequest(String endPoint, Pair<String, String> routeParam);
+
     HttpResponse<JsonNode> sendPostRequest(String endPoint, Pair<String, String> routeParam, String requestBody);
 
     HttpResponse<JsonNode> sendPostRequest(String endPoint, Pair<String, String> firstRouteParam, Pair<String, String> secondRouteParam);
