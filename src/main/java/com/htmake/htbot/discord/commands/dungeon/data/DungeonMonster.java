@@ -1,6 +1,9 @@
 package com.htmake.htbot.discord.commands.dungeon.data;
 
+import com.htmake.htbot.discord.commands.battle.data.MonsterSkillData;
 import lombok.*;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -20,7 +23,7 @@ public class DungeonMonster {
 
     private int defence;
 
-    private String skillName;
+    private int skillChance;
 
-    private int skillDamage;
+    private List<MonsterSkillData> skillList;
 }

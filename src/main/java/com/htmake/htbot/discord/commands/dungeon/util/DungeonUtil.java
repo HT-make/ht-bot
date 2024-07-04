@@ -1,8 +1,6 @@
 package com.htmake.htbot.discord.commands.dungeon.util;
 
-import com.htmake.htbot.discord.commands.battle.data.MonsterData;
-import com.htmake.htbot.discord.commands.battle.data.PlayerData;
-import com.htmake.htbot.discord.commands.battle.data.PlayerSkillStatus;
+import com.htmake.htbot.discord.commands.battle.data.*;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterOriginalStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerOriginalStatus;
 import com.htmake.htbot.discord.commands.dungeon.cache.DungeonTypeCache;
@@ -11,6 +9,7 @@ import com.htmake.htbot.discord.commands.dungeon.data.DungeonPlayer;
 import com.htmake.htbot.discord.commands.dungeon.enums.DungeonType;
 import com.htmake.htbot.discord.skillAction.BasicSkill;
 import com.htmake.htbot.discord.skillAction.factory.SkillFactory;
+import com.htmake.htbot.discord.skillAction.type.SkillType;
 import com.htmake.htbot.discord.util.FormatUtil;
 import com.htmake.htbot.domain.player.enums.Job;
 import com.htmake.htbot.global.cache.CacheFactory;
@@ -19,7 +18,6 @@ import com.htmake.htbot.discord.commands.battle.cache.PlayerDataCache;
 import com.htmake.htbot.discord.commands.battle.cache.SituationCache;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
-import com.htmake.htbot.discord.commands.battle.data.Situation;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
@@ -88,8 +86,8 @@ public class DungeonUtil {
                 0,
                 0,
                 dungeonMonster.getId(),
-                dungeonMonster.getSkillName(),
-                dungeonMonster.getSkillDamage()
+                dungeonMonster.getSkillChance(),
+                dungeonMonster.getSkillList()
         );
 
         MonsterOriginalStatus monsterOriginalStatus = new MonsterOriginalStatus(
@@ -192,5 +190,21 @@ public class DungeonUtil {
 
     public void saveDungeonType(String playerId, DungeonType dungeonType) {
         dungeonTypeCache.put(playerId, dungeonType);
+    }
+
+    public void setMonsterSkillList(List<MonsterSkillData> monsterSkillDataList, JSONArray monsterSkillArray) {
+        for (int i = 0; i < monsterSkillArray.length(); i++) {
+            JSONObject monsterSkillObject = monsterSkillArray.getJSONObject(i);
+
+            MonsterSkillData monsterSkillData = MonsterSkillData.builder()
+                    .name(monsterSkillObject.getString("name"))
+                    .damage(monsterSkillObject.getInt("damage"))
+                    .effect(monsterSkillObject.getString("effect"))
+                    .chance(monsterSkillObject.getInt("chance"))
+                    .skillType(SkillType.valueOf(monsterSkillObject.getString("skillType")))
+                    .build();
+
+            monsterSkillDataList.add(monsterSkillData);
+        }
     }
 }

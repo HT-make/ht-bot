@@ -63,7 +63,7 @@ public class PlayerAttackButtonEvent {
         MonsterOriginalStatus monsterOriginalStatus = monsterData.getMonsterOriginalStatus();
 
         if (battleUtil.conditionCheck(event, playerStatus, monsterStatus)) {
-            monsterAttackAction.execute(event, playerStatus, monsterStatus);
+            monsterAttackAction.execute(event, playerData, monsterData);
             return;
         }
 
@@ -72,7 +72,7 @@ public class PlayerAttackButtonEvent {
         if (monsterStatus.getHealth() == 0) {
             monsterKillAction.execute(event, playerStatus, monsterStatus);
         } else {
-            monsterAttackAction.execute(event, playerStatus, monsterStatus);
+            monsterAttackAction.execute(event, playerData, monsterData);
         }
     }
 

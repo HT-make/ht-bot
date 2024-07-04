@@ -1,5 +1,6 @@
 package com.htmake.htbot.discord.commands.dungeon.event.fieldDungeon;
 
+import com.htmake.htbot.discord.commands.battle.data.MonsterSkillData;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonMonster;
 import com.htmake.htbot.discord.commands.dungeon.data.DungeonPlayer;
 import com.htmake.htbot.discord.commands.dungeon.enums.DungeonType;
@@ -104,13 +105,11 @@ public class FieldDungeonEntrySelectEvent {
 
         for (int i = 0; i < dungeonMonsterArray.length(); i++) {
             JSONObject dungeonMonsterObject = dungeonMonsterArray.getJSONObject(i);
+            JSONArray monsterSkillArray = dungeonMonsterObject.getJSONArray("skillList");
+            List<MonsterSkillData> monsterSkillDataList = new ArrayList<>();
 
-            String skillName = null;
-            int skillDamage = 0;
-
-            if (dungeonMonsterObject.getString("skillName") != null) {
-                skillName = dungeonMonsterObject.getString("skillName");
-                skillDamage = dungeonMonsterObject.getInt("skillDamage");
+            if (monsterSkillArray != null) {
+                dungeonUtil.setMonsterSkillList(monsterSkillDataList, monsterSkillArray);
             }
 
             DungeonMonster dungeonMonster = DungeonMonster.builder()
@@ -120,8 +119,8 @@ public class FieldDungeonEntrySelectEvent {
                     .damage(dungeonMonsterObject.getInt("damage"))
                     .health(dungeonMonsterObject.getInt("health"))
                     .defence(dungeonMonsterObject.getInt("defence"))
-                    .skillName(skillName)
-                    .skillDamage(skillDamage)
+                    .skillChance(dungeonMonsterObject.getInt("skillChance"))
+                    .skillList(monsterSkillDataList)
                     .build();
 
             int level = dungeonMonster.getLevel() % 10;
