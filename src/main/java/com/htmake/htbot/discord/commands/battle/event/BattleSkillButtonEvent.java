@@ -13,6 +13,7 @@ import com.htmake.htbot.discord.commands.battle.util.BattleUtil;
 import com.htmake.htbot.discord.skillAction.BasicSkill;
 import com.htmake.htbot.discord.skillAction.type.SkillType;
 import com.htmake.htbot.discord.util.ErrorUtil;
+import com.htmake.htbot.discord.util.FormatUtil;
 import com.htmake.htbot.global.cache.CacheFactory;
 import kotlin.Pair;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -137,7 +138,7 @@ public class BattleSkillButtonEvent {
         }
 
         if (battleUtil.conditionCheck(event, playerStatus, monsterStatus)) {
-            monsterAttackAction.execute(event, playerStatus, monsterStatus);
+            monsterAttackAction.execute(event, playerData, monsterData);
             return;
         }
 
@@ -149,8 +150,8 @@ public class BattleSkillButtonEvent {
 
         for (Pair<String, SkillType> result : resultList) {
             switch (result.getSecond()) {
-                case ATTACK -> message = result.getFirst() + "의 데미지를 입혔다.";
-                case HEAL -> message = result.getFirst() + "의 체력을 회복했다.";
+                case ATTACK -> message = FormatUtil.decimalFormat(result.getFirst()) + "의 데미지를 입혔다.";
+                case HEAL -> message = FormatUtil.decimalFormat(result.getFirst()) + "의 체력을 회복했다.";
                 case BUFF -> message = result.getFirst() + " 효과를 얻었다.";
                 case DEBUFF -> message = result.getFirst() + " 효과를 입혔다.";
             }
@@ -162,7 +163,7 @@ public class BattleSkillButtonEvent {
         if (monsterStatus.getHealth() == 0) {
             monsterKillAction.execute(event, playerStatus, monsterStatus);
         } else {
-            monsterAttackAction.execute(event, playerStatus, monsterStatus);
+            monsterAttackAction.execute(event, playerData, monsterData);
         }
     }
 }

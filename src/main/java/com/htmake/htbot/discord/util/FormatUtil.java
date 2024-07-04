@@ -9,4 +9,8 @@ public class FormatUtil {
     public static String decimalFormat(int value){
         return formatter.format(value);
     }
+
+    public static String decimalFormat(String value) {
+        return formatter.format(Integer.parseInt(value));
+    }
 }
