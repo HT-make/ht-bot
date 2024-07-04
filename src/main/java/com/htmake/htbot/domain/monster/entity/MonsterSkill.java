@@ -1,5 +1,6 @@
 package com.htmake.htbot.domain.monster.entity;
 
+import com.htmake.htbot.discord.skillAction.type.SkillType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,10 +19,20 @@ public class MonsterSkill {
     @Column(name = "monster_skill_name", nullable = false)
     private String name;
 
-    @Column(name = "monster_skill_damage", nullable = false)
+    @Column(name = "monster_skill_damage")
     private int damage;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @Column(name = "monster_skill_effect")
+    private String effect;
+
+    @Column(name = "monster_skill_chance", nullable = false)
+    private int chance;
+
+    @Column(name = "monster_skill_type")
+    @Enumerated(EnumType.STRING)
+    private SkillType skillType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "monster_id")
     private Monster monster;
 }

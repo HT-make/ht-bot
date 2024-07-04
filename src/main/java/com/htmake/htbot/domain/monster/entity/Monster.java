@@ -39,6 +39,9 @@ public class Monster {
     @Column(name = "monster_gold", nullable = false)
     private int gold;
 
+    @Column(name = "monster_skill_chance", nullable = false)
+    private int skillChance;
+
     @Column(name = "boss_gem", nullable = false)
     private int gem;
 
@@ -48,8 +51,8 @@ public class Monster {
     @OneToMany(mappedBy = "monster", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<DropItem> dropItems;
 
-    @OneToOne(mappedBy = "monster", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private MonsterSkill monsterSkill;
+    @OneToMany(mappedBy = "monster", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MonsterSkill> monsterSkillList;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dungeon_id")
