@@ -3,7 +3,7 @@ package com.htmake.htbot.discord.skillAction.condition;
 import lombok.Getter;
 
 @Getter
-public abstract class Condition {
+public abstract class Condition implements Cloneable {
 
     protected String id;
 
@@ -29,5 +29,10 @@ public abstract class Condition {
 
     public void setCheck(boolean check) {
         this.check = check;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }
