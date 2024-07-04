@@ -6,6 +6,7 @@ import com.htmake.htbot.global.unirest.HttpClient;
 import com.htmake.htbot.global.unirest.impl.HttpClientImpl;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
+import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
@@ -28,16 +29,17 @@ public class PlayerJoinButtonEvent {
     }
 
     public void execute(ButtonInteractionEvent event, String job) {
-        HttpResponse<JsonNode> response = request(event.getUser().getId(), job);
+        HttpResponse<JsonNode> firstResponse = firstRequest(event.getUser().getId(), job);
+        HttpResponse<JsonNode> secondResponse = secondRequest(event.getUser().getId());
 
-        if (response.getStatus() == 200) {
+        if (firstResponse.getStatus() == 200 && secondResponse.getStatus() == 200) {
             requestSuccess(event);
         } else {
             errorUtil.sendError(event.getHook(), "게임 가입", "게임 가입을 이용할 수 없습니다. 잠시 후 다시 이용해주세요.");
         }
     }
 
-    private HttpResponse<JsonNode> request(String playerId, String job) {
+    private HttpResponse<JsonNode> firstRequest(String playerId, String job) {
         Map<String, Object> requestData = new HashMap<>();
         requestData.put("playerId", playerId);
         requestData.put("job", job);
@@ -45,6 +47,12 @@ public class PlayerJoinButtonEvent {
         String endPoint = "/player/join";
         String jsonBody = objectMapperUtil.mapper(requestData);
         return httpClient.sendPostRequest(endPoint, jsonBody);
+    }
+
+    private HttpResponse<JsonNode> secondRequest(String playerId) {
+        String endPoint = "/player/initial/{player_id}";
+        Pair<String, String> routeParam = new Pair<>("player_id", playerId);
+        return httpClient.sendPostRequest(endPoint, routeParam);
     }
 
     private void requestSuccess(ButtonInteractionEvent event) {
