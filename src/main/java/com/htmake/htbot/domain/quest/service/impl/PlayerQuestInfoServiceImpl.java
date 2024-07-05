@@ -2,10 +2,10 @@ package com.htmake.htbot.domain.quest.service.impl;
 
 import com.htmake.htbot.domain.inventory.entity.Inventory;
 import com.htmake.htbot.domain.inventory.repository.InventoryRepository;
-import com.htmake.htbot.domain.quest.entity.Quest;
+import com.htmake.htbot.domain.quest.entity.PlayerQuest;
 import com.htmake.htbot.domain.player.exception.NotFoundQuestException;
 import com.htmake.htbot.domain.quest.presentation.data.response.PlayerQuestInfoResponse;
-import com.htmake.htbot.domain.quest.repository.QuestRepository;
+import com.htmake.htbot.domain.quest.repository.PlayerQuestRepository;
 import com.htmake.htbot.domain.quest.service.PlayerQuestInfoService;
 import com.htmake.htbot.domain.quest.entity.MainQuest;
 import com.htmake.htbot.domain.quest.repository.MainQuestRepository;
@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @ReadOnlyService
 @RequiredArgsConstructor
 public class PlayerQuestInfoServiceImpl implements PlayerQuestInfoService {
-    private final QuestRepository questRepository;
+    private final PlayerQuestRepository playerQuestRepository;
 
     private final MainQuestRepository mainQuestRepository;
 
@@ -23,10 +23,10 @@ public class PlayerQuestInfoServiceImpl implements PlayerQuestInfoService {
 
     @Override
     public PlayerQuestInfoResponse execute(String playerId) {
-        Quest quest = questRepository.findByPlayerId(playerId)
+        PlayerQuest playerQuest = playerQuestRepository.findByPlayerId(playerId)
                 .orElseThrow(NotFoundQuestException::new);
 
-        Long progress = quest.getMainQuest().getId();
+        Long progress = playerQuest.getMainQuest().getId();
 
         MainQuest mainQuest = mainQuestRepository.findById(progress)
                 .orElseThrow(NotFoundQuestException::new);
@@ -47,7 +47,7 @@ public class PlayerQuestInfoServiceImpl implements PlayerQuestInfoService {
                 .rewardItemName(mainQuest.getRewardItemName())
                 .rewardItemQuantity(mainQuest.getRewardItemQuantity())
                 .itemQuantity(targetItemQuantity)
-                .monsterQuantity(quest.getMonsterQuantity())
+                .monsterQuantity(playerQuest.getMonsterQuantity())
                 .build();
     }
 }

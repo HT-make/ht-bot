@@ -5,9 +5,9 @@ import com.htmake.htbot.domain.player.exception.NotFoundPlayerException;
 import com.htmake.htbot.domain.player.repository.PlayerRepository;
 import com.htmake.htbot.domain.player.service.PlayerInitialService;
 import com.htmake.htbot.domain.quest.entity.MainQuest;
-import com.htmake.htbot.domain.quest.entity.Quest;
+import com.htmake.htbot.domain.quest.entity.PlayerQuest;
 import com.htmake.htbot.domain.quest.repository.MainQuestRepository;
-import com.htmake.htbot.domain.quest.repository.QuestRepository;
+import com.htmake.htbot.domain.quest.repository.PlayerQuestRepository;
 import com.htmake.htbot.domain.skill.repository.PlayerSkillRepository;
 import com.htmake.htbot.global.annotation.TransactionalService;
 import com.htmake.htbot.global.util.SkillUtil;
@@ -23,7 +23,7 @@ public class PlayerInitialServiceImpl implements PlayerInitialService {
     private final SkillUtil skillUtil;
 
     private final MainQuestRepository mainQuestRepository;
-    private final QuestRepository questRepository;
+    private final PlayerQuestRepository playerQuestRepository;
 
     @Override
     public void execute(String playerId) {
@@ -35,12 +35,12 @@ public class PlayerInitialServiceImpl implements PlayerInitialService {
         MainQuest mainQuest = mainQuestRepository.findById(1L)
                 .orElse(null);
 
-        Quest quest = Quest.builder()
+        PlayerQuest playerQuest = PlayerQuest.builder()
                 .player(player)
                 .mainQuest(mainQuest)
                 .monsterQuantity(0)
                 .build();
 
-        questRepository.save(quest);
+        playerQuestRepository.save(playerQuest);
     }
 }

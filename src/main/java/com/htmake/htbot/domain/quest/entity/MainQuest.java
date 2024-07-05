@@ -53,5 +53,5 @@ public class MainQuest {
     private int rewardItemQuantity;
 
     @OneToMany(mappedBy = "mainQuest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Quest> quest;
+    private List<PlayerQuest> playerQuest;
 }

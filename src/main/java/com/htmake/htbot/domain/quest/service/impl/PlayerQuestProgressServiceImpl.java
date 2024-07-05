@@ -3,11 +3,11 @@ package com.htmake.htbot.domain.quest.service.impl;
 import com.htmake.htbot.domain.inventory.entity.Inventory;
 import com.htmake.htbot.domain.inventory.repository.InventoryRepository;
 import com.htmake.htbot.domain.player.entity.Player;
-import com.htmake.htbot.domain.quest.entity.Quest;
+import com.htmake.htbot.domain.quest.entity.PlayerQuest;
 import com.htmake.htbot.domain.player.exception.NotFoundPlayerException;
 import com.htmake.htbot.domain.player.exception.NotFoundQuestException;
 import com.htmake.htbot.domain.player.repository.PlayerRepository;
-import com.htmake.htbot.domain.quest.repository.QuestRepository;
+import com.htmake.htbot.domain.quest.repository.PlayerQuestRepository;
 import com.htmake.htbot.domain.quest.service.PlayerQuestProgressService;
 import com.htmake.htbot.domain.quest.entity.MainQuest;
 import com.htmake.htbot.domain.quest.repository.MainQuestRepository;
@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PlayerQuestProgressServiceImpl implements PlayerQuestProgressService {
 
-    private final QuestRepository questRepository;
+    private final PlayerQuestRepository playerQuestRepository;
     private final MainQuestRepository mainQuestRepository;
     private final PlayerRepository playerRepository;
     private final InventoryRepository inventoryRepository;
@@ -29,10 +29,10 @@ public class PlayerQuestProgressServiceImpl implements PlayerQuestProgressServic
 
     @Override
     public void execute(String playerId) {
-        Quest quest = questRepository.findByPlayerId(playerId)
+        PlayerQuest playerQuest = playerQuestRepository.findByPlayerId(playerId)
                 .orElseThrow(NotFoundQuestException::new);
 
-        Long progress = quest.getMainQuest().getId();
+        Long progress = playerQuest.getMainQuest().getId();
 
         MainQuest mainQuest = mainQuestRepository.findById(progress)
                 .orElseThrow(NotFoundQuestException::new);
@@ -42,7 +42,7 @@ public class PlayerQuestProgressServiceImpl implements PlayerQuestProgressServic
         Inventory targetItem = inventoryRepository
                 .findByPlayerIdAndItemId(playerId, mainQuest.getTargetItem().getId()).orElse(null);
 
-        if (mainQuest.getTargetMonsterQuantity() > quest.getMonsterQuantity()){
+        if (mainQuest.getTargetMonsterQuantity() > playerQuest.getMonsterQuantity()){
             throw new NotEnoughMonsterQuantityException();
         }
         if (targetItem != null && targetItem.getQuantity() >= mainQuest.getTargetItemQuantity()) {
@@ -73,9 +73,9 @@ public class PlayerQuestProgressServiceImpl implements PlayerQuestProgressServic
             inventoryRepository.save(inventory);
         }
 
-        quest.setMainQuest(mainQuestRepository.findById(progress + 1).orElse(null));
-        quest.setMonsterQuantity(0);
-        questRepository.save(quest);
+        playerQuest.setMainQuest(mainQuestRepository.findById(progress + 1).orElse(null));
+        playerQuest.setMonsterQuantity(0);
+        playerQuestRepository.save(playerQuest);
 
         playerUtil.executeLevelUp(player, mainQuest.getGold(), mainQuest.getExp());
     }

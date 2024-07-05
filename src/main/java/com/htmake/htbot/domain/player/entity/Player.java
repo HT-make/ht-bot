@@ -2,7 +2,7 @@ package com.htmake.htbot.domain.player.entity;
 
 import com.htmake.htbot.domain.inventory.entity.Inventory;
 import com.htmake.htbot.domain.player.enums.Job;
-import com.htmake.htbot.domain.quest.entity.Quest;
+import com.htmake.htbot.domain.quest.entity.PlayerQuest;
 import com.htmake.htbot.domain.skill.entity.PlayerSkill;
 import com.htmake.htbot.domain.skill.entity.RegisteredSkill;
 import jakarta.persistence.*;
@@ -50,7 +50,7 @@ public class Player {
     private List<RegisteredSkill> registeredSkillList;
 
     @OneToOne(mappedBy = "player", cascade = CascadeType.ALL)
-    private Quest quest;
+    private PlayerQuest playerQuest;
 
     public void killMonster(int currentExp, int gold) {
         this.currentExp = currentExp;
