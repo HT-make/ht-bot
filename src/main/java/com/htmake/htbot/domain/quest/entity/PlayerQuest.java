@@ -16,7 +16,7 @@ public class PlayerQuest {
     @Column(name = "player_quest_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "player_id")
     private Player player;
 
@@ -24,14 +24,8 @@ public class PlayerQuest {
     @JoinColumn(name = "main_quest_id")
     private MainQuest mainQuest;
 
-    @Column(name = "monster_quantity")
-    private int monsterQuantity;
 
     public void setMainQuest(MainQuest mainQuest) {
         this.mainQuest = mainQuest;
-    }
-
-    public void setMonsterQuantity(int monsterQuantity) {
-        this.monsterQuantity = monsterQuantity;
     }
 }

@@ -1,7 +1,8 @@
 package com.htmake.htbot.domain.quest.entity;
 
-import com.htmake.htbot.domain.misc.entity.Misc;
-import com.htmake.htbot.domain.monster.entity.Monster;
+import com.htmake.htbot.domain.quest.entity.reward.QuestReward;
+import com.htmake.htbot.domain.quest.entity.target.misc.TargetMisc;
+import com.htmake.htbot.domain.quest.entity.target.monster.TargetMonster;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,45 +14,32 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MainQuest {
+
     @Id
     @Column(name = "main_quest_id")
     private Long id;
 
-    @Column(name = "quest_title")
+    @Column(name = "quest_title", nullable = false)
     private String title;
 
-    @Column(name = "quest_description")
+    @Column(name = "quest_description", nullable = false)
     private String description;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "target_monster_id")
-    private Monster targetMonster;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "target_item_id")
-    private Misc targetItem;
-
-    @Column(name = "target_monster_quantity")
-    private int targetMonsterQuantity;
-
-    @Column(name = "target_item_quantity")
-    private int targetItemQuantity;
-
-    @Column(name = "quest_gold")
+    @Column(name = "quest_gold", nullable = false)
     private int gold;
 
-    @Column(name = "quest_exp")
+    @Column(name = "quest_exp", nullable = false)
     private int exp;
 
-    @Column(name = "reward_item_id")
-    private String rewardItemId;
-
-    @Column(name = "reward_item_name")
-    private String rewardItemName;
-
-    @Column(name = "reward_item_quantity")
-    private int rewardItemQuantity;
+    @OneToMany(mappedBy = "mainQuest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<QuestReward> questRewardList;
 
     @OneToMany(mappedBy = "mainQuest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PlayerQuest> playerQuest;
+    private List<TargetMonster> targetMonsterList;
+
+    @OneToMany(mappedBy = "mainQuest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<TargetMisc> targetMiscList;
+
+    @OneToMany(mappedBy = "mainQuest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<PlayerQuest> playerQuestList;
 }
