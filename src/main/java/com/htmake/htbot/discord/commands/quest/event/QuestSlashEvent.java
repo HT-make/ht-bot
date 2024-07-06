@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -30,8 +31,8 @@ public class QuestSlashEvent {
         HttpResponse<JsonNode> response = request(event.getUser().getId());
         
         if (response.getStatus() == 200) {
-            JSONObject questData = response.getBody().getObject();
-            requestSuccess(event, questData);
+            JSONObject questObject = response.getBody().getObject();
+            requestSuccess(event, questObject);
         } else {
             errorUtil.sendError(event, "퀘스트를 불러올 수 없습니다.", "잠시 후 다시 이용해주세요.");
         }
@@ -43,17 +44,12 @@ public class QuestSlashEvent {
         return httpClient.sendGetRequest(endPoint, routeParam);
     }
 
-    private void requestSuccess(SlashCommandInteractionEvent event, JSONObject questData) {
-        MessageEmbed embed = buildEmbed(questData, event.getUser());
-
-        int monsterQuantity = questData.getInt("monsterQuantity");
-        int targetMonsterQuantity = questData.getInt("targetMonsterQuantity");
-        int itemQuantity = questData.getInt("itemQuantity");
-        int targetItemQuantity = questData.getInt("targetItemQuantity");
+    private void requestSuccess(SlashCommandInteractionEvent event, JSONObject questObject) {
+        MessageEmbed embed = buildEmbed(questObject, event.getUser());
 
         Button completeButton = Button.primary("quest-complete", "완료").asDisabled();
 
-        if (monsterQuantity >= targetMonsterQuantity && itemQuantity >= targetItemQuantity) {
+        if (validTargetQuantity(questObject)) {
             completeButton = Button.primary("quest-complete", "완료").asEnabled();
         }
 
@@ -65,33 +61,64 @@ public class QuestSlashEvent {
                 .queue();
     }
 
-    private MessageEmbed buildEmbed(JSONObject questData, User user) {
+    private MessageEmbed buildEmbed(JSONObject questObject, User user) {
         String profileUrl = user.getAvatarUrl() != null ? user.getAvatarUrl() : user.getDefaultAvatarUrl();
 
         return new EmbedBuilder()
                 .setColor(Color.GREEN)
                 .setAuthor(user.getName(), null, profileUrl)
-                .setTitle("진행중인 퀘스트 정보")
-                .setDescription(format(questData)).build();
+                .setTitle(":scroll: 퀘스트")
+                .addField(questObject.getString("title"), questObject.getString("description"), false)
+                .addField(":dart: 목표", targetFormat(questObject), false)
+                .addField(":purse: 보상", rewardFormat(questObject), false)
+                .build();
     }
 
-    private String format(JSONObject questData){
+    private String targetFormat(JSONObject questObject) {
+        JSONArray targetArray = questObject.getJSONArray("targetList");
         StringBuilder sb = new StringBuilder();
 
-        sb.append(":scroll: ").append(questData.getString("title")).append("\n")
-                .append(questData.getString("description")).append("\n\n")
-                .append(":dart: 목표").append("\n")
-                .append("몬스터: ").append(questData.getString("targetMonster")).append(" (")
-                .append(questData.getInt("monsterQuantity")).append("/").append(questData.getInt("targetMonsterQuantity")).append(")\n")
-                .append("아이템: ").append(questData.getString("targetItem")).append(" (")
-                .append(questData.getInt("itemQuantity")).append("/").append(questData.getInt("targetItemQuantity")).append(")\n\n")
-                .append(":purse: 보상\n")
-                .append("골드: ").append(FormatUtil.decimalFormat(questData.getInt("gold"))).append("\n")
-                .append("경험치: ").append(FormatUtil.decimalFormat(questData.getInt("exp"))).append("\n")
-                .append("아이템: ").append(questData.getString("rewardItemName")).append(" (")
-                .append(questData.getInt("rewardItemQuantity")).append(")\n");
+        for (int i = 0; i < targetArray.length(); i++) {
+            JSONObject targetObject = targetArray.getJSONObject(i);
+            sb.append(targetObject.getString("name")).append(" (")
+                    .append(targetObject.getInt("currentQuantity")).append("/")
+                    .append(targetObject.getInt("requiredQuantity")).append(")\n");
+        }
 
         return sb.toString();
+    }
+
+    private String rewardFormat(JSONObject questObject) {
+        JSONArray rewardArray = questObject.getJSONArray("rewardList");
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(FormatUtil.decimalFormat(questObject.getInt("gold"))).append(" 골드\n")
+                .append(FormatUtil.decimalFormat(questObject.getInt("exp"))).append(" 경험치\n");
+
+        for (int i = 0; i < rewardArray.length(); i++) {
+            JSONObject rewardObject = rewardArray.getJSONObject(i);
+            sb.append(rewardObject.getString("name")).append(" ")
+                    .append(rewardObject.getInt("quantity")).append("개\n");
+        }
+
+        return sb.toString();
+    }
+
+    private boolean validTargetQuantity(JSONObject questObject) {
+        JSONArray targetArray = questObject.getJSONArray("targetList");
+
+        for (int i = 0; i < targetArray.length(); i++) {
+            JSONObject targetObject = targetArray.getJSONObject(i);
+
+            int requiredQuantity = targetObject.getInt("requiredQuantity");
+            int currentQuantity = targetObject.getInt("currentQuantity");
+
+            if (currentQuantity < requiredQuantity) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
 
