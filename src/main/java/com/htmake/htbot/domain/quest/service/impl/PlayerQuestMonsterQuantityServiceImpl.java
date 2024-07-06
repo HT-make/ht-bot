@@ -1,40 +1,50 @@
 package com.htmake.htbot.domain.quest.service.impl;
 
-import com.htmake.htbot.domain.monster.entity.Monster;
-import com.htmake.htbot.domain.monster.repository.MonsterRepository;
 import com.htmake.htbot.domain.quest.entity.PlayerQuest;
 import com.htmake.htbot.domain.player.exception.NotFoundPlayerException;
-import com.htmake.htbot.domain.player.exception.NotFoundQuestException;
+import com.htmake.htbot.domain.quest.exception.NotFoundPlayerTargetMonsterException;
+import com.htmake.htbot.domain.quest.exception.NotFoundQuestException;
+import com.htmake.htbot.domain.quest.entity.target.monster.PlayerTargetMonster;
+import com.htmake.htbot.domain.quest.entity.target.monster.TargetMonster;
 import com.htmake.htbot.domain.quest.presentation.data.request.PlayerQuestMonsterQuantityRequest;
 import com.htmake.htbot.domain.quest.repository.PlayerQuestRepository;
+import com.htmake.htbot.domain.quest.repository.PlayerTargetMonsterRepository;
 import com.htmake.htbot.domain.quest.service.PlayerQuestMonsterQuantityService;
 import com.htmake.htbot.domain.quest.entity.MainQuest;
 import com.htmake.htbot.domain.quest.repository.MainQuestRepository;
 import com.htmake.htbot.global.annotation.TransactionalService;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Objects;
+import java.util.List;
 
 @TransactionalService
 @RequiredArgsConstructor
 public class PlayerQuestMonsterQuantityServiceImpl implements PlayerQuestMonsterQuantityService {
+
     private final PlayerQuestRepository playerQuestRepository;
-    private final MonsterRepository monsterRepository;
     private final MainQuestRepository mainQuestRepository;
+    private final PlayerTargetMonsterRepository playerTargetMonsterRepository;
 
     @Override
     public void execute(String playerId, PlayerQuestMonsterQuantityRequest request) {
         PlayerQuest playerQuest = playerQuestRepository.findByPlayerId(playerId)
                 .orElseThrow(NotFoundPlayerException::new);
 
-        MainQuest mainQuest = mainQuestRepository.findById(playerQuest.getMainQuest().getId())
+        Long progress = playerQuest.getMainQuest().getId();
+
+        MainQuest mainQuest = mainQuestRepository.findById(progress)
                 .orElseThrow(NotFoundQuestException::new);
 
-        Monster targetMonster = monsterRepository.findByName(mainQuest.getTargetMonster().getName()).orElse(null);
+        List<TargetMonster> targetMonsterList = mainQuest.getTargetMonsterList();
 
-        if (targetMonster != null && Objects.equals(targetMonster.getName(), request.getName())) {
-            playerQuest.setMonsterQuantity(playerQuest.getMonsterQuantity() + 1);
-            playerQuestRepository.save(playerQuest);
+        for (TargetMonster targetMonster : targetMonsterList) {
+            if (targetMonster.getMonster().getName().equals(request.getName())) {
+                PlayerTargetMonster playerTargetMonster = playerTargetMonsterRepository.findByPlayerIdAndTargetMonster(playerId, targetMonster)
+                        .orElseThrow(NotFoundPlayerTargetMonsterException::new);
+
+                playerTargetMonster.addCurrentQuantity();
+                playerTargetMonsterRepository.save(playerTargetMonster);
+            }
         }
     }
 }
