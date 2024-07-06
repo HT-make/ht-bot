@@ -26,7 +26,7 @@ public class QuestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PatchMapping("/progress/{player_id}")
+    @PostMapping("/progress/{player_id}")
     public ResponseEntity<Void> questProgress(@PathVariable("player_id") String playerId) {
         playerQuestProgressService.execute(playerId);
         return new ResponseEntity<>(HttpStatus.OK);

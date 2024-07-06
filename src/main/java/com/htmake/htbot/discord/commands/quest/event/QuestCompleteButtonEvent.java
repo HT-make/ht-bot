@@ -36,7 +36,7 @@ public class QuestCompleteButtonEvent {
     private HttpResponse<JsonNode> request(String playerId) {
         String endPoint = "/quest/progress/{player_id}";
         Pair<String, String> routeParam = new Pair<>("player_id", playerId);
-        return httpClient.sendGetRequest(endPoint, routeParam);
+        return httpClient.sendPostRequest(endPoint, routeParam);
     }
 
     public void requestSuccess(ButtonInteractionEvent event) {
