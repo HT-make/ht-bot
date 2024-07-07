@@ -1,7 +1,6 @@
 package com.htmake.htbot.domain.monster.entity;
 
 import com.htmake.htbot.domain.dungeon.entity.Dungeon;
-import com.htmake.htbot.domain.quest.entity.MainQuest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -57,7 +56,4 @@ public class Monster {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dungeon_id")
     private Dungeon dungeon;
-
-    @OneToMany(mappedBy = "targetMonster", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<MainQuest> mainQuest;
 }

@@ -23,6 +23,7 @@ public enum ErrorCode {
 
     //QUEST
     NOT_FOUND_QUEST("퀘스트를 찾을 수 없습니다.", 404),
+    NOT_FOUND_PLAYER_TARGET_MONSTER("몬스터 처치 정보를 찾을 수 없습니다.", 404),
     NOT_ENOUGH_MONSTER_QUANTITY("몬스터 수량이 부족합니다.", 400),
     NOT_ENOUGH_ITEM_QUANTITY("아이템 수량이 부족합니다.", 400),
 
