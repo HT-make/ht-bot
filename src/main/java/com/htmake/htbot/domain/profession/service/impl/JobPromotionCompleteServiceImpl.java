@@ -3,9 +3,11 @@ package com.htmake.htbot.domain.profession.service.impl;
 import com.htmake.htbot.domain.inventory.entity.Inventory;
 import com.htmake.htbot.domain.inventory.repository.InventoryRepository;
 import com.htmake.htbot.domain.player.entity.Player;
+import com.htmake.htbot.domain.player.entity.Status;
 import com.htmake.htbot.domain.player.enums.Job;
 import com.htmake.htbot.domain.player.exception.NotFoundPlayerException;
 import com.htmake.htbot.domain.player.repository.PlayerRepository;
+import com.htmake.htbot.domain.player.repository.StatusRepository;
 import com.htmake.htbot.domain.profession.entity.Profession;
 import com.htmake.htbot.domain.profession.exception.NotFoundJobException;
 import com.htmake.htbot.domain.profession.repository.ProfessionRepository;
@@ -27,8 +29,9 @@ public class JobPromotionCompleteServiceImpl implements JobPromotionCompleteServ
     private final ProfessionRepository professionRepository;
     private final PlayerRepository playerRepository;
     private final InventoryRepository inventoryRepository;
-
     private final PlayerSkillRepository playerSkillRepository;
+    private final StatusRepository statusRepository;
+
     private final SkillUtil skillUtil;
 
     @Override
@@ -68,7 +71,12 @@ public class JobPromotionCompleteServiceImpl implements JobPromotionCompleteServ
         player.setGem(player.getGem() - profession.getGem());
         player.setJob(job);
 
+        Status status = statusRepository.findById(playerId)
+                        .orElseThrow(NotFoundPlayerException::new);
+        status.addCriticalChance(20);
+
         playerRepository.save(player);
+        statusRepository.save(status);
         playerSkillRepository.saveAll(skillUtil.buildPlayerSkillList(player, job));
     }
 }
