@@ -49,4 +49,20 @@ public class Status {
         this.criticalChance = criticalChance;
         this.criticalDamage = criticalDamage;
     }
+
+    public void addDamage(int damage) {
+        this.damage += damage;
+    }
+
+    public void addHealth(int health) {
+        this.health += health;
+    }
+
+    public void addMana(int mana) {
+        this.mana += mana;
+    }
+
+    public void addCriticalChance(int criticalChance) {
+        this.criticalChance += criticalChance;
+    }
 }

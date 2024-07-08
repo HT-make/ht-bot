@@ -65,9 +65,9 @@ public class PlayerJoinServiceImpl implements PlayerJoinService {
 
         Status status = Status.builder()
                 .id(player.getId())
-                .damage(weapon.getDamage())
-                .health(weapon.getHealth() + armor.getHealth())
-                .defence(weapon.getDefence() + armor.getDefence())
+                .damage(BasicStatus.DAMAGE.getValue() + weapon.getDamage())
+                .health(BasicStatus.HEALTH.getValue() + weapon.getHealth() + armor.getHealth())
+                .defence(BasicStatus.DEFENCE.getValue() + weapon.getDefence() + armor.getDefence())
                 .mana(BasicStatus.MANA.getValue() + weapon.getMana())
                 .criticalChance(BasicStatus.CRITICAL_CHANCE.getValue() + weapon.getCriticalChance())
                 .criticalDamage(BasicStatus.CRITICAL_DAMAGE.getValue() + weapon.getCriticalDamage())
