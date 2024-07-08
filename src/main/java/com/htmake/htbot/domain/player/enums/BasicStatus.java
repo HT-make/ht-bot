@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum BasicStatus {
 
+    DAMAGE(10),
+    HEALTH(100),
+    DEFENCE(0),
     MANA(100),
     CRITICAL_CHANCE(10),
     CRITICAL_DAMAGE(200);
