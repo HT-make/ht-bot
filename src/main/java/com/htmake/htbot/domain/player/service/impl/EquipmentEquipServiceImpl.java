@@ -13,6 +13,7 @@ import com.htmake.htbot.domain.inventory.repository.InventoryRepository;
 import com.htmake.htbot.domain.player.entity.Equipment;
 import com.htmake.htbot.domain.player.entity.Player;
 import com.htmake.htbot.domain.player.entity.Status;
+import com.htmake.htbot.domain.player.enums.Job;
 import com.htmake.htbot.domain.player.exception.NotFoundPlayerException;
 import com.htmake.htbot.domain.player.presentation.data.request.EquipmentEquipRequest;
 import com.htmake.htbot.domain.player.repository.EquipmentRepository;
@@ -81,10 +82,13 @@ public class EquipmentEquipServiceImpl implements EquipmentEquipService {
     }
 
     private void equipWeapon(Player player, Equipment equipment, String name) {
-        Weapon weapon = weaponRepository.findByName(name)
+        Weapon weaponToEquip = weaponRepository.findByName(name)
                 .orElseThrow(EquipmentNotFoundException::new);
 
-        if (!weapon.getWeaponType().getJob().equals(player.getJob())) {
+        Job requireJob = weaponToEquip.getWeaponType().getJob();
+        Job playerJob = player.getJob();
+
+        if (!(playerJob.equals(requireJob) || playerJob.getLowerJob().contains(requireJob))) {
             throw new EquipmentTypeMismatchException();
         }
 
@@ -95,24 +99,24 @@ public class EquipmentEquipServiceImpl implements EquipmentEquipService {
                 .orElseThrow(NotFoundPlayerException::new);
 
         status.updateStatus(
-                status.getDamage() + weapon.getDamage() - currentWeapon.getDamage(),
-                status.getHealth() + weapon.getHealth() - currentWeapon.getHealth(),
-                status.getDefence() + weapon.getDefence() - currentWeapon.getDefence(),
-                status.getMana() + weapon.getMana() - currentWeapon.getMana(),
-                status.getCriticalChance() + weapon.getCriticalChance() - currentWeapon.getCriticalChance(),
-                status.getCriticalDamage() + weapon.getCriticalDamage() - currentWeapon.getCriticalDamage()
+                status.getDamage() + weaponToEquip.getDamage() - currentWeapon.getDamage(),
+                status.getHealth() + weaponToEquip.getHealth() - currentWeapon.getHealth(),
+                status.getDefence() + weaponToEquip.getDefence() - currentWeapon.getDefence(),
+                status.getMana() + weaponToEquip.getMana() - currentWeapon.getMana(),
+                status.getCriticalChance() + weaponToEquip.getCriticalChance() - currentWeapon.getCriticalChance(),
+                status.getCriticalDamage() + weaponToEquip.getCriticalDamage() - currentWeapon.getCriticalDamage()
         );
 
         statusRepository.save(status);
 
-        equipment.updateWeapon(weapon.getId(), weapon.getName());
+        equipment.updateWeapon(weaponToEquip.getId(), weaponToEquip.getName());
         equipmentRepository.save(equipment);
 
         updateInventory(player, currentWeapon.getId(), currentWeapon.getName());
     }
 
     private void equipArmor(Player player, Equipment equipment, String name) {
-        Armor armor = armorRepository.findByName(name)
+        Armor armorToEquip = armorRepository.findByName(name)
                 .orElseThrow(EquipmentNotFoundException::new);
 
         Armor currentArmor = armorRepository.findById(equipment.getArmorId())
@@ -123,8 +127,8 @@ public class EquipmentEquipServiceImpl implements EquipmentEquipService {
 
         status.updateStatus(
                 status.getDamage(),
-                status.getHealth() + armor.getHealth() - currentArmor.getHealth(),
-                status.getDefence() + armor.getDefence() - currentArmor.getDefence(),
+                status.getHealth() + armorToEquip.getHealth() - currentArmor.getHealth(),
+                status.getDefence() + armorToEquip.getDefence() - currentArmor.getDefence(),
                 status.getMana(),
                 status.getCriticalChance(),
                 status.getCriticalDamage()
@@ -132,7 +136,7 @@ public class EquipmentEquipServiceImpl implements EquipmentEquipService {
 
         statusRepository.save(status);
 
-        equipment.updateArmor(armor.getId(), armor.getName());
+        equipment.updateArmor(armorToEquip.getId(), armorToEquip.getName());
         equipmentRepository.save(equipment);
 
         updateInventory(player, currentArmor.getId(), currentArmor.getName());
