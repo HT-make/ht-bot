@@ -77,6 +77,9 @@ public class BattleUtil {
                 .addField(":crossed_swords: 공격력", "" + FormatUtil.decimalFormat(monsterStatus.getDamage()), true)
                 .addField(":heart: 체력", "" + FormatUtil.decimalFormat(monsterStatus.getHealth()), true)
                 .addField(":shield: 방어력", "" + FormatUtil.decimalFormat(monsterStatus.getDefence()), true)
+                .addField(":boom: 치명타 확률", monsterStatus.getCriticalChance() + "%", true)
+                .addField(":boom: 치명타 데미지", FormatUtil.decimalFormat(monsterStatus.getCriticalDamage()) + "%", true)
+                .addBlankField(true)
 
                 .addField(":video_game: 전투 현황", situation, false)
 
