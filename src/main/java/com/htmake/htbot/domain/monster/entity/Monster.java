@@ -32,6 +32,12 @@ public class Monster {
     @Column(name = "monster_defence", nullable = false)
     private int defence;
 
+    @Column(name = "monster_critical_chance", nullable = false)
+    private int criticalChance;
+
+    @Column(name = "monster_critical_damage", nullable = false)
+    private int criticalDamage;
+
     @Column(name = "monster_exp", nullable = false)
     private int exp;
 

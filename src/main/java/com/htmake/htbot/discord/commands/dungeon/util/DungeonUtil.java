@@ -63,6 +63,9 @@ public class DungeonUtil {
                 .addField(":crossed_swords: 공격력", "" + FormatUtil.decimalFormat(dungeonMonster.getDamage()), true)
                 .addField(":heart: 체력", "" + FormatUtil.decimalFormat(dungeonMonster.getHealth()), true)
                 .addField(":shield: 방어력", "" + FormatUtil.decimalFormat(dungeonMonster.getDefence()), true)
+                .addField(":boom: 치명타 확률",  dungeonMonster.getCriticalChance()+ "%", true)
+                .addField(":boom: 치명타 데미지", FormatUtil.decimalFormat(dungeonMonster.getCriticalDamage()) + "%", true)
+                .addBlankField(true)
 
                 .addField(":video_game: 전투 현황", situation.toString(), false)
 
@@ -83,8 +86,8 @@ public class DungeonUtil {
                 dungeonMonster.getDamage(),
                 dungeonMonster.getHealth(),
                 dungeonMonster.getDefence(),
-                0,
-                0,
+                dungeonMonster.getCriticalChance(),
+                dungeonMonster.getCriticalDamage(),
                 dungeonMonster.getId(),
                 dungeonMonster.getSkillChance(),
                 dungeonMonster.getSkillList()
@@ -96,8 +99,8 @@ public class DungeonUtil {
                 dungeonMonster.getDamage(),
                 dungeonMonster.getHealth(),
                 dungeonMonster.getDefence(),
-                0,
-                0
+                dungeonMonster.getCriticalChance(),
+                dungeonMonster.getCriticalDamage()
         );
 
         MonsterData monsterData = MonsterData.builder()

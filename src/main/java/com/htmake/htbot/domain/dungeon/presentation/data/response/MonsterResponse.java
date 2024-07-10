@@ -29,6 +29,10 @@ public class MonsterResponse {
 
     private int defence;
 
+    private int criticalChance;
+
+    private int criticalDamage;
+
     private int skillChance;
 
     private List<MonsterSkillResponse> skillList;
@@ -50,6 +54,8 @@ public class MonsterResponse {
                 .damage(monster.getDamage())
                 .health(monster.getHealth())
                 .defence(monster.getDefence())
+                .criticalChance(monster.getCriticalChance())
+                .criticalDamage(monster.getCriticalDamage())
                 .skillChance(monster.getSkillChance())
                 .skillList(skillList)
                 .build();
