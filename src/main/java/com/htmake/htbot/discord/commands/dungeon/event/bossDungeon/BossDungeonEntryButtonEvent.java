@@ -111,6 +111,8 @@ public class BossDungeonEntryButtonEvent {
                     .damage(dungeonMonsterObject.getInt("damage"))
                     .health(dungeonMonsterObject.getInt("health"))
                     .defence(dungeonMonsterObject.getInt("defence"))
+                    .criticalChance(dungeonMonsterObject.getInt("criticalChance"))
+                    .criticalDamage(dungeonMonsterObject.getInt("criticalDamage"))
                     .skillChance(dungeonMonsterObject.getInt("skillChance"))
                     .skillList(monsterSkillDataList)
                     .build();

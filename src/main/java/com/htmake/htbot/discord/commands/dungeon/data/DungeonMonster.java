@@ -23,6 +23,10 @@ public class DungeonMonster {
 
     private int defence;
 
+    private int criticalChance;
+
+    private int criticalDamage;
+
     private int skillChance;
 
     private List<MonsterSkillData> skillList;
