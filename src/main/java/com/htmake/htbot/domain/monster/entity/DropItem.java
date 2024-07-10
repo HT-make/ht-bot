@@ -11,16 +11,20 @@ import lombok.*;
 public class DropItem {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "drop_item_id")
-    private String id;
-
-    @Column(name = "drop_item_name", nullable = false)
-    private String name;
-
-    @Column(name = "drop_item_chance", nullable = false)
-    private int getChance;
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "monster_id")
     private Monster monster;
+
+    @Column(name = "item_id", nullable = false)
+    private String itemId;
+
+    @Column(name = "item_name", nullable = false)
+    private String name;
+
+    @Column(name = "drop_chance", nullable = false)
+    private int chance;
 }
