@@ -26,5 +26,5 @@ public class DropItem {
     private String name;
 
     @Column(name = "drop_chance", nullable = false)
-    private int getChance;
+    private int chance;
 }

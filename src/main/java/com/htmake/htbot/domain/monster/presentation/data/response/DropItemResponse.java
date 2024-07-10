@@ -22,7 +22,7 @@ public class DropItemResponse {
         return DropItemResponse.builder()
                 .id(dropItem.getItemId())
                 .name(dropItem.getName())
-                .chance(dropItem.getGetChance())
+                .chance(dropItem.getChance())
                 .build();
     }
 }
