@@ -11,6 +11,8 @@ import kotlin.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import org.apache.commons.math3.random.MersenneTwister;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -63,7 +65,7 @@ public class BattleActionUtil {
         for (int i = 0; i < dropItemArray.length(); i++) {
             JSONObject dropItemObject = dropItemArray.getJSONObject(i);
 
-            Random random = new Random();
+            RandomGenerator random = new MersenneTwister();
 
             int randomNum = random.nextInt(100);
             int dropChance = dropItemObject.getInt("chance");
