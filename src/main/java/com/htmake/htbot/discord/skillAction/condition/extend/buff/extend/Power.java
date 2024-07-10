@@ -10,15 +10,6 @@ public class Power extends Buff {
         super("power", "힘" + getRomanNumeral(version), ":crossed_swords:", getTurn(version), getValue(version));
     }
 
-    private static String getRomanNumeral(int version) {
-        return switch (version) {
-            case 1 -> "I";
-            case 2 -> "II";
-            case 3 -> "III";
-            default -> throw new IllegalArgumentException("Invalid version: " + version);
-        };
-    }
-
     private static int getTurn(int version) {
         return switch (version) {
             case 1, 2 -> 3;

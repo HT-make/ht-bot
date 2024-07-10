@@ -12,14 +12,6 @@ public class Thorn extends Condition {
         setValue(version);
     }
 
-    private String getRomanNumeral(int version) {
-        return switch (version) {
-            case 1 -> "I";
-            case 2 -> "II";
-            default -> throw new IllegalArgumentException("Invalid version: " + version);
-        };
-    }
-
     private void setValue(int version) {
         switch (version) {
             case 1 -> this.value = 0.1;

@@ -31,6 +31,17 @@ public abstract class Condition implements Cloneable {
         this.check = check;
     }
 
+    public static String getRomanNumeral(int version) {
+        return switch (version) {
+            case 1 -> "I";
+            case 2 -> "II";
+            case 3 -> "III";
+            case 4 -> "IV";
+            case 5 -> "V";
+            default -> throw new IllegalArgumentException("Invalid version: " + version);
+        };
+    }
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();

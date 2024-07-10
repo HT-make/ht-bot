@@ -10,14 +10,6 @@ public class Absorption extends Buff {
         super("absorption", "흡수" + getRomanNumeral(version), ":nazar_amulet:", 3, getValue(version));
     }
 
-    private static String getRomanNumeral(int version) {
-        return switch (version) {
-            case 1 -> "I";
-            case 2 -> "II";
-            default -> throw new IllegalArgumentException("Invalid version: " + version);
-        };
-    }
-
     private static double getValue(int version) {
         return switch (version) {
             case 1 -> 0.1;
