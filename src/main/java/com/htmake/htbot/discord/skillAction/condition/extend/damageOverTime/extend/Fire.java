@@ -13,6 +13,7 @@ public class Fire extends DamageOverTime {
             case 1 -> 0.5;
             case 2 -> 0.9;
             case 3 -> 1.5;
+            case 4 -> 2.0;
             default -> throw new IllegalArgumentException("Invalid version: " + version);
         };
     }

@@ -16,6 +16,7 @@ public class Faint extends Condition {
         switch (version) {
             case 1 -> this.value = 50;
             case 2 -> this.value = 75;
+            case 3 -> this.value = 100;
         }
     }
 

@@ -14,6 +14,7 @@ public class Absorption extends Buff {
         return switch (version) {
             case 1 -> 0.1;
             case 2 -> 0.15;
+            case 3 -> 0.3;
             default -> throw new IllegalArgumentException("Invalid version: " + version);
         };
     }

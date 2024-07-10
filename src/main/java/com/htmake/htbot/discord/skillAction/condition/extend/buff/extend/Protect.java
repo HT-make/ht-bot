@@ -14,6 +14,7 @@ public class Protect extends Buff {
         return switch (version) {
             case 1 -> 0.5;
             case 2 -> 0.7;
+            case 3 -> 1.0;
             default -> throw new IllegalArgumentException("Invalid version: " + version);
         };
     }
