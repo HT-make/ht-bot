@@ -5,7 +5,7 @@ import com.htmake.htbot.discord.commands.battle.data.PlayerData;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
-import com.htmake.htbot.discord.skillAction.condition.extend.Light;
+import com.htmake.htbot.discord.skillAction.condition.extend.etc.Light;
 import com.htmake.htbot.discord.skillAction.skill.impl.AbstractSkillStrategy;
 import com.htmake.htbot.discord.skillAction.type.SkillType;
 import kotlin.Pair;

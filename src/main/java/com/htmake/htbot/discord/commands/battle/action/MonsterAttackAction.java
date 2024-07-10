@@ -9,7 +9,7 @@ import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerOrigina
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.util.BattleUtil;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
-import com.htmake.htbot.discord.skillAction.condition.extend.Faint;
+import com.htmake.htbot.discord.skillAction.condition.extend.etc.Faint;
 import com.htmake.htbot.discord.skillAction.condition.extend.buff.Buff;
 import com.htmake.htbot.discord.skillAction.condition.extend.damageOverTime.DamageOverTime;
 import com.htmake.htbot.discord.skillAction.condition.extend.damageOverTime.extend.Poison;

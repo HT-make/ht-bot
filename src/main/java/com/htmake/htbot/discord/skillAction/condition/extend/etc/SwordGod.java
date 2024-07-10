@@ -1,4 +1,4 @@
-package com.htmake.htbot.discord.skillAction.condition.extend;
+package com.htmake.htbot.discord.skillAction.condition.extend.etc;
 
 import com.htmake.htbot.discord.commands.battle.data.status.BasicStatus;
 import com.htmake.htbot.discord.skillAction.condition.Condition;

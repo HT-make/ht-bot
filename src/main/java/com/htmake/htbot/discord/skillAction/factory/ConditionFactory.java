@@ -1,9 +1,9 @@
 package com.htmake.htbot.discord.skillAction.factory;
 
 import com.htmake.htbot.discord.skillAction.condition.Condition;
-import com.htmake.htbot.discord.skillAction.condition.extend.Faint;
-import com.htmake.htbot.discord.skillAction.condition.extend.Invincible;
-import com.htmake.htbot.discord.skillAction.condition.extend.Thorn;
+import com.htmake.htbot.discord.skillAction.condition.extend.etc.Faint;
+import com.htmake.htbot.discord.skillAction.condition.extend.etc.Invincible;
+import com.htmake.htbot.discord.skillAction.condition.extend.etc.Thorn;
 import com.htmake.htbot.discord.skillAction.condition.extend.buff.extend.*;
 import com.htmake.htbot.discord.skillAction.condition.extend.damageOverTime.extend.Bleeding;
 import com.htmake.htbot.discord.skillAction.condition.extend.damageOverTime.extend.Fire;
