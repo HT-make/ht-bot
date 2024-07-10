@@ -20,7 +20,7 @@ public class DropItemResponse {
 
     public static DropItemResponse toResponse(DropItem dropItem) {
         return DropItemResponse.builder()
-                .id(dropItem.getId())
+                .id(dropItem.getItemId())
                 .name(dropItem.getName())
                 .chance(dropItem.getGetChance())
                 .build();
