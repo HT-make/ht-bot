@@ -36,7 +36,7 @@ public class S3101 extends AbstractSkillStrategy {
 
         SkillAction skillAction = new SkillAction();
         double skillValue = passiveOn ? 2.8 : 2.3;
-        skillAction.attack(skillValue, playerStatus, monsterStatus, resultList);
+        skillAction.attack(skillValue, playerData, monsterData, resultList);
 
         if (RandomUtil.randomPercentage(100)) {
             Fire fire = new Fire(1);

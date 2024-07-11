@@ -29,7 +29,7 @@ public class S3301 extends AbstractSkillStrategy {
         Map<String, Condition> monsterCondition = monsterStatus.getConditionMap();
 
         SkillAction skillAction = new SkillAction();
-        skillAction.attack(3.8, playerStatus, monsterStatus, resultList);
+        skillAction.attack(3.8, playerData, monsterData, resultList);
 
         if (RandomUtil.randomPercentage(50)) {
             Fire fire = new Fire(2);

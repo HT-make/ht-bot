@@ -2,7 +2,6 @@ package com.htmake.htbot.discord.skillAction.skills.wizard.class4;
 
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
-import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerOriginalStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.skillAction.skill.action.SkillAction;
@@ -23,12 +22,11 @@ public class S3401 extends AbstractSkillStrategy {
     protected void applySkill(PlayerData playerData, MonsterData monsterData, List<Pair<String, SkillType>> resultList) {
         PlayerStatus playerStatus = playerData.getPlayerStatus();
         PlayerOriginalStatus playerOriginalStatus = playerData.getPlayerOriginalStatus();
-        MonsterStatus monsterStatus = monsterData.getMonsterStatus();
 
         int healthCost = (int) (playerOriginalStatus.getHealth() * 0.05);
         playerStatus.setHealth(Math.max(1, playerStatus.getHealth() - healthCost));
 
         SkillAction skillAction = new SkillAction().additionalCriticalDamage(100);
-        skillAction.attack(5.0, playerStatus, monsterStatus, resultList);
+        skillAction.attack(5.0, playerData, monsterData, resultList);
     }
 }

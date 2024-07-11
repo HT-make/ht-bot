@@ -2,8 +2,6 @@ package com.htmake.htbot.discord.skillAction.skills.wizard.class2;
 
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
-import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
-import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.skillAction.skill.action.SkillAction;
 import com.htmake.htbot.discord.skillAction.skill.impl.AbstractSkillStrategy;
 import com.htmake.htbot.discord.skillAction.type.SkillType;
@@ -21,13 +19,10 @@ public class S3201 extends AbstractSkillStrategy {
 
     @Override
     protected void applySkill(PlayerData playerData, MonsterData monsterData, List<Pair<String, SkillType>> resultList) {
-        PlayerStatus playerStatus = playerData.getPlayerStatus();
-        MonsterStatus monsterStatus = monsterData.getMonsterStatus();
-
         SkillAction skillAction = new SkillAction();
         int chance = 45;
         do {
-            skillAction.attack(3.3, playerStatus, monsterStatus, resultList);
+            skillAction.attack(3.3, playerData, monsterData, resultList);
             chance -= 5;
         } while (RandomUtil.randomPercentage(chance));
     }
