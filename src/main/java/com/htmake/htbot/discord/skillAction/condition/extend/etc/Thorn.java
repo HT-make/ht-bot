@@ -1,4 +1,4 @@
-package com.htmake.htbot.discord.skillAction.condition.extend;
+package com.htmake.htbot.discord.skillAction.condition.extend.etc;
 
 import com.htmake.htbot.discord.commands.battle.data.status.BasicStatus;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
@@ -10,14 +10,6 @@ public class Thorn extends Condition {
     public Thorn(int version) {
         initialize("thorn", "가시" + getRomanNumeral(version), ":sewing_needle:", 3);
         setValue(version);
-    }
-
-    private String getRomanNumeral(int version) {
-        return switch (version) {
-            case 1 -> "I";
-            case 2 -> "II";
-            default -> throw new IllegalArgumentException("Invalid version: " + version);
-        };
     }
 
     private void setValue(int version) {

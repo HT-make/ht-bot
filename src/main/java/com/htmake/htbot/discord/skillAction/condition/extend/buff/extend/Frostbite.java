@@ -10,14 +10,6 @@ public class Frostbite extends Buff {
         super("frostbite", "동상" + getRomanNumeral(version), ":snowflake:", 2, getValue(version));
     }
 
-    private static String getRomanNumeral(int version) {
-        return switch (version) {
-            case 1 -> "I";
-            case 2 -> "II";
-            default -> throw new IllegalArgumentException("Invalid version: " + version);
-        };
-    }
-
     private static double getValue(int version) {
         return switch (version) {
             case 1 -> 0.1;

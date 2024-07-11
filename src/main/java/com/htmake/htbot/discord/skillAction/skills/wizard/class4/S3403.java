@@ -29,7 +29,7 @@ public class S3403 extends AbstractSkillStrategy {
         Map<String, Condition> monsterCondition = monsterStatus.getConditionMap();
 
         SkillAction skillAction = new SkillAction().additionalCriticalChance(60);
-        skillAction.attack(4.0, playerStatus, monsterStatus, resultList);
+        skillAction.attack(4.0, playerData, monsterData, resultList);
 
         if (RandomUtil.randomPercentage(80)) {
             Bleeding bleeding = new Bleeding(2);

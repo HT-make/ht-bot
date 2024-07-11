@@ -5,7 +5,7 @@ import com.htmake.htbot.discord.commands.battle.data.PlayerData;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerOriginalStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
-import com.htmake.htbot.discord.skillAction.condition.extend.Thorn;
+import com.htmake.htbot.discord.skillAction.condition.extend.etc.Thorn;
 import com.htmake.htbot.discord.skillAction.condition.extend.buff.extend.Absorption;
 import com.htmake.htbot.discord.skillAction.skill.impl.AbstractSkillStrategy;
 import com.htmake.htbot.discord.skillAction.type.SkillType;

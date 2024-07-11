@@ -1,4 +1,4 @@
-package com.htmake.htbot.discord.skillAction.condition.extend;
+package com.htmake.htbot.discord.skillAction.condition.extend.etc;
 
 import com.htmake.htbot.discord.skillAction.condition.Condition;
 import com.htmake.htbot.discord.util.RandomUtil;
@@ -12,18 +12,11 @@ public class Faint extends Condition {
         setValue(version);
     }
 
-    private String getRomanNumeral(int version) {
-        return switch (version) {
-            case 1 -> "I";
-            case 2 -> "II";
-            default -> throw new IllegalArgumentException("Invalid version: " + version);
-        };
-    }
-
     private void setValue(int version) {
         switch (version) {
             case 1 -> this.value = 50;
             case 2 -> this.value = 75;
+            case 3 -> this.value = 100;
         }
     }
 

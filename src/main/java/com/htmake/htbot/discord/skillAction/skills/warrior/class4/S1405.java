@@ -6,8 +6,8 @@ import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerOriginalStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
-import com.htmake.htbot.discord.skillAction.condition.extend.AngelsProtection;
-import com.htmake.htbot.discord.skillAction.condition.extend.Light;
+import com.htmake.htbot.discord.skillAction.condition.extend.etc.AngelsProtection;
+import com.htmake.htbot.discord.skillAction.condition.extend.etc.Light;
 import com.htmake.htbot.discord.skillAction.condition.extend.buff.Buff;
 import com.htmake.htbot.discord.skillAction.condition.extend.buff.extend.Power;
 import com.htmake.htbot.discord.skillAction.condition.extend.buff.extend.Protect;

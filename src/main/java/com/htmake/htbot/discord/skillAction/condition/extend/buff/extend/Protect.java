@@ -10,18 +10,11 @@ public class Protect extends Buff {
         super("protect", "보호" + getRomanNumeral(version), ":shield:", 3, getValue(version));
     }
 
-    private static String getRomanNumeral(int version) {
-        return switch (version) {
-            case 1 -> "I";
-            case 2 -> "II";
-            default -> throw new IllegalArgumentException("Invalid version: " + version);
-        };
-    }
-
     private static double getValue(int version) {
         return switch (version) {
             case 1 -> 0.5;
             case 2 -> 0.7;
+            case 3 -> 1.0;
             default -> throw new IllegalArgumentException("Invalid version: " + version);
         };
     }

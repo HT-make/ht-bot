@@ -7,24 +7,7 @@ import com.htmake.htbot.discord.skillAction.type.BuffType;
 public class Power extends Buff {
 
     public Power(int version) {
-        super("power", "힘" + getRomanNumeral(version), ":crossed_swords:", getTurn(version), getValue(version));
-    }
-
-    private static String getRomanNumeral(int version) {
-        return switch (version) {
-            case 1 -> "I";
-            case 2 -> "II";
-            case 3 -> "III";
-            default -> throw new IllegalArgumentException("Invalid version: " + version);
-        };
-    }
-
-    private static int getTurn(int version) {
-        return switch (version) {
-            case 1, 2 -> 3;
-            case 3 -> 2;
-            default -> throw new IllegalArgumentException("Invalid version: " + version);
-        };
+        super("power", "힘" + getRomanNumeral(version), ":crossed_swords:", 3, getValue(version));
     }
 
     private static double getValue(int version) {
@@ -32,6 +15,7 @@ public class Power extends Buff {
             case 1 -> 0.3;
             case 2 -> 0.5;
             case 3 -> 0.7;
+            case 4 -> 0.9;
             default -> throw new IllegalArgumentException("Invalid version: " + version);
         };
     }

@@ -1,6 +1,11 @@
 package com.htmake.htbot.discord.skillAction.skill.action;
 
+import com.htmake.htbot.discord.commands.battle.action.ConditionAction;
+import com.htmake.htbot.discord.commands.battle.data.MonsterData;
+import com.htmake.htbot.discord.commands.battle.data.PlayerData;
 import com.htmake.htbot.discord.commands.battle.data.status.BasicStatus;
+import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
+import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
 import com.htmake.htbot.discord.skillAction.condition.extend.buff.Buff;
 import com.htmake.htbot.discord.skillAction.condition.extend.damageOverTime.DamageOverTime;
@@ -24,9 +29,13 @@ public class SkillAction {
     private double ignoreDefense;
     private Job job;
 
+    private final ConditionAction conditionAction;
+
     public SkillAction() {
         this.damageReceived = 0;
         this.isCritical = false;
+
+        this.conditionAction = new ConditionAction();
     }
 
     public int getDamageReceived() {
@@ -62,8 +71,14 @@ public class SkillAction {
         return this;
     }
 
-    public void attack(double skillValue, BasicStatus playerStatus, BasicStatus monsterStatus, List<Pair<String, SkillType>> resultList) {
+    public void attack(double skillValue, PlayerData playerData, MonsterData monsterData, List<Pair<String, SkillType>> resultList) {
+        PlayerStatus playerStatus = playerData.getPlayerStatus();
+        MonsterStatus monsterStatus = monsterData.getMonsterStatus();
+
         damageReceived = (calculateDamage(skillValue, playerStatus) + additionalDamage) - getDefence(monsterStatus.getDefence());
+
+        conditionAction.effectProcessing(playerData, monsterData, damageReceived, true);
+
         monsterStatus.setHealth(Math.max(0, monsterStatus.getHealth() - damageReceived));
         resultList.add(new Pair<>(String.valueOf(damageReceived), SkillType.ATTACK));
     }

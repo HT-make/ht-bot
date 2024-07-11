@@ -4,7 +4,6 @@ import com.htmake.htbot.discord.commands.battle.data.MonsterData;
 import com.htmake.htbot.discord.commands.battle.data.PlayerData;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterOriginalStatus;
 import com.htmake.htbot.discord.commands.battle.data.status.extend.MonsterStatus;
-import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
 import com.htmake.htbot.discord.skillAction.condition.extend.buff.extend.Frostbite;
 import com.htmake.htbot.discord.skillAction.skill.action.SkillAction;
@@ -31,14 +30,13 @@ public class S3102 extends AbstractSkillStrategy {
 
     @Override
     protected void applySkill(PlayerData playerData, MonsterData monsterData, List<Pair<String, SkillType>> resultList) {
-        PlayerStatus playerStatus = playerData.getPlayerStatus();
         MonsterStatus monsterStatus = monsterData.getMonsterStatus();
         MonsterOriginalStatus monsterOriginalStatus = monsterData.getMonsterOriginalStatus();
         Map<String, Condition> monsterCondition = monsterStatus.getConditionMap();
 
         SkillAction skillAction = new SkillAction();
         double skillValue = passiveOn ? 2.7 : 2.0;
-        skillAction.attack(skillValue, playerStatus, monsterStatus, resultList);
+        skillAction.attack(skillValue, playerData, monsterData, resultList);
 
         if (RandomUtil.randomPercentage(40)) {
             Frostbite frostbite = new Frostbite(1);
