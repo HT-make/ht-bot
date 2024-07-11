@@ -9,6 +9,7 @@ import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerOrigina
 import com.htmake.htbot.discord.commands.battle.data.status.extend.PlayerStatus;
 import com.htmake.htbot.discord.commands.battle.util.BattleUtil;
 import com.htmake.htbot.discord.skillAction.condition.Condition;
+import com.htmake.htbot.discord.skillAction.condition.extend.damageOverTime.extend.Toxic;
 import com.htmake.htbot.discord.skillAction.condition.extend.etc.Faint;
 import com.htmake.htbot.discord.skillAction.condition.extend.buff.Buff;
 import com.htmake.htbot.discord.skillAction.condition.extend.damageOverTime.DamageOverTime;
@@ -50,7 +51,7 @@ public class MonsterAttackAction {
         if (RandomUtil.randomPercentage(monsterStatus.getSkillChance())) {
             handleSkillAttack(event, playerData, monsterData);
         } else {
-            handleMonsterAttack(event, playerStatus, monsterStatus);
+            handleMonsterAttack(event, playerData, monsterData);
         }
 
         if (playerStatus.getHealth() == 0) {
@@ -78,11 +79,10 @@ public class MonsterAttackAction {
         return false;
     }
 
-    private void handleMonsterAttack(
-            ButtonInteractionEvent event,
-            PlayerStatus playerStatus,
-            MonsterStatus monsterStatus
-    ) {
+    private void handleMonsterAttack(ButtonInteractionEvent event, PlayerData playerData, MonsterData monsterData) {
+        PlayerStatus playerStatus = playerData.getPlayerStatus();
+        MonsterStatus monsterStatus = monsterData.getMonsterStatus();
+
         Pair<Integer, Boolean> damage = monsterAttackDamage(monsterStatus);
         String message = monsterStatus.getName() + "의 ";
 
@@ -95,7 +95,7 @@ public class MonsterAttackAction {
         battleUtil.updateSituation(event.getUser().getId(), message);
         battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
 
-        applyAttack(event, playerStatus, monsterStatus, damage.getFirst());
+        applyAttack(event, playerData, monsterData, damage.getFirst());
     }
 
     private Pair<Integer, Boolean> monsterAttackDamage(MonsterStatus monsterStatus) {
@@ -164,7 +164,7 @@ public class MonsterAttackAction {
         MonsterStatus monsterStatus = monsterData.getMonsterStatus();
         MonsterOriginalStatus monsterOriginalStatus = monsterData.getMonsterOriginalStatus();
 
-        applyAttack(event, playerStatus, monsterStatus, skill.getDamage());
+        applyAttack(event, playerData, monsterData, skill.getDamage());
 
         if (!skill.getEffect().equals("")) {
             List<String> effect = split(skill.getEffect());
@@ -249,7 +249,9 @@ public class MonsterAttackAction {
 
             if (condition instanceof DamageOverTime damageOverTime) {
                 if (damageOverTime instanceof Poison poison) {
-                    poison.setEffectDamage(playerStatus.getHealth());
+                    poison.setEffectDamage(playerOriginalStatus.getHealth());
+                } else if (damageOverTime instanceof Toxic toxic) {
+                    toxic.setEffectDamage(playerStatus.getHealth());
                 } else {
                     damageOverTime.setEffectDamage(monsterStatus.getDamage());
                 }
@@ -265,23 +267,25 @@ public class MonsterAttackAction {
 
     private void applyAttack(
         ButtonInteractionEvent event,
-        PlayerStatus playerStatus,
-        MonsterStatus monsterStatus,
+        PlayerData playerData,
+        MonsterData monsterData,
         int damage
     ) {
+        PlayerStatus playerStatus = playerData.getPlayerStatus();
+        MonsterStatus monsterStatus = monsterData.getMonsterStatus();
+
         Map<String, Condition> playerCondition = playerStatus.getConditionMap();
         int damageReceived = Math.max(0, damage - playerStatus.getDefence());
 
-        if (playerCondition.containsKey("invincible")) {
-            damageReceived = 0;
-            playerCondition.remove("invincible");
-        }
+        damageReceived = conditionAction.invincibleCheck(playerCondition, damageReceived);
 
         playerStatus.setHealth(Math.max(0, playerStatus.getHealth() - damageReceived));
 
         String message = damageReceived + "의 데미지를 입혔다.";
         battleUtil.updateSituation(event.getUser().getId(), message);
         battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
+
+        conditionAction.effectProcessing(playerData, monsterData, damageReceived, false);
     }
 
     private List<String> split(String effect) {
