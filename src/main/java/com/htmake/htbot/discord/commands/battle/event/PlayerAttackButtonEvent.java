@@ -1,5 +1,6 @@
 package com.htmake.htbot.discord.commands.battle.event;
 
+import com.htmake.htbot.discord.commands.battle.action.ConditionAction;
 import com.htmake.htbot.discord.commands.battle.action.MonsterAttackAction;
 import com.htmake.htbot.discord.commands.battle.action.MonsterKillAction;
 import com.htmake.htbot.discord.commands.battle.data.MonsterData;
@@ -33,6 +34,7 @@ public class PlayerAttackButtonEvent {
     private final BattleUtil battleUtil;
     private final MonsterKillAction monsterKillAction;
     private final MonsterAttackAction monsterAttackAction;
+    private final ConditionAction conditionAction;
 
     private final PlayerDataCache playerDataCache;
     private final MonsterDataCache monsterDataCache;
@@ -42,6 +44,7 @@ public class PlayerAttackButtonEvent {
         this.battleUtil = new BattleUtil();
         this.monsterKillAction = new MonsterKillAction();
         this.monsterAttackAction = new MonsterAttackAction();
+        this.conditionAction = new ConditionAction();
 
         this.playerDataCache = CacheFactory.playerDataCache;
         this.monsterDataCache = CacheFactory.monsterDataCache;
@@ -57,17 +60,15 @@ public class PlayerAttackButtonEvent {
 
         PlayerData playerData = playerDataCache.get(playerId);
         PlayerStatus playerStatus = playerData.getPlayerStatus();
-        PlayerOriginalStatus playerOriginalStatus = playerData.getPlayerOriginalStatus();
         MonsterData monsterData = monsterDataCache.get(playerId);
         MonsterStatus monsterStatus = monsterData.getMonsterStatus();
-        MonsterOriginalStatus monsterOriginalStatus = monsterData.getMonsterOriginalStatus();
 
         if (battleUtil.conditionCheck(event, playerStatus, monsterStatus)) {
             monsterAttackAction.execute(event, playerData, monsterData);
             return;
         }
 
-        playerTurn(event, playerStatus, playerOriginalStatus, monsterStatus, monsterOriginalStatus);
+        playerTurn(event, playerData, monsterData);
 
         if (monsterStatus.getHealth() == 0) {
             monsterKillAction.execute(event, playerStatus, monsterStatus);
@@ -76,13 +77,12 @@ public class PlayerAttackButtonEvent {
         }
     }
 
-    private void playerTurn(
-            ButtonInteractionEvent event,
-            PlayerStatus playerStatus,
-            PlayerOriginalStatus playerOriginalStatus,
-            MonsterStatus monsterStatus,
-            MonsterOriginalStatus monsterOriginalStatus
-    ) {
+    private void playerTurn(ButtonInteractionEvent event, PlayerData playerData, MonsterData monsterData) {
+        PlayerStatus playerStatus = playerData.getPlayerStatus();
+        PlayerOriginalStatus playerOriginalStatus = playerData.getPlayerOriginalStatus();
+        MonsterStatus monsterStatus = monsterData.getMonsterStatus();
+        MonsterOriginalStatus monsterOriginalStatus = monsterData.getMonsterOriginalStatus();
+
         Pair<Integer, Boolean> attack = playerAttackDamage(playerStatus, monsterStatus);
 
         User user = event.getUser();
@@ -101,24 +101,20 @@ public class PlayerAttackButtonEvent {
         battleUtil.editEmbed(event, playerStatus, monsterStatus, "start");
 
         int damage = attack.getFirst();
-
         Map<String, Condition> monsterCondition = monsterStatus.getConditionMap();
 
         if (playerStatus.getJob().equals(Job.GREAT_WIZARD)) {
             damage += playerStatus.getMana();
         }
 
-        if (monsterCondition.containsKey("invincible")) {
-            damage = 0;
-            monsterCondition.remove("invincible");
-        }
-
+        damage = conditionAction.invincibleCheck(monsterCondition, damage);
         monsterStatus.setHealth(Math.max(0, (monsterStatus.getHealth() - damage)));
 
         message = FormatUtil.decimalFormat(damage) + "의 데미지를 입혔다.";
         battleUtil.updateSituation(playerId, message);
         battleUtil.editEmbed(event, playerStatus, monsterStatus, "progress");
 
+        conditionAction.effectProcessing(playerData, monsterData, damage, true);
 
         applyJobSpecificEffects(event, playerStatus, playerOriginalStatus, monsterStatus, monsterOriginalStatus, playerId);
     }
