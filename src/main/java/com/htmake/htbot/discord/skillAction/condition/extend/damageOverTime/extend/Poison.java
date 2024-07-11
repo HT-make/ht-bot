@@ -5,7 +5,7 @@ import com.htmake.htbot.discord.skillAction.condition.extend.damageOverTime.Dama
 public class Poison extends DamageOverTime {
 
     public Poison(int version) {
-        super("poison", "독" + getRomanNumeral(version), ":skull_crossbones:", 3, getValue(version));
+        super("poison", "독" + getRomanNumeral(version), ":test_tube:", 3, getValue(version));
     }
 
     private static double getValue(int version) {
