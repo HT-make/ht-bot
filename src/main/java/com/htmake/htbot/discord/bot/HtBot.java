@@ -11,7 +11,6 @@ import com.htmake.htbot.discord.commands.profession.ProfessionCommand;
 import com.htmake.htbot.discord.commands.quest.QuestCommand;
 import com.htmake.htbot.discord.commands.shop.ShopCommand;
 import com.htmake.htbot.discord.commands.skill.SkillCommand;
-import com.htmake.htbot.global.unirest.HttpClient;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.Getter;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -27,13 +26,10 @@ import javax.security.auth.login.LoginException;
 @Getter
 public class HtBot {
 
-    private final HttpClient httpClient;
     private final Dotenv config;
     private final ShardManager shardManager;
 
-    public HtBot(HttpClient httpClient) throws LoginException {
-        this.httpClient = httpClient;
-
+    public HtBot() throws LoginException {
         // Load environment variables
         config = Dotenv.configure().load();
         String token = config.get("TOKEN");
