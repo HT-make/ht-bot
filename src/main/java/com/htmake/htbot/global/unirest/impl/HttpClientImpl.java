@@ -1,5 +1,7 @@
 package com.htmake.htbot.global.unirest.impl;
 
+import com.htmake.htbot.global.unirest.records.RequestParam;
+import com.htmake.htbot.global.unirest.records.RouteParam;
 import com.htmake.htbot.global.util.RestServiceType;
 import com.htmake.htbot.global.unirest.HttpClient;
 import com.mashape.unirest.http.HttpResponse;
@@ -112,6 +114,19 @@ public class HttpClientImpl implements HttpClient {
             }
 
             return getRequest.asJson();
+        } catch (UnirestException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Failed to send HTTP GET request", e);
+        }
+    }
+
+    @Override
+    public HttpResponse<JsonNode> sendGetRequest(String endPoint, RouteParam routeParam, RequestParam requestParam) {
+        try {
+            return Unirest.get(RestServiceType.DEFAULT_URL + endPoint)
+                    .routeParam(routeParam.name(), routeParam.value())
+                    .queryString(requestParam.name(), requestParam.value())
+                    .asJson();
         } catch (UnirestException e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to send HTTP GET request", e);

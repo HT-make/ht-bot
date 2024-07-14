@@ -1,5 +1,7 @@
 package com.htmake.htbot.global.unirest;
 
+import com.htmake.htbot.global.unirest.records.RequestParam;
+import com.htmake.htbot.global.unirest.records.RouteParam;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import kotlin.Pair;
@@ -25,6 +27,8 @@ public interface HttpClient {
     HttpResponse<JsonNode> sendGetRequest(String endPoint, Pair<String, String> firstRouteParam, Pair<String, String> secondRouteParam);
 
     HttpResponse<JsonNode> sendGetRequest(String endPoint, List<Pair<String, String>> requestParamList);
+
+    HttpResponse<JsonNode> sendGetRequest(String endPoint, RouteParam routeParam, RequestParam requestParam);
 
     HttpResponse<JsonNode> sendPatchRequest(String endPoint, Pair<String, String> routeParam, String requestBody);
 
