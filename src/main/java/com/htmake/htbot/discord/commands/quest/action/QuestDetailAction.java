@@ -66,7 +66,7 @@ public class QuestDetailAction {
     private HttpResponse<JsonNode> request() {
         String endPoint = "/quest/{player_id}";
         Pair<String, String> routeParam = new Pair<>("player_id", user.getId());
-        return httpClient.sendGetRequest(endPoint, routeParam);
+        return httpClient.sendPostRequest(endPoint, routeParam);
     }
 
     private void requestSuccess(InteractionEventWrapper event, JSONObject questObject) {
