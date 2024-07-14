@@ -2,9 +2,9 @@ package com.htmake.htbot.domain.quest.presentation;
 
 import com.htmake.htbot.domain.quest.presentation.data.request.PlayerQuestMonsterQuantityRequest;
 import com.htmake.htbot.domain.quest.presentation.data.response.PlayerQuestInfoResponse;
-import com.htmake.htbot.domain.quest.service.PlayerQuestInfoService;
-import com.htmake.htbot.domain.quest.service.PlayerQuestMonsterQuantityService;
-import com.htmake.htbot.domain.quest.service.PlayerQuestProgressService;
+import com.htmake.htbot.domain.quest.presentation.data.response.QuestDialogueResponse;
+import com.htmake.htbot.domain.quest.presentation.data.response.ReadDialogueCheckResponse;
+import com.htmake.htbot.domain.quest.service.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,12 +17,29 @@ import org.springframework.web.bind.annotation.*;
 public class QuestController {
 
     private final PlayerQuestInfoService playerQuestInfoService;
+    private final ReadDialogueCheckService readDialogueCheckService;
+    private final QuestDialogueService questDialogueService;
     private final PlayerQuestProgressService playerQuestProgressService;
     private final PlayerQuestMonsterQuantityService playerQuestMonsterQuantityService;
 
-    @GetMapping("/{player_id}")
+    @PostMapping("/{player_id}")
     public ResponseEntity<PlayerQuestInfoResponse> quest(@PathVariable("player_id") String playerId) {
         PlayerQuestInfoResponse response = playerQuestInfoService.execute(playerId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/dialogue/check/{player_id}")
+    public ResponseEntity<ReadDialogueCheckResponse> readDialogueCheck(@PathVariable("player_id") String playerId) {
+        ReadDialogueCheckResponse response = readDialogueCheckService.execute(playerId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/dialogue/{player_id}")
+    public ResponseEntity<QuestDialogueResponse> questDialogue(
+            @PathVariable("player_id") String playerId,
+            @RequestParam("trigger") String trigger
+    ) {
+        QuestDialogueResponse response = questDialogueService.execute(playerId, trigger);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

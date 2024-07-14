@@ -3,6 +3,7 @@ package com.htmake.htbot.domain.quest.entity;
 import com.htmake.htbot.domain.player.entity.Player;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -24,8 +25,15 @@ public class PlayerQuest {
     @JoinColumn(name = "main_quest_id")
     private MainQuest mainQuest;
 
+    @Column(name = "read_dialogue")
+    @ColumnDefault("false")
+    private boolean readDialogue;
 
     public void setMainQuest(MainQuest mainQuest) {
         this.mainQuest = mainQuest;
+    }
+
+    public void setReadDialogue(boolean readDialogue) {
+        this.readDialogue = readDialogue;
     }
 }

@@ -63,6 +63,7 @@ public class PlayerQuestProgressServiceImpl implements PlayerQuestProgressServic
                         .orElseThrow(NotFoundQuestException::new);
 
         playerQuest.setMainQuest(newMainQuest);
+        playerQuest.setReadDialogue(false);
         questUtil.initialSet(player, newMainQuest);
         playerQuestRepository.save(playerQuest);
 

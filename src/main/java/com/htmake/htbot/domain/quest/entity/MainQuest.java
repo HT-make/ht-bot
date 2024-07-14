@@ -1,6 +1,7 @@
 package com.htmake.htbot.domain.quest.entity;
 
 import com.htmake.htbot.domain.quest.entity.reward.QuestReward;
+import com.htmake.htbot.domain.quest.entity.dialogue.QuestDialogue;
 import com.htmake.htbot.domain.quest.entity.target.misc.TargetMisc;
 import com.htmake.htbot.domain.quest.entity.target.monster.TargetMonster;
 import jakarta.persistence.*;
@@ -42,4 +43,7 @@ public class MainQuest {
 
     @OneToMany(mappedBy = "mainQuest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PlayerQuest> playerQuestList;
+
+    @OneToMany(mappedBy = "mainQuest", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<QuestDialogue> questDialogueList;
 }
