@@ -1,6 +1,7 @@
 package com.htmake.htbot.discord.commands.quest;
 
 import com.htmake.htbot.discord.commands.quest.event.QuestCompleteButtonEvent;
+import com.htmake.htbot.discord.commands.quest.event.QuestDialogueButtonEvent;
 import com.htmake.htbot.discord.commands.quest.event.QuestSlashEvent;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.discord.util.MessageUtil;
@@ -19,6 +20,8 @@ public class QuestCommand extends ListenerAdapter {
 
     private final QuestCompleteButtonEvent questCompleteButtonEvent;
 
+    private final QuestDialogueButtonEvent questDialogueButtonEvent;
+
     private final ErrorUtil errorUtil;
     private final MessageUtil messageUtil;
 
@@ -26,6 +29,8 @@ public class QuestCommand extends ListenerAdapter {
         this.questSlashEvent = new QuestSlashEvent();
 
         this.questCompleteButtonEvent = new QuestCompleteButtonEvent();
+
+        this.questDialogueButtonEvent = new QuestDialogueButtonEvent();
 
         this.errorUtil = new ErrorUtil();
         this.messageUtil = new MessageUtil();
@@ -57,6 +62,11 @@ public class QuestCommand extends ListenerAdapter {
 
             if (componentList.get(1).equals("complete")) {
                 questCompleteButtonEvent.execute(event);
+            }
+
+            switch (componentList.get(1)) {
+                case "complete" -> questCompleteButtonEvent.execute(event);
+                case "dialogue" -> questDialogueButtonEvent.execute(event, componentList.get(2));
             }
         }
     }
