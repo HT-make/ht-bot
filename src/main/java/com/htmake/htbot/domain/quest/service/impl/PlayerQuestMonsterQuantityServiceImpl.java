@@ -30,6 +30,10 @@ public class PlayerQuestMonsterQuantityServiceImpl implements PlayerQuestMonster
         PlayerQuest playerQuest = playerQuestRepository.findByPlayerId(playerId)
                 .orElseThrow(NotFoundPlayerException::new);
 
+        if (!playerQuest.isReadDialogue()) {
+            return;
+        }
+
         Long progress = playerQuest.getMainQuest().getId();
 
         MainQuest mainQuest = mainQuestRepository.findById(progress)

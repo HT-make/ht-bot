@@ -18,14 +18,14 @@ import com.htmake.htbot.domain.quest.repository.PlayerTargetMonsterRepository;
 import com.htmake.htbot.domain.quest.service.PlayerQuestInfoService;
 import com.htmake.htbot.domain.quest.entity.MainQuest;
 import com.htmake.htbot.domain.quest.repository.MainQuestRepository;
-import com.htmake.htbot.global.annotation.ReadOnlyService;
+import com.htmake.htbot.global.annotation.TransactionalService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@ReadOnlyService
+@TransactionalService
 @RequiredArgsConstructor
 public class PlayerQuestInfoServiceImpl implements PlayerQuestInfoService {
 
@@ -47,8 +47,12 @@ public class PlayerQuestInfoServiceImpl implements PlayerQuestInfoService {
         List<TargetResponse> targetResponseList = new ArrayList<>();
         targetMonster(playerId, mainQuest, targetResponseList);
         targetMisc(playerId, mainQuest, targetResponseList);
-
         List<QuestReward> questRewardList = mainQuest.getQuestRewardList();
+
+        if (!playerQuest.isReadDialogue()) {
+            playerQuest.setReadDialogue(true);
+            playerQuestRepository.save(playerQuest);
+        }
 
         return PlayerQuestInfoResponse.builder()
                 .title(mainQuest.getTitle())
