@@ -1,9 +1,11 @@
 package com.htmake.htbot.discord.commands.global;
 
+import com.htmake.htbot.discord.commands.global.event.GlobalSlashEvent;
 import com.htmake.htbot.discord.util.ErrorUtil;
 import com.htmake.htbot.discord.util.MessageUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.events.session.ReadyEvent;
@@ -25,9 +27,22 @@ public class GlobalCommand extends ListenerAdapter {
     private final ErrorUtil errorUtil;
     private final MessageUtil messageUtil;
 
+    private final GlobalSlashEvent globalSlashEvent;
+
     public GlobalCommand() {
         this.errorUtil = new ErrorUtil();
         this.messageUtil = new MessageUtil();
+
+        this.globalSlashEvent = new GlobalSlashEvent();
+    }
+
+    @Override
+    public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
+        String command = event.getName();
+
+        if (!command.equals("게임-가입")) {
+            globalSlashEvent.execute(event);
+        }
     }
 
     @Override
