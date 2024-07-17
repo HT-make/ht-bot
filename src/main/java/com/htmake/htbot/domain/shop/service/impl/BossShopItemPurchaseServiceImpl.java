@@ -31,7 +31,7 @@ public class BossShopItemPurchaseServiceImpl implements BossShopItemPurchaseServ
                 .orElseThrow(NotFoundPlayerException::new);
 
         Inventory bossCoin = inventoryRepository.findByPlayerIdAndName(player.getId(), "보스 코인")
-                .orElseThrow(NotFoundItemException::new);
+                .orElseThrow(NotEnoughBossCoinException::new);
 
         if (bossCoin.getQuantity() < item.getCoin()) {
             throw new NotEnoughBossCoinException();
