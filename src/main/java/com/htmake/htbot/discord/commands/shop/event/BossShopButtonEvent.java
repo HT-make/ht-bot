@@ -82,10 +82,11 @@ public class BossShopButtonEvent {
     private MessageEmbed buildEmbed(List<BossShopItem> bossShopItemList, MessageEmbed embed) {
         List<BossShopItem> bossShopItemListToLeftPage = new ArrayList<>();
         List<BossShopItem> bossShopItemListToRightPage = new ArrayList<>();
+
         for (int i = 0; i < 5; i++) {
             bossShopItemListToLeftPage.add(bossShopItemList.get(i));
         }
-        for (int i = 5; i < 10; i++) {
+        for (int i = 5; i < bossShopItemList.size(); i++) {
             bossShopItemListToRightPage.add(bossShopItemList.get(i));
         }
 
@@ -119,9 +120,7 @@ public class BossShopButtonEvent {
     public static StringSelectMenu menuEmbed(String placeholder, List<BossShopItem> bossShopItemList) {
         List<SelectOption> options = new ArrayList<>();
 
-        for (int i = 0; i < 10; i++) {
-            if (bossShopItemList.size() < i) break;
-            BossShopItem bossShopItem = bossShopItemList.get(i);
+        for (BossShopItem bossShopItem : bossShopItemList) {
             options.add(SelectOption.of(bossShopItem.getName(), "shop-purchase-boss-" + bossShopItem.getId()));
         }
 
