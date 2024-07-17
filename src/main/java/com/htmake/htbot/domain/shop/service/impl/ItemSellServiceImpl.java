@@ -47,10 +47,12 @@ public class ItemSellServiceImpl implements ItemSellService {
             default -> 0;
         };
 
-        if (existingItem.getQuantity() == 1) {
+        int currentQuantity = existingItem.getQuantity() - quantity;
+
+        if (currentQuantity == 0) {
             inventoryRepository.delete(existingItem);
         } else {
-            existingItem.setQuantity(existingItem.getQuantity() - quantity);
+            existingItem.setQuantity(currentQuantity);
             inventoryRepository.save(existingItem);
         }
 
